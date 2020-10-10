@@ -18,8 +18,8 @@ private:
     vector<int> MARKER_ELEMS;
 
     // Tableaux du maillage
-    double *nodes // Coordonnées des noeuds
-        vector<double> *element2nodes;
+    double *nodes; // Coordonnées des noeuds
+    vector<double> *element2nodes;
     int *element2nodesStart;
     int *elementTypes;
 
