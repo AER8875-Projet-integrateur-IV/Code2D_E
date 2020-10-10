@@ -7,7 +7,7 @@
 
 #include "../meshData/meshData.hpp"
 #include "./su2Reader.hpp"
-#include "../../tools/stringTools.hpp"
+#include "../../tools/stringTools.cpp"
 
 using namespace std;
 
@@ -15,15 +15,10 @@ class MeshRead
 {
 private:
     string _path;
-    MeshData *_meshData;
-    Su2Reader _su2Reader;
-
-    vector<vector<double> *> *element2nodesBoundary;
-    vector<int *> *element2nodesStartBoundary;
-    vector<int *> *boundaryTypes;
+    shared_ptr<MeshData> _meshData;
 
 public:
-    MeshRead(string &path, MeshData *meshData);
+    MeshRead(string &path, shared_ptr<MeshData> meshData);
     ~MeshRead();
     void readFile();
 };

@@ -1,10 +1,9 @@
 #include "./meshRead.hpp"
 
-MeshRead::MeshRead(string &path, MeshData *meshData)
+MeshRead::MeshRead(string &path, shared_ptr<MeshData> meshData)
 {
     _path = path;
     _meshData = meshData;
-    _su2Reader = Su2Reader(_path, _meshData);
     return;
 };
 MeshRead::~MeshRead()
@@ -13,8 +12,9 @@ MeshRead::~MeshRead()
 };
 void MeshRead::readFile()
 {
-    if (endsWith(_path, ".su2"))
+    if (ends_With(_path, ".su2"))
     {
+        Su2Reader _su2Reader = Su2Reader(_path, _meshData);
         _su2Reader.readFile();
     }
     else

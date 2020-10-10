@@ -1,10 +1,10 @@
 #include <su2Reader.hpp>
 
-Su2Reader::Su2Reader(string &path, MeshData *meshData)
+Su2Reader::Su2Reader(string &path, shared_ptr<MeshData> meshData)
 {
     _path = path;
     _meshData = meshData;
-    _inputFile == NULL;
+    _inputFile = NULL;
     return;
 }
 
@@ -22,9 +22,12 @@ void Su2Reader::readFile()
     {
         // if there is a probleme when opening the file
         printf("Le programme n'arrive pas à ouvrir le fichier: %s\n", _path.c_str());
-        system("pause");
+        //cin.get();
         exit(1);
     }
+    cout << "Le fichier " << _path << "est bien ouvert." << endl;
+
+    cout << "Lecture du maillage terminée." << endl;
 
     return;
 }

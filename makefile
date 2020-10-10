@@ -42,7 +42,7 @@ current_dir := $(shell basename $(CURDIR))
 
 Executable = $(current_dir).out
 
-ExecutableSourceFile = main.cpp
+ExecutableSourceFile = src/main.cpp
 
 # Executable debug object file
 ExecutableDebugObjectFile = $(subst .cpp,.o,$(addprefix .debug/,$(ExecutableSourceFile)))
@@ -74,7 +74,7 @@ VPATH := $(AllDirs)
 
 # Default compilation configuration
 CXX = g++
-CXXFLAGS += -std=c++20 -Wall -Wno-unused-function -Wno-strict-overflow
+CXXFLAGS += -std=c++11 -Wall -Wno-unused-function -Wno-strict-overflow
 
 DEBUGFLAGS += -Og -g -pg 
 RELEASEFLAGS += -O3 -fopenmp
