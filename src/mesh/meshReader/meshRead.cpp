@@ -11,11 +11,11 @@ MeshRead::~MeshRead()
 {
     return;
 };
-void MeshRead::read()
+void MeshRead::readFile()
 {
-    if (_path.ends_with('.su2'))
+    if (endsWith(_path, ".su2"))
     {
-        _su2Reader.read();
+        _su2Reader.readFile();
     }
     else
     {

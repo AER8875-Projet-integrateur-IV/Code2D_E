@@ -7,6 +7,7 @@
 
 #include "../meshData/meshData.hpp"
 #include "./su2Reader.hpp"
+#include "../../tools/stringTools.hpp"
 
 using namespace std;
 
@@ -24,5 +25,5 @@ private:
 public:
     MeshRead(string &path, MeshData *meshData);
     ~MeshRead();
-    void read();
+    void readFile();
 };
