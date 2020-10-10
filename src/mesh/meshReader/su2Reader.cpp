@@ -1,8 +1,17 @@
 #include <su2Reader.hpp>
 
-Su2Reader::Su2Reader(std::string filename)
+Su2Reader::Su2Reader(string &path, MeshData *meshData)
 {
-    v_filename = filename;
+    _path = path;
+    _meshData = meshData;
+    return;
 }
 
-Su2Reader::~Su2Reader() {}
+Su2Reader::~Su2Reader()
+{
+    return;
+}
+void Su2Reader::read()
+{
+    return;
+}

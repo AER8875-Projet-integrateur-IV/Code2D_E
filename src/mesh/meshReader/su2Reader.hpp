@@ -3,15 +3,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
-#include <../meshData/su2Data.hpp>
+#include "../meshData/meshData.hpp"
+using namespace std;
 
 class Su2Reader
 {
 private:
-    std::string v_filename;
+    string _path;
+    MeshData *_meshData;
 
 public:
-    Su2Reader(std::string filename);
+    Su2Reader(string &path, MeshData *meshData);
     ~Su2Reader();
+    void read();
 };

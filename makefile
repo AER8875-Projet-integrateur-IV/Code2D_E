@@ -74,7 +74,7 @@ VPATH := $(AllDirs)
 
 # Default compilation configuration
 CXX = g++
-CXXFLAGS += -std=c++11 -Wall -Wno-unused-function -Wno-strict-overflow
+CXXFLAGS += -std=c++20 -Wall -Wno-unused-function -Wno-strict-overflow
 
 DEBUGFLAGS += -Og -g -pg 
 RELEASEFLAGS += -O3 -fopenmp
