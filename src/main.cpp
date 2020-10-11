@@ -4,6 +4,6 @@
 int main(int argc, char const *argv[])
 {
     std::cout << "Hello Word!" << std::endl;
-    openFile_test();
+    main_Test();
     return 0;
 }
