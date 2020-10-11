@@ -58,6 +58,15 @@ void Su2Reader::readFile()
     return;
 }
 
+bool Su2Reader::isFileValid()
+{
+    if (_inputFile == NULL)
+    {
+        _inputFile = fopen(_path.c_str(), "r");
+    }
+    return _inputFile != NULL;
+}
+
 bool Su2Reader::setIndice(string ligne, int &indice)
 {
     if (ligne.find("NDIME") != string::npos)
@@ -110,7 +119,7 @@ void Su2Reader::setParametres(string ligne, int indice)
     case 0: // NDIME
         break;
     case 1: // NELEM
-        setElemen2Nodes(ligne);
+        setElement2Nodes(ligne);
         break;
     case 2: // NPOIN
         setNodes(ligne);
@@ -118,44 +127,30 @@ void Su2Reader::setParametres(string ligne, int indice)
     case 3: // NMARK
         break;
     case 4: // MARKER_TAG
-        setRefLoadFile(line);
         break;
-    case Param::controlFile:
-        setControlFile(line);
+    case 5: // MARKER_ELEMS
+        setElement2NodesFrontieres(ligne);
         break;
-    case Param::missionDefFile:
-        setMissionDefFile(line);
-        break;
-    case Param::missionMix:
-        setMissionMix(line);
-        break;
-    case Param::rangPair:
-        setRangPair(line);
-        break;
-    case Param::user:
-        setUser(line);
-        break;
-    case Param::target:
-        setTarget(line);
-        break;
-    case Param::outputName:
-        setOutputName(line);
-        break;
-    case Param::crackGrowth:
-        //setCrackGrowth(line);
-        break;
-    default:
-        printf("ERROR: unknown element in projectFile\n");
-        system("pause");
-        exit(1);
     }
 }
 
-bool Su2Reader::isFileValid()
+void Su2Reader::setElement2Nodes(string ligne)
 {
-    if (_inputFile == NULL)
-    {
-        _inputFile = fopen(_path.c_str(), "r");
-    }
-    return _inputFile != NULL;
+    vector<string> elements = parseString(ligne, "\\s+");
+    _meshData->setElement2Nodes(elements);
+    return;
+}
+
+void Su2Reader::setNodes(string ligne)
+{
+    vector<string> noeuds = parseString(ligne, "\\s+");
+    _meshData->setNodes(noeuds);
+    return;
+}
+
+void Su2Reader::setElement2NodesFrontieres(string ligne)
+{
+    vector<string> elements = parseString(ligne, "\\s+");
+    _meshData->setElement2NodesFrontieres(elements);
+    return;
 }

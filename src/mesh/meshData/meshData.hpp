@@ -44,6 +44,9 @@ public:
     void setNMARK(int NMARK);
     void setMARKER_TAG(string MARKER_TAG);
     void setMARKER_ELEMS(int MARKER_ELEMS);
-    //void setNDIME(int NDIME);
+
+    void setNodes(vector<string> nodes);
+    void setElement2Nodes(vector<string> element2Nodes);
+    void setElement2NodesFrontieres(vector<string> element2NodesFrontieres);
 };
 #endif

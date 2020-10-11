@@ -21,6 +21,9 @@ private:
     bool isFileValid();
     bool setIndice(string ligne, int &indice);
     void setParametres(string ligne, int indice);
+    void setElement2Nodes(string ligne);
+    void setElement2NodesFrontieres(string ligne);
+    void setNodes(string ligne);
 
 public:
     Su2Reader(string &path, shared_ptr<MeshData> meshData);

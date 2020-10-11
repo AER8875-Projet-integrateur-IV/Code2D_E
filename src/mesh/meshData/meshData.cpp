@@ -47,4 +47,8 @@ void MeshData::setMARKER_ELEMS(int MARKER_ELEMS)
     _MARKER_ELEMS.push_back(MARKER_ELEMS);
 }
 
+void MeshData::setNodes(vector<string> nodes);
+void MeshData::setElement2Nodes(vector<string> element2Nodes);
+void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres);
+
 //Getters
