@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 using namespace std;
 
@@ -24,15 +25,17 @@ private:
     vector<int> _MARKER_ELEMS;
 
     // Tableaux du maillage
-    double *_nodes; // Coordonnées des noeuds
-    vector<double> *_element2nodes;
-    int *_element2nodesStart;
-    int *_elementTypes;
+    vector<double> _nodes; // Coordonnées des noeuds
+    vector<int> _element2Nodes;
+    vector<int> _element2NodesStart;
+    vector<int> _elementTypes;
+    bool _nodesReserve = false;
+    bool _element2NodesReserve = false;
 
     // Frontières
-    vector<vector<double> *> *_element2nodesBoundary;
-    vector<int *> *_element2nodesStartBoundary;
-    vector<int *> *_boundaryTypes;
+    vector<vector<int>> _element2NodesBoundary;
+    vector<vector<int>> _element2NodesStartBoundary;
+    vector<vector<int>> _elementTypesBoundary;
 
 public:
     MeshData();
