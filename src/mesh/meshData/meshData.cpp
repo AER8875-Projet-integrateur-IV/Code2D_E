@@ -65,7 +65,7 @@ void MeshData::setElement2Nodes(vector<string> element2Nodes)
 {
     if (!_element2NodesReserve)
     {
-        _element2Nodes.reserve(_NELEM * element2Nodes.size());
+        _element2Nodes.reserve(_NELEM * (element2Nodes.size() - 2));
         _element2NodesStart.reserve(_NELEM + 1);
         _element2NodesStart.push_back(0);
         _elementTypes.reserve(_NELEM);
@@ -80,8 +80,41 @@ void MeshData::setElement2Nodes(vector<string> element2Nodes)
     return;
 }
 
-void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres)
+void MeshData::setElement2NodesFrontieres()
 {
+    if (!_element2NodesBoundaryReserve)
+    {
+        _element2NodesBoundary.reserve(_NMARK);
+        _element2NodesStartBoundary.reserve(_NMARK);
+        _elementTypesBoundary.reserve(_NMARK);
+        _element2NodesBoundaryReserve = true;
+        _element2NodesBoundaryReserves.assign(_NMARK, false);
+    }
+    return;
+}
+
+void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres, int marker_index)
+{
+    if (!_element2NodesBoundaryReserves[marker_index - 1])
+    {
+        vector<int> vecteur_temp1;
+        vecteur_temp1.reserve(_MARKER_ELEMS[marker_index - 1] * (element2NodesFrontieres.size() - 1));
+        _element2NodesBoundary.push_back(vecteur_temp1);
+        vector<int> vecteur_temp2;
+        vecteur_temp2.reserve(_MARKER_ELEMS[marker_index - 1] + 1);
+        _element2NodesStartBoundary.push_back(vecteur_temp2);
+        _element2NodesStartBoundary[marker_index - 1].push_back(0);
+        vector<int> vecteur_temp3;
+        vecteur_temp3.reserve(_MARKER_ELEMS[marker_index - 1]);
+        _elementTypesBoundary.push_back(vecteur_temp3);
+        _element2NodesBoundaryReserves[marker_index - 1] = true;
+    }
+    _elementTypesBoundary[marker_index - 1].push_back(stoi(element2NodesFrontieres[0]));
+    for (size_t i = 1; i < element2NodesFrontieres.size(); i++)
+    {
+        _element2NodesBoundary[marker_index - 1].push_back(stoi(element2NodesFrontieres[i]));
+    }
+    _element2NodesStartBoundary[marker_index - 1].push_back(element2NodesFrontieres.size() - 2);
     return;
 }
 

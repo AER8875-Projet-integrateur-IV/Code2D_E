@@ -36,6 +36,8 @@ private:
     vector<vector<int>> _element2NodesBoundary;
     vector<vector<int>> _element2NodesStartBoundary;
     vector<vector<int>> _elementTypesBoundary;
+    bool _element2NodesBoundaryReserve = false;
+    vector<bool> _element2NodesBoundaryReserves;
 
 public:
     MeshData();
@@ -50,6 +52,7 @@ public:
 
     void setNodes(vector<string> nodes);
     void setElement2Nodes(vector<string> element2Nodes);
-    void setElement2NodesFrontieres(vector<string> element2NodesFrontieres);
+    void setElement2NodesFrontieres();
+    void setElement2NodesFrontieres(vector<string> element2NodesFrontieres, int marker_index);
 };
 #endif

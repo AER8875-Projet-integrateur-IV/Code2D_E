@@ -25,10 +25,11 @@ void Su2Reader::readFile()
         //cin.get();
         exit(1);
     }
-    cout << "Le fichier " << _path << "est bien ouvert." << endl;
+    cout << "Le fichier " << _path << " est bien ouvert." << endl;
     char *line = NULL;
     size_t len = 0;
     int indice = 0;
+    int marker_index = 0;
     while ((getline(&line, &len, _inputFile)) != -1)
     {
         string ligne = line;
@@ -37,13 +38,13 @@ void Su2Reader::readFile()
         if (ligne[0] != '%')
         {
             // Indice de la zone à lire
-            if (setIndice(ligne, indice))
+            if (setIndice(ligne, indice, marker_index))
             {
                 continue;
             }
             else
             {
-                setParametres(ligne, indice);
+                setParametres(ligne, indice, marker_index);
             }
         }
 
@@ -67,7 +68,7 @@ bool Su2Reader::isFileValid()
     return _inputFile != NULL;
 }
 
-bool Su2Reader::setIndice(string ligne, int &indice)
+bool Su2Reader::setIndice(string ligne, int &indice, int &marker_index)
 {
     if (ligne.find("NDIME") != string::npos)
     {
@@ -98,10 +99,12 @@ bool Su2Reader::setIndice(string ligne, int &indice)
         indice = 4;
         string value = getEqualValue(ligne);
         _meshData->setMARKER_TAG(value);
+        _meshData->setElement2NodesFrontieres();
     }
     else if (ligne.find("MARKER_ELEMS") != string::npos)
     {
         indice = 5;
+        marker_index++;
         string value = getEqualValue(ligne);
         _meshData->setMARKER_ELEMS(stoi(value));
     }
@@ -112,7 +115,7 @@ bool Su2Reader::setIndice(string ligne, int &indice)
     return true;
 }
 
-void Su2Reader::setParametres(string ligne, int indice)
+void Su2Reader::setParametres(string ligne, int indice, int marker_index)
 {
     switch (indice)
     {
@@ -129,7 +132,7 @@ void Su2Reader::setParametres(string ligne, int indice)
     case 4: // MARKER_TAG
         break;
     case 5: // MARKER_ELEMS
-        setElement2NodesFrontieres(ligne);
+        setElement2NodesFrontieres(ligne, marker_index);
         break;
     }
 }
@@ -148,9 +151,9 @@ void Su2Reader::setNodes(string ligne)
     return;
 }
 
-void Su2Reader::setElement2NodesFrontieres(string ligne)
+void Su2Reader::setElement2NodesFrontieres(string ligne, int marker_index)
 {
     vector<string> elements = parseString(ligne, "\\s+");
-    _meshData->setElement2NodesFrontieres(elements);
+    _meshData->setElement2NodesFrontieres(elements, marker_index);
     return;
 }

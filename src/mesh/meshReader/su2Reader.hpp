@@ -19,10 +19,10 @@ private:
     FILE *_inputFile;
 
     bool isFileValid();
-    bool setIndice(string ligne, int &indice);
-    void setParametres(string ligne, int indice);
+    bool setIndice(string ligne, int &indice, int &marker_index);
+    void setParametres(string ligne, int indice, int marker_index);
     void setElement2Nodes(string ligne);
-    void setElement2NodesFrontieres(string ligne);
+    void setElement2NodesFrontieres(string ligne, int marker_index);
     void setNodes(string ligne);
 
 public:
