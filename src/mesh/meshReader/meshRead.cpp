@@ -20,7 +20,6 @@ void MeshRead::readFile()
     else
     {
         printf("Le format de maillage n'est pas reconnu (%s).\n", _path.c_str());
-        system("pause");
         exit(1);
     };
     return;

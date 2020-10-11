@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESHREAD_HPP
+#define MESHREAD_HPP
 
 #include <iostream>
 #include <string>
@@ -7,11 +8,11 @@
 
 #include "../meshData/meshData.hpp"
 #include "./su2Reader.hpp"
-#include "../../tools/stringTools.cpp"
+#include "../../tools/stringTools.hpp"
 
 using namespace std;
 
-class MeshRead
+class MeshRead : public StringTools
 {
 private:
     string _path;
@@ -22,3 +23,4 @@ public:
     ~MeshRead();
     void readFile();
 };
+#endif
