@@ -55,10 +55,18 @@ public:
     void setElement2NodesFrontieres();
     void setElement2NodesFrontieres(vector<string> element2NodesFrontieres, int marker_index);
 
+    int getNDIME() const;
+    int getNELEM() const;
+    int getNPOIN() const;
+    int getNMARK() const;
+    vector<string> getMARKER_TAG() const;
+    vector<int> getMARKER_ELEMS() const;
     vector<double> getNodes() const;
     vector<int> getElement2Nodes() const;
     vector<int> getElement2NodesStart() const;
+    vector<int> getElementTypes() const;
     vector<vector<int>> getElement2NodesBoundary() const;
     vector<vector<int>> getElement2NodesStartBoundary() const;
+    vector<vector<int>> getElementTypesBoundary() const;
 };
 #endif

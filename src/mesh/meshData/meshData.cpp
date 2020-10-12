@@ -76,7 +76,7 @@ void MeshData::setElement2Nodes(vector<string> element2Nodes)
     {
         _element2Nodes.push_back(stoi(element2Nodes[i]));
     }
-    _element2NodesStart.push_back(element2Nodes.size() - 2);
+    _element2NodesStart.push_back(_element2NodesStart.back() + element2Nodes.size() - 2);
     return;
 }
 
@@ -114,11 +114,41 @@ void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres
     {
         _element2NodesBoundary[marker_index - 1].push_back(stoi(element2NodesFrontieres[i]));
     }
-    _element2NodesStartBoundary[marker_index - 1].push_back(element2NodesFrontieres.size() - 2);
+    _element2NodesStartBoundary[marker_index - 1].push_back(_element2NodesStartBoundary[marker_index - 1].back() + element2NodesFrontieres.size() - 1);
     return;
 }
 
 //Getters
+
+int MeshData::getNDIME() const
+{
+    return _NDIME;
+}
+
+int MeshData::getNELEM() const
+{
+    return _NELEM;
+}
+
+int MeshData::getNPOIN() const
+{
+    return _NPOIN;
+}
+
+int MeshData::getNMARK() const
+{
+    return _NMARK;
+}
+
+vector<string> MeshData::getMARKER_TAG() const
+{
+    return _MARKER_TAG;
+}
+
+vector<int> MeshData::getMARKER_ELEMS() const
+{
+    return _MARKER_ELEMS;
+}
 
 vector<double> MeshData::getNodes() const
 {
@@ -135,6 +165,11 @@ vector<int> MeshData::getElement2NodesStart() const
     return _element2NodesStart;
 }
 
+vector<int> MeshData::getElementTypes() const
+{
+    return _elementTypes;
+}
+
 vector<vector<int>> MeshData::getElement2NodesBoundary() const
 {
     return _element2NodesBoundary;
@@ -143,4 +178,9 @@ vector<vector<int>> MeshData::getElement2NodesBoundary() const
 vector<vector<int>> MeshData::getElement2NodesStartBoundary() const
 {
     return _element2NodesStartBoundary;
+}
+
+vector<vector<int>> MeshData::getElementTypesBoundary() const
+{
+    return _elementTypesBoundary;
 }
