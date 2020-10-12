@@ -1,5 +1,10 @@
-#ifndef SU2READER_HPP
-#define SU2READER_HPP
+/* 
+/Fichier su2Reader.hpp
+/Date: octobre 2020 
+/Projet: Projet Intégrateur 4
+*/
+
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -30,4 +35,3 @@ public:
     ~Su2Reader();
     void readFile();
 };
-#endif

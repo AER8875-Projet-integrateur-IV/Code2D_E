@@ -1,3 +1,9 @@
+/* 
+/Fichier su2Reader.cpp
+/Date: octobre 2020 
+/Projet: Projet Intégrateur 4
+*/
+
 #include <./su2Reader.hpp>
 
 Su2Reader::Su2Reader(string &path, shared_ptr<MeshData> meshData)

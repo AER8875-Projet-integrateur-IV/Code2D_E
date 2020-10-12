@@ -3,8 +3,8 @@
 /Date: 10 octobre 2020
 /Projet: Projet Intégrateur 4
 */
-#ifndef MESHDATA_HPP
-#define MESHDATA_HPP
+
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -69,4 +69,3 @@ public:
     vector<vector<int>> getElement2NodesStartBoundary() const;
     vector<vector<int>> getElementTypesBoundary() const;
 };
-#endif

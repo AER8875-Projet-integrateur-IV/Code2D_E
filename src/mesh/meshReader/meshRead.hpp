@@ -1,5 +1,10 @@
-#ifndef MESHREAD_HPP
-#define MESHREAD_HPP
+/* 
+/Fichier meshRead.hpp
+/Date: octobre 2020 
+/Projet: Projet Intégrateur 4
+*/
+
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -23,4 +28,3 @@ public:
     ~MeshRead();
     void readFile();
 };
-#endif

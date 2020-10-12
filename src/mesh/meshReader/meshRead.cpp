@@ -1,3 +1,9 @@
+/* 
+/Fichier meshRead.cpp
+/Date: octobre 2020 
+/Projet: Projet Intégrateur 4
+*/
+
 #include "./meshRead.hpp"
 
 MeshRead::MeshRead(string &path, shared_ptr<MeshData> meshData)
