@@ -56,5 +56,9 @@ public:
     void setElement2NodesFrontieres(vector<string> element2NodesFrontieres, int marker_index);
 
     vector<double> getNodes() const;
+    vector<int> getElement2Nodes() const;
+    vector<int> getElement2NodesStart() const;
+    vector<vector<int>> getElement2NodesBoundary() const;
+    vector<vector<int>> getElement2NodesStartBoundary() const;
 };
 #endif

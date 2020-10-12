@@ -1,7 +1,7 @@
 build/
 .vscode
 CMakeLists.txt
-.gitignore
+tests/mesh/exemple_mesh
 
 # Pour c++
 #----------------------------------------------

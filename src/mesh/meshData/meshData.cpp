@@ -119,3 +119,28 @@ void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres
 }
 
 //Getters
+
+vector<double> MeshData::getNodes() const
+{
+    return _nodes;
+}
+
+vector<int> MeshData::getElement2Nodes() const
+{
+    return _element2Nodes;
+}
+
+vector<int> MeshData::getElement2NodesStart() const
+{
+    return _element2NodesStart;
+}
+
+vector<vector<int>> MeshData::getElement2NodesBoundary() const
+{
+    return _element2NodesBoundary;
+}
+
+vector<vector<int>> MeshData::getElement2NodesStartBoundary() const
+{
+    return _element2NodesStartBoundary;
+}
