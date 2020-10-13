@@ -119,7 +119,49 @@ void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres
     return;
 }
 
-//Getters
+/// Connectivité
+
+void MeshData::setEsup()
+{
+    // Initialisation de _esupStart
+
+    _esupStart.assign(_NPOIN + 1, 0);
+
+    // Première passe et stockage
+
+    for (size_t i = 0; i < _element2Nodes.size(); i++)
+    {
+        _esupStart[_element2Nodes[i] + 1]++;
+    }
+    for (size_t i = 1; i < _NPOIN + 1; i++)
+    {
+        _esupStart[i] += _esupStart[i - 1];
+    }
+
+    // Deuxième passe et stockage
+
+    _esup.reserve(_esupStart.back() - 1);
+    for (int iElem = 0; iElem < _NELEM; iElem++)
+    {
+        for (int iNode = _element2NodesStart[iElem]; iNode < _element2NodesStart[iElem + 1]; iNode++)
+        {
+            int istor = _esupStart[iNode] + 1;
+            _esupStart[iNode] = istor;
+            _esup[istor] = iElem;
+        }
+    }
+    for (int iNode = _NPOIN + 1; iNode > 0; iNode--)
+    {
+        _esupStart[iNode] = _esupStart[iNode - 1];
+    }
+    _esupStart[0] = 0;
+
+    return;
+}
+
+// Getters
+
+/// Paramètres du maillage
 
 int MeshData::getNDIME() const
 {
@@ -150,6 +192,8 @@ vector<int> MeshData::getMARKER_ELEMS() const
 {
     return _MARKER_ELEMS;
 }
+
+/// Tableaux du maillage
 
 vector<double> MeshData::getNodes() const
 {
@@ -184,4 +228,16 @@ vector<vector<int>> MeshData::getElement2NodesStartBoundary() const
 vector<vector<int>> MeshData::getElementTypesBoundary() const
 {
     return _elementTypesBoundary;
+}
+
+/// Connectivité
+
+vector<int> MeshData::getEsup() const
+{
+    return _esup;
+}
+
+vector<int> MeshData::getEsupStart() const
+{
+    return _esupStart;
 }

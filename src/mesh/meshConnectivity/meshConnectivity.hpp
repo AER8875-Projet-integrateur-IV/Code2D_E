@@ -25,4 +25,5 @@ private:
 public:
     MeshConnectivity(shared_ptr<MeshData> meshData);
     ~MeshConnectivity();
+    void generateEsup();
 };
