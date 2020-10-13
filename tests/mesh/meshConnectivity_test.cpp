@@ -21,6 +21,46 @@ void connectiviteNodeElements(shared_ptr<MeshData> meshData) // // Etat: Succés
     return;
 }
 
+void connectiviteFaces(shared_ptr<MeshData> meshData)
+{
+    cout << "Début fonction connectiviteFaces()\n";
+    for (size_t i = 0; i < meshData->getNFAEL().size(); i++)
+    {
+        int nfaces = meshData->getNFAEL()[i];
+        cout << "Elements (" << i << ") Nbre de Faces: " << nfaces << "\n";
+        for (int j = 0; j < nfaces; j++)
+        {
+            int nnoeuds = meshData->getNNOFA()[i][j];
+            cout << "\tNbre de Noeuds: " << nnoeuds << "\n";
+            cout << "\t\tNoeuds: ";
+            for (int k = 0; k < nnoeuds; k++)
+            {
+                cout << meshData->getLpofa()[i][j][k] << " ";
+            }
+            cout << "\n";
+        }
+        cout << "\n";
+    }
+    cout << "Fin fonction connectiviteFaces()\n";
+    return;
+}
+
+void connectiviteElementElements(shared_ptr<MeshData> meshData)
+{
+    cout << "Début fonction connectiviteElementElements()\n";
+    for (int i = 1; i < meshData->getNELEM() + 1; i++)
+    {
+        cout << "EsuelStart " << meshData->getEsuelStart()[i] << " (" << i - 1 << ")\n";
+        for (int j = meshData->getEsuelStart()[i - 1]; j < meshData->getEsuelStart()[i]; j++)
+        {
+            cout << meshData->getEsuel()[j] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "Fin fonction connectiviteElementElements()\n";
+    return;
+}
+
 void main_meshConnectivity_Test()
 {
     shared_ptr<MeshData> meshData = make_shared<MeshData>();
@@ -31,6 +71,9 @@ void main_meshConnectivity_Test()
     MeshRead meshRead = MeshRead(path4, meshData);
     meshRead.readFile();
     meshData->setConnectivity();
-    connectiviteNodeElements(meshData);
+    //connectiviteNodeElements(meshData);
+    connectiviteFaces(meshData);
+    //connectiviteElementElements(meshData);
+
     return;
 }

@@ -14,5 +14,7 @@
 using namespace std;
 
 void connectiviteNodeElements(shared_ptr<MeshData> meshData);
+void connectiviteFaces(shared_ptr<MeshData> meshData);
+void connectiviteElementElements(shared_ptr<MeshData> meshData);
 
 void main_meshConnectivity_Test();

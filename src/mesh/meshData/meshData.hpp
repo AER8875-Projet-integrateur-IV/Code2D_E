@@ -51,7 +51,7 @@ private:
     vector<vector<int>> _NNOFA;
     vector<vector<vector<int>>> _lpofa;
     void getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem);
-    vector<vector<int>> setNNOFA(int iElem);
+    void setNNOFA(int iElem, vector<vector<int>> &ilpofa);
     void setFaces();
 
     /// Connectivité element2elements
@@ -104,4 +104,9 @@ public:
     /// Connectivité
     vector<int> getEsup() const;
     vector<int> getEsupStart() const;
+    vector<int> getNFAEL() const;
+    vector<vector<int>> getNNOFA() const;
+    vector<vector<vector<int>>> getLpofa() const;
+    vector<int> getEsuel() const;
+    vector<int> getEsuelStart() const;
 };

@@ -264,22 +264,23 @@ void MeshData::getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int
     return;
 }
 
-vector<vector<int>> MeshData::setNNOFA(int iElem)
+void MeshData::setNNOFA(int iElem, vector<vector<int>> &ilpofa)
 {
-    vector<vector<int>> ilpofa;
     int vtkIndex = _elementTypes[iElem];
     getVTKConnectivity(vtkIndex, ilpofa, iElem);
+    return;
 }
 
 void MeshData::setFaces()
 {
-
+    cout << "b°) Début de la génération de la connectivité des faces.\n";
     _NFAEL.reserve(_NELEM);
     _NNOFA.reserve(_NELEM);
     _lpofa.reserve(_NELEM);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        vector<vector<int>> ilpofa = setNNOFA(iElem);
+        vector<vector<int>> ilpofa;
+        setNNOFA(iElem, ilpofa);
         _lpofa.push_back(ilpofa);
         _NFAEL.push_back(static_cast<int>(ilpofa.size()));
         vector<int> iNNOFA;
@@ -290,12 +291,15 @@ void MeshData::setFaces()
         }
         _NNOFA.push_back(iNNOFA);
     }
-
+    cout << "\tFin de la génération de la connectivité des faces.\n";
+    cout << "-----------------------------------------------------------\n";
     return;
 }
 
 void MeshData::setEsuel()
 {
+    cout << "c°) Début de la génération de la connectivité element vs elements.\n";
+
     // Construction de _esuelStart
 
     _esuelStart.reserve(_NELEM + 1);
@@ -331,7 +335,7 @@ void MeshData::setEsuel()
                         if (nnofj != nnofa)
                         {
                             int icoun = 0;
-                            for (size_t jnofa = 0; jnofa < nnofa; jnofa++)
+                            for (int jnofa = 0; jnofa < nnofa; jnofa++)
                             {
                                 int jpoin = _lpofa[jElem][jFael][jnofa];
                                 icoun += lpoin[jpoin];
@@ -351,6 +355,8 @@ void MeshData::setEsuel()
             }
         }
     }
+    cout << "\tFin de la génération de la connectivité element vs elements.\n";
+    cout << "-------------------------------------------------------------------\n";
 
     return;
 }
@@ -444,4 +450,29 @@ vector<int> MeshData::getEsup() const
 vector<int> MeshData::getEsupStart() const
 {
     return _esupStart;
+}
+
+vector<int> MeshData::getNFAEL() const
+{
+    return _NFAEL;
+}
+
+vector<vector<int>> MeshData::getNNOFA() const
+{
+    return _NNOFA;
+}
+
+vector<vector<vector<int>>> MeshData::getLpofa() const
+{
+    return _lpofa;
+}
+
+vector<int> MeshData::getEsuel() const
+{
+    return _esuel;
+}
+
+vector<int> MeshData::getEsuelStart() const
+{
+    return _esuelStart;
 }
