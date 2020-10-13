@@ -123,6 +123,7 @@ void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres
 
 void MeshData::setEsup()
 {
+    cout << "a°) Début de génération connectivité noeud vs elements.\n";
     // Initialisation de _esupStart
 
     _esupStart.assign(_NPOIN + 1, 0);
@@ -140,22 +141,25 @@ void MeshData::setEsup()
 
     // Deuxième passe et stockage
 
-    _esup.assign(_esupStart.back() - 1, 0);
+    _esup.assign(_esupStart.back(), 0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
         for (int iNode = _element2NodesStart[iElem]; iNode < _element2NodesStart[iElem + 1]; iNode++)
         {
             int nodeI = _element2Nodes[iNode];
-            int istor = _esupStart[nodeI] + 1;
-            _esupStart[nodeI] = istor;
+            int istor = _esupStart[nodeI];
+            _esupStart[nodeI]++;
             _esup[istor] = iElem;
         }
     }
-    for (int iNode = _NPOIN + 1; iNode > 0; iNode--)
+    for (int iNode = _NPOIN; iNode > 0; iNode--)
     {
         _esupStart[iNode] = _esupStart[iNode - 1];
     }
     _esupStart[0] = 0;
+
+    cout << "\t Fin génération connectivité noeud vs elements.\n";
+    cout << "-------------------------------------------------------\n";
 
     return;
 }
