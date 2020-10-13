@@ -163,6 +163,53 @@ void MeshData::setEsup()
 
     return;
 }
+vector<vector<int>> MeshData::setNNOFA(int iElem)
+{
+    vector<vector<int>> ilpofa;
+    int vtkIndex = _elementTypes<iElem>;
+}
+void MeshData::setFaces(int version = 2)
+{
+    if (version == 1)
+    {
+        _NFAEL.reserve(_NELEM);
+        _NNOFA.reserve(_NELEM);
+        _lpofa.reserve(_NELEM);
+        for (int iElem = 0; iElem < _NELEM; iElem++)
+        {
+            vector<vector<int>> ilpofa = setNNOFA(iElem);
+            _lpofa.push_back(ilpofa);
+            _NFAEL.push_back(static_cast<int>(ilpofa.size()));
+            vector<int> iNNOFA;
+            iNNOFA.reserve(ilpofa.size());
+            for (size_t iFace = 0; iFace < ilpofa.size(); iFace++)
+            {
+                iNNOFA.push_back(static_cast<int>(ilpofa[iFace].size()));
+            }
+            _NNOFA.push_back(iNNOFA);
+        }
+        return;
+    }
+    else
+    {
+        return;
+    }
+
+    return;
+}
+
+void MeshData::setEsuel()
+{
+    return;
+}
+
+void MeshData::setConnectivity()
+{
+    setEsup();
+    setFaces();
+    setEsuel();
+    return;
+}
 
 // Getters
 

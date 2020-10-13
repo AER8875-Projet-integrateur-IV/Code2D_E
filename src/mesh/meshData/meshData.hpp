@@ -40,8 +40,21 @@ private:
     vector<bool> _element2NodesBoundaryReserves;
 
     // Connectivé
+
+    /// Connectivité node2elements
     vector<int> _esup;
     vector<int> _esupStart;
+    void setEsup();
+
+    /// Connectivité des faces
+    vector<int> _NFAEL;
+    vector<vector<int>> _NNOFA;
+    vector<vector<vector<int>>> _lpofa;
+    vector<vector<int>> setNNOFA(int iElem);
+    void setFaces(int version = 2);
+
+    /// Connectivité element2elements
+    void setEsuel();
 
 public:
     MeshData();
@@ -64,7 +77,7 @@ public:
     void setElement2NodesFrontieres(vector<string> element2NodesFrontieres, int marker_index);
 
     /// Connectivité
-    void setEsup();
+    void setConnectivity();
 
     // Getters
 
