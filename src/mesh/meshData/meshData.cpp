@@ -163,36 +163,132 @@ void MeshData::setEsup()
 
     return;
 }
+
+void MeshData::getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem)
+{
+    switch (vtkIndex)
+    {
+    case 1:
+        // VERTEX
+        break;
+    case 2:
+        // POLY_VERTEX
+        break;
+    case 3:
+        // LINE
+        break;
+    case 4:
+        // POLY_LINE
+        break;
+    case 5:
+        // TRIANGLE
+        ilpofa.reserve(3);
+        for (size_t i = 0; i < 3; i++)
+        {
+            vector<int> nodes_temp;
+            nodes_temp.reserve(2);
+            nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i]);
+            if (i == 2)
+            {
+                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem]]);
+            }
+            else
+            {
+                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i + 1]);
+            }
+            ilpofa.push_back(nodes_temp);
+        }
+        break;
+    case 6:
+        // TRIANGLE_STRIP
+        break;
+    case 7:
+        // POLYGON
+        break;
+    case 8:
+        // PIXEL
+        ilpofa.reserve(4);
+        for (size_t i = 0; i < 4; i++)
+        {
+            vector<int> nodes_temp;
+            nodes_temp.reserve(2);
+            nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i]);
+            if (i == 3)
+            {
+                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem]]);
+            }
+            else
+            {
+                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i + 1]);
+            }
+            ilpofa.push_back(nodes_temp);
+        }
+        break;
+    case 9:
+        // QUAD
+        ilpofa.reserve(4);
+        for (size_t i = 0; i < 4; i++)
+        {
+            vector<int> nodes_temp;
+            nodes_temp.reserve(2);
+            nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i]);
+            if (i == 3)
+            {
+                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem]]);
+            }
+            else
+            {
+                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i + 1]);
+            }
+            ilpofa.push_back(nodes_temp);
+        }
+        break;
+    case 10:
+        // TETRA
+        break;
+    case 11:
+        // VOXEL
+        break;
+    case 12:
+        // HEXAHEDRON
+        break;
+    case 13:
+        // WEDGE
+        break;
+    case 14:
+        // PYRAMID
+        break;
+    default:
+        break;
+    }
+    return;
+}
+
 vector<vector<int>> MeshData::setNNOFA(int iElem)
 {
     vector<vector<int>> ilpofa;
-    int vtkIndex = _elementTypes<iElem>;
+    int vtkIndex = _elementTypes[iElem];
+    getVTKConnectivity(vtkIndex, ilpofa, iElem);
 }
-void MeshData::setFaces(int version = 2)
+
+void MeshData::setFaces()
 {
-    if (version == 1)
+
+    _NFAEL.reserve(_NELEM);
+    _NNOFA.reserve(_NELEM);
+    _lpofa.reserve(_NELEM);
+    for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        _NFAEL.reserve(_NELEM);
-        _NNOFA.reserve(_NELEM);
-        _lpofa.reserve(_NELEM);
-        for (int iElem = 0; iElem < _NELEM; iElem++)
+        vector<vector<int>> ilpofa = setNNOFA(iElem);
+        _lpofa.push_back(ilpofa);
+        _NFAEL.push_back(static_cast<int>(ilpofa.size()));
+        vector<int> iNNOFA;
+        iNNOFA.reserve(ilpofa.size());
+        for (size_t iFace = 0; iFace < ilpofa.size(); iFace++)
         {
-            vector<vector<int>> ilpofa = setNNOFA(iElem);
-            _lpofa.push_back(ilpofa);
-            _NFAEL.push_back(static_cast<int>(ilpofa.size()));
-            vector<int> iNNOFA;
-            iNNOFA.reserve(ilpofa.size());
-            for (size_t iFace = 0; iFace < ilpofa.size(); iFace++)
-            {
-                iNNOFA.push_back(static_cast<int>(ilpofa[iFace].size()));
-            }
-            _NNOFA.push_back(iNNOFA);
+            iNNOFA.push_back(static_cast<int>(ilpofa[iFace].size()));
         }
-        return;
-    }
-    else
-    {
-        return;
+        _NNOFA.push_back(iNNOFA);
     }
 
     return;

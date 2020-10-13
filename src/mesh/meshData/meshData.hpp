@@ -50,8 +50,9 @@ private:
     vector<int> _NFAEL;
     vector<vector<int>> _NNOFA;
     vector<vector<vector<int>>> _lpofa;
+    void getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem);
     vector<vector<int>> setNNOFA(int iElem);
-    void setFaces(int version = 2);
+    void setFaces();
 
     /// Connectivité element2elements
     void setEsuel();
