@@ -5,7 +5,7 @@
 */
 #include "./meshConnectivity_test.hpp"
 
-void connectiviteNodeElements(shared_ptr<MeshData> meshData) // // Etat: Succés
+void connectiviteNodeElements(shared_ptr<MeshData> meshData) // Etat: Succés
 {
     cout << "Début fonction connectiviteNodeElements()\n";
     for (int i = 1; i < meshData->getNPOIN() + 1; i++)
@@ -21,7 +21,7 @@ void connectiviteNodeElements(shared_ptr<MeshData> meshData) // // Etat: Succés
     return;
 }
 
-void connectiviteFaces(shared_ptr<MeshData> meshData)
+void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
 {
     cout << "Début fonction connectiviteFaces()\n";
     for (size_t i = 0; i < meshData->getNFAEL().size(); i++)
@@ -45,7 +45,7 @@ void connectiviteFaces(shared_ptr<MeshData> meshData)
     return;
 }
 
-void connectiviteElementElements(shared_ptr<MeshData> meshData)
+void connectiviteElementElements(shared_ptr<MeshData> meshData) // Etat: Succés
 {
     cout << "Début fonction connectiviteElementElements()\n";
     for (int i = 1; i < meshData->getNELEM() + 1; i++)
@@ -72,8 +72,8 @@ void main_meshConnectivity_Test()
     meshRead.readFile();
     meshData->setConnectivity();
     //connectiviteNodeElements(meshData);
-    connectiviteFaces(meshData);
-    //connectiviteElementElements(meshData);
+    //connectiviteFaces(meshData);
+    connectiviteElementElements(meshData);
 
     return;
 }

@@ -332,7 +332,7 @@ void MeshData::setEsuel()
                     for (int jFael = 0; jFael < _NFAEL[jElem]; jFael++)
                     {
                         int nnofj = _NNOFA[jElem][jFael];
-                        if (nnofj != nnofa)
+                        if (nnofj == nnofa)
                         {
                             int icoun = 0;
                             for (int jnofa = 0; jnofa < nnofa; jnofa++)
