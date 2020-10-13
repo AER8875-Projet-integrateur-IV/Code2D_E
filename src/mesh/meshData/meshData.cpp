@@ -296,6 +296,62 @@ void MeshData::setFaces()
 
 void MeshData::setEsuel()
 {
+    // Construction de _esuelStart
+
+    _esuelStart.reserve(_NELEM + 1);
+    _esuelStart.push_back(0);
+    for (size_t i = 0; i < _NFAEL.size(); i++)
+    {
+        _esuelStart.push_back(_NFAEL[i] + _esuelStart.back());
+    }
+
+    // Construction de _esuel
+
+    _esuel.assign(_esuelStart.back(), -1);
+    vector<int> lpoin(_NPOIN, 0);
+    for (int iElem = 0; iElem < _NELEM; iElem++)
+    {
+        for (int iFael = 0; iFael < _NFAEL[iElem]; iFael++)
+        {
+            int nnofa = _NNOFA[iElem][iFael];
+            vector<int> lhelp = _lpofa[iElem][iFael];
+            for (size_t i = 0; i < lhelp.size(); i++)
+            {
+                lpoin[lhelp[i]] = 1;
+            }
+            int ipoin = lhelp[0];
+            for (int istor = _esupStart[ipoin]; istor < _esupStart[ipoin + 1]; istor++)
+            {
+                int jElem = _esup[istor];
+                if (jElem != iElem)
+                {
+                    for (int jFael = 0; jFael < _NFAEL[jElem]; jFael++)
+                    {
+                        int nnofj = _NNOFA[jElem][jFael];
+                        if (nnofj != nnofa)
+                        {
+                            int icoun = 0;
+                            for (size_t jnofa = 0; jnofa < nnofa; jnofa++)
+                            {
+                                int jpoin = _lpofa[jElem][jFael][jnofa];
+                                icoun += lpoin[jpoin];
+                            }
+                            if (icoun == nnofa)
+                            {
+                                _esuel[_esuelStart[iElem] + iFael] = jElem;
+                            }
+                        }
+                    }
+                }
+            }
+            // Reset lpoin
+            for (size_t i = 0; i < lhelp.size(); i++)
+            {
+                lpoin[lhelp[i]] = 0;
+            }
+        }
+    }
+
     return;
 }
 

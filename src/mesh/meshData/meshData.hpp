@@ -55,6 +55,8 @@ private:
     void setFaces();
 
     /// Connectivité element2elements
+    vector<int> _esuelStart;
+    vector<int> _esuel;
     void setEsuel();
 
 public:
