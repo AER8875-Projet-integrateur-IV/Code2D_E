@@ -133,20 +133,21 @@ void MeshData::setEsup()
     {
         _esupStart[_element2Nodes[i] + 1]++;
     }
-    for (size_t i = 1; i < _NPOIN + 1; i++)
+    for (int i = 1; i < _NPOIN + 1; i++)
     {
         _esupStart[i] += _esupStart[i - 1];
     }
 
     // Deuxième passe et stockage
 
-    _esup.reserve(_esupStart.back() - 1);
+    _esup.assign(_esupStart.back() - 1, 0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
         for (int iNode = _element2NodesStart[iElem]; iNode < _element2NodesStart[iElem + 1]; iNode++)
         {
-            int istor = _esupStart[iNode] + 1;
-            _esupStart[iNode] = istor;
+            int nodeI = _element2Nodes[iNode];
+            int istor = _esupStart[nodeI] + 1;
+            _esupStart[nodeI] = istor;
             _esup[istor] = iElem;
         }
     }

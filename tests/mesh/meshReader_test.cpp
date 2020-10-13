@@ -56,7 +56,7 @@ void verification_lectureMaillage(MeshRead meshRead, shared_ptr<MeshData> meshDa
     cout << "Fin fonction verification_lectureMaillage()" << endl;
 };
 
-void main_Test()
+void main_meshReader_Test()
 {
     shared_ptr<MeshData> meshData = make_shared<MeshData>();
     string path1 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/naca0012_euler_9x9x1_O_1B.su2";
