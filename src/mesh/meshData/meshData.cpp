@@ -301,17 +301,26 @@ void MeshData::setEsuel()
     cout << "c°) Début de la génération de la connectivité element vs elements.\n";
 
     // Construction de _esuelStart
-
     _esuelStart.reserve(_NELEM + 1);
     _esuelStart.push_back(0);
     for (size_t i = 0; i < _NFAEL.size(); i++)
     {
         _esuelStart.push_back(_NFAEL[i] + _esuelStart.back());
     }
+    _NFACE = _esuelStart.back();
+    for (int iMark = 0; iMark < _NMARK; iMark++)
+    {
+        _NFACE += _MARKER_ELEMS[iMark];
+    }
+    _NFACE /= 2;
 
-    // Construction de _esuel
+    // Construction de _esuel , _esuf et _fsuel
 
     _esuel.assign(_esuelStart.back(), -1);
+    _fsuel.assign(_esuelStart.back(), -1);
+    _esuf.assign(2 * _NFACE, -1);
+    int iFace = 0;
+
     vector<int> lpoin(_NPOIN, 0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
@@ -343,6 +352,20 @@ void MeshData::setEsuel()
                             if (icoun == nnofa)
                             {
                                 _esuel[_esuelStart[iElem] + iFael] = jElem;
+
+                                if (_esuel[_esuelStart[jElem] + jFael] == iElem)
+                                {
+                                    _fsuel[_esuelStart[iElem] + iFael] = _fsuel[_esuelStart[jElem] + jFael];
+                                }
+                                else
+                                {
+                                    // Adding a new face
+                                    _fsuel[_esuelStart[iElem] + iFael] = iFace;
+                                    _fsuel[_esuelStart[jElem] + jFael] = iFace;
+                                    _esuf[iFace * 2 + 0] = iElem;
+                                    _esuf[iFace * 2 + 1] = jElem;
+                                    iFace++;
+                                }
                             }
                         }
                     }

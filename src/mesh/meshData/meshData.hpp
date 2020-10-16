@@ -21,6 +21,7 @@ private:
     int _NELEM;
     int _NPOIN;
     int _NMARK;
+    int _NFACE;
     vector<string> _MARKER_TAG;
     vector<int> _MARKER_ELEMS;
 
@@ -57,6 +58,8 @@ private:
     /// Connectivité element2elements
     vector<int> _esuelStart;
     vector<int> _esuel;
+    vector<int> _fsuel;
+    vector<int> _esuf;
     void setEsuel();
 
 public:
