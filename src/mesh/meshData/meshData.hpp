@@ -49,22 +49,21 @@ private:
     vector<int> _esupStart;
     void setEsup();
 
-    /// Connectivité des faces
-    /*   
-    vector<int> _NFAEL;
-    vector<vector<int>> _NNOFA;
-    vector<vector<vector<int>>> _lpofa;
-    void getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem);
-    void setNNOFA(int iElem, vector<vector<int>> &ilpofa);
-    void setFaces();
-    int VTK2NFAEL(const int &vtkIndex); 
-    */
-
     /// Connectivité element2elements
     vector<int> _esuelStart;
     vector<int> _esuel;
+
+    /// Connectivité element2faces
     vector<int> _fsuel;
+    // _fsuelStart =  _esuelStart
+
+    /// Connectivité face2elements
     vector<int> _esuf;
+
+    /// Connectivité face2nodes
+    vector<int> _psuf;
+    vector<int> _psufStart;
+
     void setEsuel();
 
 public:
@@ -120,4 +119,6 @@ public:
     vector<int> getEsuelStart() const;
     vector<int> getFsuel() const;
     vector<int> getEsuf() const;
+    vector<int> getPsuf() const;
+    vector<int> getPsufStart() const;
 };

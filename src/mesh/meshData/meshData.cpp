@@ -324,6 +324,9 @@ void MeshData::setEsuel()
     _esuel.assign(_esuelStart.back(), -1);
     _fsuel.assign(_esuelStart.back(), -1);
     _esuf.assign(2 * _NFACE, -1);
+    _psufStart.reserve(_NFACE + 1);
+    _psufStart.push_back(0);
+    _psuf.reserve(_NDIME * _NFACE);
     int iFace = 0;
 
     vector<int> lpoin(_NPOIN, 0);
@@ -371,6 +374,11 @@ void MeshData::setEsuel()
                                     _fsuel[_esuelStart[jElem] + jFael] = iFace;
                                     _esuf[iFace * 2 + 0] = iElem;
                                     _esuf[iFace * 2 + 1] = jElem;
+                                    _psufStart.push_back(_psufStart.back() + nnofa);
+                                    for (int inofa = 0; inofa < nnofa; inofa++)
+                                    {
+                                        _psuf.push_back(lhelp[inofa]);
+                                    }
                                     iFace++;
                                 }
                             }
@@ -520,4 +528,14 @@ vector<int> MeshData::getFsuel() const
 vector<int> MeshData::getEsuf() const
 {
     return _esuf;
+}
+
+vector<int> MeshData::getPsuf() const
+{
+    return _psuf;
+}
+
+vector<int> MeshData::getPsufStart() const
+{
+    return _psufStart;
 }
