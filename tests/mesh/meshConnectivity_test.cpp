@@ -65,6 +65,7 @@ void connectiviteElementElements(shared_ptr<MeshData> meshData) // Etat: Succés
 void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
 {
     cout << "Début fonction connectiviteFaces()\n";
+    cout << "Connectivité element2Faces\n";
     for (int i = 1; i < meshData->getNELEM() + 1; i++)
     {
         cout << "EsuelStart " << meshData->getEsuelStart()[i] << " (" << i - 1 << ")\n";
@@ -74,9 +75,20 @@ void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
         }
         cout << "\n";
     }
+    cout << "Connectivité Face2Elements\n";
     for (int iFace = 0; iFace < meshData->getNFACE(); iFace++)
     {
         cout << "Face " << iFace << " :" << meshData->getEsuf()[2 * iFace] << " , " << meshData->getEsuf()[2 * iFace + 1] << "\n";
+    }
+    cout << "Connectivité Face2Nodes\n";
+    for (size_t i = 1; i < meshData->getPsufStart().size(); i++)
+    {
+        cout << "PsufStart " << meshData->getPsufStart()[i] << " (" << i - 1 << ")\n";
+        for (int j = meshData->getPsufStart()[i - 1]; j < meshData->getPsufStart()[i]; j++)
+        {
+            cout << meshData->getPsuf()[j] << " ";
+        }
+        cout << "\n";
     }
     cout << "Fin fonction connectiviteFaces()\n";
     return;
