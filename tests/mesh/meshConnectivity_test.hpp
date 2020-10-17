@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "../../src/mesh/meshData/meshData.hpp"
+#include "../../src/mesh/meshData/vtkConnectivity.hpp"
 #include "../../src/mesh/meshReader/meshRead.hpp"
 
 using namespace std;

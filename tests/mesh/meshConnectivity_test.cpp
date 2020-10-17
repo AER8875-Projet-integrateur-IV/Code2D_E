@@ -24,18 +24,19 @@ void connectiviteNodeElements(shared_ptr<MeshData> meshData) // Etat: Succés
 void connectiviteFacesLocale(shared_ptr<MeshData> meshData) // Etat: Succés
 {
     cout << "Début fonction connectiviteFacesLocale()\n";
-    for (size_t i = 0; i < meshData->getNFAEL().size(); i++)
+    for (int iElem = 0; iElem < meshData->getNELEM(); iElem++)
     {
-        int nfaces = meshData->getNFAEL()[i];
-        cout << "Elements (" << i << ") Nbre de Faces: " << nfaces << "\n";
-        for (int j = 0; j < nfaces; j++)
+        int nfaces = meshData->getNfael(iElem);
+        cout << "Elements (" << iElem << ") Nbre de Faces: " << nfaces << "\n";
+        for (int iFael = 0; iFael < nfaces; iFael++)
         {
-            int nnoeuds = meshData->getNNOFA()[i][j];
+            int nnoeuds = meshData->getLnofa(iElem, iFael);
             cout << "\tNbre de Noeuds: " << nnoeuds << "\n";
             cout << "\t\tNoeuds: ";
-            for (int k = 0; k < nnoeuds; k++)
+            vector<int> Noeuds = meshData->getLpofa(iElem, iFael);
+            for (int iNoeud = 0; iNoeud < nnoeuds; iNoeud++)
             {
-                cout << meshData->getLpofa()[i][j][k] << " ";
+                cout << Noeuds[iNoeud] << " ";
             }
             cout << "\n";
         }
@@ -91,9 +92,9 @@ void main_meshConnectivity_Test()
     MeshRead meshRead = MeshRead(path4, meshData);
     meshRead.readFile();
     meshData->setConnectivity();
-    //connectiviteNodeElements(meshData);
-    //connectiviteFacesLocale(meshData);
-    //connectiviteElementElements(meshData);
+    connectiviteNodeElements(meshData);
+    connectiviteFacesLocale(meshData);
+    connectiviteElementElements(meshData);
     connectiviteFaces(meshData);
 
     return;
