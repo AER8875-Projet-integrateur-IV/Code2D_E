@@ -164,6 +164,11 @@ void MeshData::setEsup()
     return;
 }
 
+/* 
+int MeshData::VTK2NFAEL(const int &vtkIndex)
+{
+    return 0;
+}
 void MeshData::getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem)
 {
     switch (vtkIndex)
@@ -295,7 +300,7 @@ void MeshData::setFaces()
     cout << "-----------------------------------------------------------\n";
     return;
 }
-
+*/
 void MeshData::setEsuel()
 {
     cout << "c°) Début de la génération de la connectivité element vs elements.\n";
@@ -303,9 +308,9 @@ void MeshData::setEsuel()
     // Construction de _esuelStart
     _esuelStart.reserve(_NELEM + 1);
     _esuelStart.push_back(0);
-    for (size_t i = 0; i < _NFAEL.size(); i++)
+    for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        _esuelStart.push_back(_NFAEL[i] + _esuelStart.back());
+        _esuelStart.push_back(VTKConnectivity::getNfael(_elementTypes[iElem]) + _esuelStart.back());
     }
     _NFACE = _esuelStart.back();
     for (int iMark = 0; iMark < _NMARK; iMark++)
@@ -324,12 +329,13 @@ void MeshData::setEsuel()
     vector<int> lpoin(_NPOIN, 0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        for (int iFael = 0; iFael < _NFAEL[iElem]; iFael++)
+        for (int iFael = 0; iFael < VTKConnectivity::getNfael(_elementTypes[iElem]); iFael++)
         {
-            int nnofa = _NNOFA[iElem][iFael];
-            vector<int> lhelp = _lpofa[iElem][iFael];
-            for (size_t i = 0; i < lhelp.size(); i++)
+            int nnofa = VTKConnectivity::getLnofa(_elementTypes[iElem], iFael);
+            vector<int> lhelp = VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
+            for (int i = 0; i < nnofa; i++)
             {
+                lhelp[i] = _element2Nodes[_element2NodesStart[iElem] + lhelp[i]];
                 lpoin[lhelp[i]] = 1;
             }
             int ipoin = lhelp[0];
@@ -338,16 +344,17 @@ void MeshData::setEsuel()
                 int jElem = _esup[istor];
                 if (jElem != iElem)
                 {
-                    for (int jFael = 0; jFael < _NFAEL[jElem]; jFael++)
+                    for (int jFael = 0; jFael < VTKConnectivity::getNfael(_elementTypes[jElem]); jFael++)
                     {
-                        int nnofj = _NNOFA[jElem][jFael];
+                        int nnofj = VTKConnectivity::getLnofa(_elementTypes[jElem], jFael);
                         if (nnofj == nnofa)
                         {
                             int icoun = 0;
-                            for (int jnofa = 0; jnofa < nnofa; jnofa++)
+                            vector<int> lhelp_j = VTKConnectivity::getLpofa(_elementTypes[jElem], jFael);
+                            for (int jnofa = 0; jnofa < nnofj; jnofa++)
                             {
-                                int jpoin = _lpofa[jElem][jFael][jnofa];
-                                icoun += lpoin[jpoin];
+                                lhelp_j[jnofa] = _element2Nodes[_element2NodesStart[jElem] + lhelp_j[jnofa]];
+                                icoun += lpoin[lhelp_j[jnofa]];
                             }
                             if (icoun == nnofa)
                             {
@@ -387,7 +394,7 @@ void MeshData::setEsuel()
 void MeshData::setConnectivity()
 {
     setEsup();
-    setFaces();
+    //setFaces();
     setEsuel();
     return;
 }
@@ -414,6 +421,11 @@ int MeshData::getNPOIN() const
 int MeshData::getNMARK() const
 {
     return _NMARK;
+}
+
+int MeshData::getNFACE() const
+{
+    return _NFACE;
 }
 
 vector<string> MeshData::getMARKER_TAG() const
@@ -475,19 +487,19 @@ vector<int> MeshData::getEsupStart() const
     return _esupStart;
 }
 
-vector<int> MeshData::getNFAEL() const
+int MeshData::getNfael(const int &iElem)
 {
-    return _NFAEL;
+    return VTKConnectivity::getNfael(_elementTypes[iElem]);
 }
 
-vector<vector<int>> MeshData::getNNOFA() const
+int MeshData::getLnofa(const int &iElem, const int &iFael)
 {
-    return _NNOFA;
+    return VTKConnectivity::getLnofa(_elementTypes[iElem], iFael);
 }
 
-vector<vector<vector<int>>> MeshData::getLpofa() const
+vector<int> MeshData::getLpofa(const int &iElem, const int &iFael)
 {
-    return _lpofa;
+    return VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
 }
 
 vector<int> MeshData::getEsuel() const
@@ -498,4 +510,14 @@ vector<int> MeshData::getEsuel() const
 vector<int> MeshData::getEsuelStart() const
 {
     return _esuelStart;
+}
+
+vector<int> MeshData::getFsuel() const
+{
+    return _fsuel;
+}
+
+vector<int> MeshData::getEsuf() const
+{
+    return _esuf;
 }

@@ -11,6 +11,8 @@
 #include <vector>
 #include <memory>
 
+#include "./vtkConnectivity.hpp"
+
 using namespace std;
 
 class MeshData
@@ -48,12 +50,15 @@ private:
     void setEsup();
 
     /// Connectivité des faces
+    /*   
     vector<int> _NFAEL;
     vector<vector<int>> _NNOFA;
     vector<vector<vector<int>>> _lpofa;
     void getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem);
     void setNNOFA(int iElem, vector<vector<int>> &ilpofa);
     void setFaces();
+    int VTK2NFAEL(const int &vtkIndex); 
+    */
 
     /// Connectivité element2elements
     vector<int> _esuelStart;
@@ -92,6 +97,7 @@ public:
     int getNELEM() const;
     int getNPOIN() const;
     int getNMARK() const;
+    int getNFACE() const;
     vector<string> getMARKER_TAG() const;
     vector<int> getMARKER_ELEMS() const;
 
@@ -107,9 +113,11 @@ public:
     /// Connectivité
     vector<int> getEsup() const;
     vector<int> getEsupStart() const;
-    vector<int> getNFAEL() const;
-    vector<vector<int>> getNNOFA() const;
-    vector<vector<vector<int>>> getLpofa() const;
+    int getNfael(const int &iElem);
+    int getLnofa(const int &iElem, const int &iFael);
+    vector<int> getLpofa(const int &iElem, const int &iFael);
     vector<int> getEsuel() const;
     vector<int> getEsuelStart() const;
+    vector<int> getFsuel() const;
+    vector<int> getEsuf() const;
 };
