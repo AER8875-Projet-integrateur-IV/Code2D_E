@@ -21,9 +21,9 @@ void connectiviteNodeElements(shared_ptr<MeshData> meshData) // Etat: Succés
     return;
 }
 
-void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
+void connectiviteFacesLocale(shared_ptr<MeshData> meshData) // Etat: Succés
 {
-    cout << "Début fonction connectiviteFaces()\n";
+    cout << "Début fonction connectiviteFacesLocale()\n";
     for (size_t i = 0; i < meshData->getNFAEL().size(); i++)
     {
         int nfaces = meshData->getNFAEL()[i];
@@ -41,7 +41,7 @@ void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
         }
         cout << "\n";
     }
-    cout << "Fin fonction connectiviteFaces()\n";
+    cout << "Fin fonction connectiviteFacesLocale()\n";
     return;
 }
 
@@ -61,6 +61,26 @@ void connectiviteElementElements(shared_ptr<MeshData> meshData) // Etat: Succés
     return;
 }
 
+void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
+{
+    cout << "Début fonction connectiviteFaces()\n";
+    for (int i = 1; i < meshData->getNELEM() + 1; i++)
+    {
+        cout << "EsuelStart " << meshData->getEsuelStart()[i] << " (" << i - 1 << ")\n";
+        for (int j = meshData->getEsuelStart()[i - 1]; j < meshData->getEsuelStart()[i]; j++)
+        {
+            cout << meshData->getFsuel()[j] << " ";
+        }
+        cout << "\n";
+    }
+    for (int iFace = 0; iFace < meshData->getNFACE(); iFace++)
+    {
+        cout << "Face " << iFace << " :" << meshData->getEsuf()[2 * iFace] << " , " << meshData->getEsuf()[2 * iFace + 1] << "\n";
+    }
+    cout << "Fin fonction connectiviteFaces()\n";
+    return;
+}
+
 void main_meshConnectivity_Test()
 {
     shared_ptr<MeshData> meshData = make_shared<MeshData>();
@@ -72,8 +92,9 @@ void main_meshConnectivity_Test()
     meshRead.readFile();
     meshData->setConnectivity();
     //connectiviteNodeElements(meshData);
-    //connectiviteFaces(meshData);
-    connectiviteElementElements(meshData);
+    //connectiviteFacesLocale(meshData);
+    //connectiviteElementElements(meshData);
+    connectiviteFaces(meshData);
 
     return;
 }
