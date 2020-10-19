@@ -313,10 +313,12 @@ void MeshData::setEsuel()
         _esuelStart.push_back(VTKConnectivity::getNfael(_elementTypes[iElem]) + _esuelStart.back());
     }
     _NFACE = _esuelStart.back();
+    _NBOUNDARY = 0;
     for (int iMark = 0; iMark < _NMARK; iMark++)
     {
-        _NFACE += _MARKER_ELEMS[iMark];
+        _NBOUNDARY += _MARKER_ELEMS[iMark];
     }
+    _NFACE += _NBOUNDARY;
     _NFACE /= 2;
 
     // Construction de _esuel , _esuf et _fsuel
@@ -401,12 +403,9 @@ void MeshData::setEsuel()
 
 void MeshData::setGhostCell()
 {
-    int iFace = _NFACE;
-    for (int iMark = 0; iMark < _NMARK; iMark++)
-    {
-        iFace -= _MARKER_ELEMS[iMark];
-    }
+    int iFace = _NFACE - _NBOUNDARY;
     int nelem = _NELEM;
+    _face2bc.reserve(2 * _NBOUNDARY);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
         for (int j = _esuelStart[iElem]; j < _esuelStart[iElem + 1]; j++)
@@ -426,6 +425,21 @@ void MeshData::setGhostCell()
                     lhelp[i] = _element2Nodes[_element2NodesStart[iElem] + lhelp[i]];
                     _psuf.push_back(lhelp[i]);
                 }
+                for (int iMark = 0; iMark < _NMARK; iMark++)
+                {
+                    for (int jFael = 0; jFael < _MARKER_ELEMS[iMark]; jFael++)
+                    {
+                        vector<int> lhelp2;
+                        getElement2NodesBoundary(iMark, jFael, lhelp2);
+                        std::sort(lhelp.begin(), lhelp.end());
+                        if (lhelp == lhelp2)
+                        {
+                            _face2bc.push_back(iFace);
+                            _face2bc.push_back(iMark);
+                        }
+                    }
+                }
+
                 nelem++;
                 iFace++;
             }
@@ -461,6 +475,11 @@ int MeshData::getNELEM() const
 int MeshData::getNPOIN() const
 {
     return _NPOIN;
+}
+
+int MeshData::getNBOUNDARY() const
+{
+    return _NBOUNDARY;
 }
 
 int MeshData::getNMARK() const
@@ -520,6 +539,17 @@ vector<vector<int>> MeshData::getElementTypesBoundary() const
     return _elementTypesBoundary;
 }
 
+void MeshData::getElement2NodesBoundary(int iMark, int iFael, vector<int> &lhelp)
+{
+    for (int i = _element2NodesStartBoundary[iMark][iFael]; i < _element2NodesStartBoundary[iMark][iFael + 1]; i++)
+    {
+        lhelp.push_back(_element2NodesBoundary[iMark][i]);
+    }
+    std::sort(lhelp.begin(), lhelp.end());
+
+    return;
+}
+
 /// Connectivité
 
 vector<int> MeshData::getEsup() const
@@ -575,4 +605,9 @@ vector<int> MeshData::getPsuf() const
 vector<int> MeshData::getPsufStart() const
 {
     return _psufStart;
+}
+
+vector<int> MeshData::getFace2bc() const
+{
+    return _face2bc;
 }

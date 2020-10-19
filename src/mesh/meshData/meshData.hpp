@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <algorithm>
+#include <functional>
 
 #include "./vtkConnectivity.hpp"
 
@@ -24,6 +26,7 @@ private:
     int _NPOIN;
     int _NMARK;
     int _NFACE;
+    int _NBOUNDARY;
     vector<string> _MARKER_TAG;
     vector<int> _MARKER_ELEMS;
 
@@ -65,6 +68,8 @@ private:
     vector<int> _psufStart;
     void setEsuel();
 
+    /// Cellules fantômes et conditions frontières
+    vector<int> _face2bc;
     void setGhostCell();
 
 public:
@@ -96,6 +101,7 @@ public:
     int getNDIME() const;
     int getNELEM() const;
     int getNPOIN() const;
+    int getNBOUNDARY() const;
     int getNMARK() const;
     int getNFACE() const;
     vector<string> getMARKER_TAG() const;
@@ -109,6 +115,7 @@ public:
     vector<vector<int>> getElement2NodesBoundary() const;
     vector<vector<int>> getElement2NodesStartBoundary() const;
     vector<vector<int>> getElementTypesBoundary() const;
+    void getElement2NodesBoundary(int iMark, int iFael, vector<int> &lhelp);
 
     /// Connectivité
     vector<int> getEsup() const;
@@ -122,4 +129,5 @@ public:
     vector<int> getEsuf() const;
     vector<int> getPsuf() const;
     vector<int> getPsufStart() const;
+    vector<int> getFace2bc() const;
 };
