@@ -90,6 +90,12 @@ void connectiviteFaces(shared_ptr<MeshData> meshData) // Etat: Succés
         }
         cout << "\n";
     }
+    cout << "Connectivité des conditions frontières \n";
+    for (int i = 0; i < meshData->getNBOUNDARY(); i++)
+    {
+        cout << "Face " << meshData->getFace2bc()[2 * i + 0] << " , Condition " << meshData->getFace2bc()[2 * i + 1] << " , TAG " << meshData->getMARKER_TAG()[meshData->getFace2bc()[2 * i + 1]] << endl;
+    }
+
     cout << "Fin fonction connectiviteFaces()\n";
     return;
 }
