@@ -63,8 +63,9 @@ private:
     /// Connectivité face2nodes
     vector<int> _psuf;
     vector<int> _psufStart;
-
     void setEsuel();
+
+    void setGhostCell();
 
 public:
     MeshData();

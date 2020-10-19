@@ -399,11 +399,48 @@ void MeshData::setEsuel()
     return;
 }
 
+void MeshData::setGhostCell()
+{
+    int iFace = _NFACE;
+    for (int iMark = 0; iMark < _NMARK; iMark++)
+    {
+        iFace -= _MARKER_ELEMS[iMark];
+    }
+    int nelem = _NELEM;
+    for (int iElem = 0; iElem < _NELEM; iElem++)
+    {
+        for (int j = _esuelStart[iElem]; j < _esuelStart[iElem + 1]; j++)
+        {
+            if (_esuel[j] == -1)
+            {
+                int iFael = j - _esuelStart[iElem];
+                _esuel[j] = nelem;
+                _esuf[iFace * 2 + 0] = iElem;
+                _esuf[iFace * 2 + 1] = nelem;
+                _fsuel[_esuelStart[iElem] + iFael] = iFace;
+                int nnofa = VTKConnectivity::getLnofa(_elementTypes[iElem], iFael);
+                _psufStart.push_back(_psufStart.back() + nnofa);
+                vector<int> lhelp = VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
+                for (int i = 0; i < nnofa; i++)
+                {
+                    lhelp[i] = _element2Nodes[_element2NodesStart[iElem] + lhelp[i]];
+                    _psuf.push_back(lhelp[i]);
+                }
+                nelem++;
+                iFace++;
+            }
+        }
+    }
+
+    return;
+}
+
 void MeshData::setConnectivity()
 {
     setEsup();
     //setFaces();
     setEsuel();
+    setGhostCell();
     return;
 }
 
