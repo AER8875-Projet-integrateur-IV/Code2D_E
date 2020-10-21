@@ -145,10 +145,20 @@ public:
 
     /////////////////////    METRIQUES        ///////////////////////////////////////////
 
+    // Setters
+
     void initializeMetric();
     void setElement2Volumes(const double &volume);
     void setElement2Centres(const vector<double> &centre);
     void setFace2Aires(const double &aire);
     void setFace2Centres(const vector<double> &centre);
     void setFace2Normales(const vector<double> &normale);
+
+    // Getters
+
+    vector<double> getElement2Volumes() const;
+    vector<double> getElement2Centres() const;
+    vector<double> getFace2Aires() const;
+    vector<double> getFace2Centres() const;
+    vector<double> getFace2Normales() const;
 };

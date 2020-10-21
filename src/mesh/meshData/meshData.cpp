@@ -680,3 +680,28 @@ void MeshData::setFace2Normales(const vector<double> &normale)
     }
     return;
 }
+
+vector<double> MeshData::getElement2Volumes() const
+{
+    return _element2Volumes;
+}
+
+vector<double> MeshData::getElement2Centres() const
+{
+    return _element2Centres;
+}
+
+vector<double> MeshData::getFace2Aires() const
+{
+    return _face2Aires;
+}
+
+vector<double> MeshData::getFace2Centres() const
+{
+    return _face2Centres;
+}
+
+vector<double> MeshData::getFace2Normales() const
+{
+    return _face2Normales;
+}
