@@ -72,6 +72,14 @@ private:
     vector<int> _face2bc;
     void setGhostCell();
 
+    ////////////////////    METRIQUES        ///////////////////////////////////////////
+
+    vector<double> _element2Volumes;
+    vector<double> _element2Centres;
+    vector<double> _face2Aires;
+    vector<double> _face2Centres;
+    vector<double> _face2Normales;
+
 public:
     MeshData();
     ~MeshData();
@@ -110,6 +118,7 @@ public:
     /// Tableaux du maillage
     vector<double> getNodes() const;
     vector<int> getElement2Nodes() const;
+    void getElement2Nodes(int &iElem, vector<int> &nodes) const;
     vector<int> getElement2NodesStart() const;
     vector<int> getElementTypes() const;
     vector<vector<int>> getElement2NodesBoundary() const;
@@ -120,6 +129,7 @@ public:
     /// Connectivité
     vector<int> getEsup() const;
     vector<int> getEsupStart() const;
+    int getVTKindex(const int &iElem);
     int getNfael(const int &iElem);
     int getLnofa(const int &iElem, const int &iFael);
     vector<int> getLpofa(const int &iElem, const int &iFael);
@@ -130,4 +140,15 @@ public:
     vector<int> getPsuf() const;
     vector<int> getPsufStart() const;
     vector<int> getFace2bc() const;
+
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////    METRIQUES        ///////////////////////////////////////////
+
+    void initializeMetric();
+    void setElement2Volumes(const double &volume);
+    void setElement2Centres(const double &centre);
+    void setFace2Aires(const double &aire);
+    void setFace2Centres(const double &centre);
+    void setFace2Normales(const vector<double> &normale);
 };

@@ -514,6 +514,16 @@ vector<int> MeshData::getElement2Nodes() const
     return _element2Nodes;
 }
 
+void MeshData::getElement2Nodes(int &iElem, vector<int> &nodes) const
+{
+    for (int iNode = _element2NodesStart[iElem]; iNode < _element2NodesStart[iElem + 1]; iNode++)
+    {
+        nodes.push_back(_element2Nodes[iNode]);
+    }
+
+    return;
+}
+
 vector<int> MeshData::getElement2NodesStart() const
 {
     return _element2NodesStart;
@@ -560,6 +570,11 @@ vector<int> MeshData::getEsup() const
 vector<int> MeshData::getEsupStart() const
 {
     return _esupStart;
+}
+
+int MeshData::getVTKindex(const int &iElem)
+{
+    return _elementTypes[iElem];
 }
 
 int MeshData::getNfael(const int &iElem)
@@ -610,4 +625,51 @@ vector<int> MeshData::getPsufStart() const
 vector<int> MeshData::getFace2bc() const
 {
     return _face2bc;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////    METRIQUES        ///////////////////////////////////////////
+
+void MeshData::initializeMetric()
+{
+    _element2Volumes.reserve(_NELEM);
+    _element2Centres.reserve(_NELEM + _NBOUNDARY);
+    _face2Aires.reserve(_NFACE);
+    _face2Centres.reserve(_NFACE);
+    _face2Normales.reserve(_NFACE * _NDIME);
+    return;
+}
+
+void MeshData::setElement2Volumes(const double &volume)
+{
+    _element2Volumes.push_back(volume);
+    return;
+}
+
+void MeshData::setElement2Centres(const double &centre)
+{
+    _element2Centres.push_back(centre);
+    return;
+}
+
+void MeshData::setFace2Aires(const double &aire)
+{
+    _face2Aires.push_back(aire);
+    return;
+}
+
+void MeshData::setFace2Centres(const double &centre)
+{
+    _face2Centres.push_back(centre);
+    return;
+}
+
+void MeshData::setFace2Normales(const vector<double> &normale)
+{
+    for (size_t i = 0; i < normale.size(); i++)
+    {
+        _face2Normales.push_back(normale[i]);
+    }
+    return;
 }
