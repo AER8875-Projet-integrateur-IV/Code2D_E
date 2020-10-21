@@ -147,8 +147,8 @@ public:
 
     void initializeMetric();
     void setElement2Volumes(const double &volume);
-    void setElement2Centres(const double &centre);
+    void setElement2Centres(const vector<double> &centre);
     void setFace2Aires(const double &aire);
-    void setFace2Centres(const double &centre);
+    void setFace2Centres(const vector<double> &centre);
     void setFace2Normales(const vector<double> &normale);
 };

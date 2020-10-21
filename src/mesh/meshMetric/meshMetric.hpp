@@ -1,6 +1,6 @@
 /* 
 /Fichier meshMetric.hpp
-/Date: 21 octobre 2020 - 01h13
+/Date: 21 octobre 2020 - 02h13
 /Projet: Projet Intégrateur 4
 */
 #pragma once
@@ -20,6 +20,13 @@ class MeshMetric
 {
 private:
     shared_ptr<MeshData> _meshData;
+    vector<double> _nodes;
+    int _NDIME;
+
+    void calculAireTriangle(vector<double> &pt1, vector<double> &pt2, vector<double> &pt3, double &aire, vector<double> &centre);
+    void calculTriangle(vector<int> &nodes, double &aire, vector<double> &centre);
+    void calculQuad(vector<int> &nodes, double &aire, vector<double> &centre);
+    void setElement2Volumes();
 
 public:
     MeshMetric(shared_ptr<MeshData> meshData);

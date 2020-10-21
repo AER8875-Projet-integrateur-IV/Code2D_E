@@ -634,9 +634,9 @@ vector<int> MeshData::getFace2bc() const
 void MeshData::initializeMetric()
 {
     _element2Volumes.reserve(_NELEM);
-    _element2Centres.reserve(_NELEM + _NBOUNDARY);
+    _element2Centres.reserve(_NELEM * _NDIME);
     _face2Aires.reserve(_NFACE);
-    _face2Centres.reserve(_NFACE);
+    _face2Centres.reserve(_NFACE * _NDIME);
     _face2Normales.reserve(_NFACE * _NDIME);
     return;
 }
@@ -647,9 +647,12 @@ void MeshData::setElement2Volumes(const double &volume)
     return;
 }
 
-void MeshData::setElement2Centres(const double &centre)
+void MeshData::setElement2Centres(const vector<double> &centre)
 {
-    _element2Centres.push_back(centre);
+    for (size_t i = 0; i < centre.size(); i++)
+    {
+        _element2Centres.push_back(centre[i]);
+    }
     return;
 }
 
@@ -659,9 +662,13 @@ void MeshData::setFace2Aires(const double &aire)
     return;
 }
 
-void MeshData::setFace2Centres(const double &centre)
+void MeshData::setFace2Centres(const vector<double> &centre)
 {
-    _face2Centres.push_back(centre);
+    for (size_t i = 0; i < centre.size(); i++)
+    {
+        _face2Centres.push_back(centre[i]);
+    }
+
     return;
 }
 
