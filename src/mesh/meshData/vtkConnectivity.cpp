@@ -22,7 +22,7 @@ vector<int> VTKConnectivity::_NFAEL = {
     0,
     0, // VTK = 3 LINE
     0,
-    3, // TVTK = 5 TRIANGLE
+    3, // VTK = 5 TRIANGLE
     0,
     0,
     4, // VTK = 8 PIXEL
