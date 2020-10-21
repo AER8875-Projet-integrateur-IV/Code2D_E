@@ -74,3 +74,9 @@ void MeshMetric::setElement2Volumes()
         _meshData->setElement2Centres(centre);
     }
 };
+
+void MeshMetric::setMetric()
+{
+    setElement2Volumes();
+    return;
+}

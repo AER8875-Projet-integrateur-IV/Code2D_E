@@ -34,5 +34,7 @@ public:
 
     // Setters
 
+    void setMetric();
+
     // Getters
 };
