@@ -11,7 +11,7 @@ void metricElements(shared_ptr<MeshData> meshData) // Etat: Probleme avec le sig
     for (int i = 0; i < meshData->getNELEM(); i++)
     {
         cout << "Element (" << i << "): Volume = " << meshData->getElement2Volumes()[i];
-        cout << " Centres = (" << meshData->getElement2Centres()[2 * i] << ", " << meshData->getElement2Centres()[2 * i];
+        cout << " Centre = (" << meshData->getElement2Centres()[2 * i] << ", " << meshData->getElement2Centres()[2 * i + 1];
         cout << ")\n";
     }
     cout << "Fin fonction metricElements()\n";
@@ -21,24 +21,13 @@ void metricElements(shared_ptr<MeshData> meshData) // Etat: Probleme avec le sig
 void metricFaces(shared_ptr<MeshData> meshData) // Etat: Succés
 {
     cout << "Début fonction metricFaces()\n";
-    /*     for (int iElem = 0; iElem < meshData->getNELEM(); iElem++)
+    for (int i = 0; i < meshData->getNFACE(); i++)
     {
-        int nfaces = meshData->getNfael(iElem);
-        cout << "Elements (" << iElem << ") Nbre de Faces: " << nfaces << "\n";
-        for (int iFael = 0; iFael < nfaces; iFael++)
-        {
-            int nnoeuds = meshData->getLnofa(iElem, iFael);
-            cout << "\tNbre de Noeuds: " << nnoeuds << "\n";
-            cout << "\t\tNoeuds: ";
-            vector<int> Noeuds = meshData->getLpofa(iElem, iFael);
-            for (int iNoeud = 0; iNoeud < nnoeuds; iNoeud++)
-            {
-                cout << Noeuds[iNoeud] << " ";
-            }
-            cout << "\n";
-        }
-        cout << "\n";
-    } */
+        cout << "Face (" << i << "): Aire = " << meshData->getFace2Aires()[i];
+        cout << " Centre = (" << meshData->getFace2Centres()[2 * i] << ", " << meshData->getFace2Centres()[2 * i + 1];
+        cout << ") Normale = (" << meshData->getFace2Normales()[2 * i] << ", " << meshData->getFace2Normales()[2 * i + 1];
+        cout << ")\n";
+    }
     cout << "Fin fonction metricFaces()\n";
     return;
 }

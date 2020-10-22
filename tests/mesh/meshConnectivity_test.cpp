@@ -107,7 +107,7 @@ void main_meshConnectivity_Test()
     string path2 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/square_5x5.su2";
     string path3 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/NACA0012_65_mixed.su2";
     string path4 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/maillage_exemple_prof.su2";
-    MeshRead meshRead = MeshRead(path4, meshData);
+    MeshRead meshRead = MeshRead(path2, meshData);
     meshRead.readFile();
     meshData->setConnectivity();
     connectiviteNodeElements(meshData);

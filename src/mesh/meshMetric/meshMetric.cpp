@@ -87,7 +87,6 @@ void MeshMetric::setFaces()
         double aire = sqrt(pow(pt2[1] - pt1[1], 2) + pow(pt2[0] - pt1[0], 2));
         vector<double> normale = {(pt2[1] - pt1[1]) / aire, (pt2[0] - pt1[0]) / aire};
         vector<double> centre = {(pt2[0] + pt1[0]) / 2., (pt2[1] + pt1[1]) / 2.};
-
         _meshData->setFace2Aires(aire);
         _meshData->setFace2Centres(centre);
         _meshData->setFace2Normales(normale);
