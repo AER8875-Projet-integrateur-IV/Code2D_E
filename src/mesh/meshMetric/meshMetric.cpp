@@ -53,7 +53,7 @@ void MeshMetric::calculQuad(vector<int> &nodes, double &aire, vector<double> &ce
     return;
 }
 
-void MeshMetric::setElement2Volumes()
+void MeshMetric::setElements()
 {
     for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
     {
@@ -73,35 +73,30 @@ void MeshMetric::setElement2Volumes()
         _meshData->setElement2Volumes(aire);
         _meshData->setElement2Centres(centre);
     }
+};
 
-    cout << "TEST :\n";
-    int iElem = 0;
-    double aire;
-    vector<double> centre;
-    vector<int> nodes;
-    _meshData->getElement2Nodes(iElem, nodes);
-    vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
-    vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
-    vector<double> pt3 = {_nodes[nodes[2] * 2], _nodes[nodes[2] * 2 + 1]};
-    vector<double> pt4 = {_nodes[nodes[3] * 2], _nodes[nodes[3] * 2 + 1]};
-    double aire1, aire2;
-    cout << "(" << pt1[0] << " , " << pt1[1] << ")\n";
-    cout << "(" << pt2[0] << " , " << pt2[1] << ")\n";
-    cout << "(" << pt3[0] << " , " << pt3[1] << ")\n";
-    cout << "(" << pt4[0] << " , " << pt4[1] << ")\n";
-    vector<double> centre1, centre2;
-    calculAireTriangle(pt1, pt2, pt3, aire1, centre1);
-    calculAireTriangle(pt3, pt4, pt1, aire2, centre2);
-    cout << "AIRE1 = " << aire1 << endl;
-    cout << "AIRE2 = " << aire2 << endl;
-    aire = aire1 + aire2;
-    centre.push_back((aire1 * centre1[0] + aire2 * centre2[0]) / aire);
-    centre.push_back((aire1 * centre1[1] + aire2 * centre2[1]) / aire);
-    cout << "AIRE = " << aire << endl;
+void MeshMetric::setFaces()
+{
+    for (int iFace = 0; iFace < _meshData->getNFACE(); iFace++)
+    {
+        vector<int> nodes;
+        _meshData->getFace2Nodes(iFace, nodes);
+        // En 2D on a:
+        vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
+        vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
+        double aire = sqrt(pow(pt2[1] - pt1[1], 2) + pow(pt2[0] - pt1[0], 2));
+        vector<double> normale = {(pt2[1] - pt1[1]) / aire, (pt2[0] - pt1[0]) / aire};
+        vector<double> centre = {(pt2[0] + pt1[0]) / 2., (pt2[1] + pt1[1]) / 2.};
+
+        _meshData->setFace2Aires(aire);
+        _meshData->setFace2Centres(centre);
+        _meshData->setFace2Normales(normale);
+    }
 };
 
 void MeshMetric::setMetric()
 {
-    setElement2Volumes();
+    setElements();
+    setFaces();
     return;
 }

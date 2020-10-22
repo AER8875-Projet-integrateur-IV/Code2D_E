@@ -11,6 +11,7 @@
 #include <memory>
 #include <algorithm>
 #include <functional>
+#include <math.h>
 
 #include "../meshData/meshData.hpp"
 
@@ -26,7 +27,8 @@ private:
     void calculAireTriangle(vector<double> &pt1, vector<double> &pt2, vector<double> &pt3, double &aire, vector<double> &centre);
     void calculTriangle(vector<int> &nodes, double &aire, vector<double> &centre);
     void calculQuad(vector<int> &nodes, double &aire, vector<double> &centre);
-    void setElement2Volumes();
+    void setElements();
+    void setFaces();
 
 public:
     MeshMetric(shared_ptr<MeshData> meshData);
