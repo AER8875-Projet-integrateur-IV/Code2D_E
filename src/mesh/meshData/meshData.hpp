@@ -133,6 +133,7 @@ public:
     int getNfael(const int &iElem);
     int getLnofa(const int &iElem, const int &iFael);
     vector<int> getLpofa(const int &iElem, const int &iFael);
+    void getFace2Nodes(int &iFace, vector<int> &nodes) const;
     vector<int> getEsuel() const;
     vector<int> getEsuelStart() const;
     vector<int> getFsuel() const;

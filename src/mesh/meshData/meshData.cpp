@@ -592,6 +592,16 @@ vector<int> MeshData::getLpofa(const int &iElem, const int &iFael)
     return VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
 }
 
+void MeshData::getFace2Nodes(int &iFace, vector<int> &nodes) const
+{
+    for (int iNode = _psufStart[iFace]; iNode < _psufStart[iFace + 1]; iNode++)
+    {
+        nodes.push_back(_psuf[iNode]);
+    }
+
+    return;
+}
+
 vector<int> MeshData::getEsuel() const
 {
     return _esuel;
