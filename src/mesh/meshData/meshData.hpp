@@ -30,8 +30,11 @@ private:
     vector<string> _MARKER_TAG;
     vector<int> _MARKER_ELEMS;
 
+    bool checkClockWise(vector<int> &nodes);
+
     // Tableaux du maillage
     vector<double> _nodes; // Coordonnées des noeuds
+    vector<int> _element2Nodes_unsorted;
     vector<int> _element2Nodes;
     vector<int> _element2NodesStart;
     vector<int> _elementTypes;

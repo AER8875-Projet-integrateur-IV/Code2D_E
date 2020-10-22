@@ -16,6 +16,24 @@ MeshData::~MeshData()
     return;
 }
 
+bool MeshData::checkClockWise(vector<int> &nodes)
+{
+    bool result = false;
+    if (nodes.size() > 2)
+    {
+        vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
+        vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
+        vector<double> pt3 = {_nodes[nodes[2] * 2], _nodes[nodes[2] * 2 + 1]};
+        double aire = 0.5 * ((pt1[0] - pt2[0]) * (pt1[1] + pt2[1]) + (pt2[0] - pt3[0]) * (pt2[1] + pt3[1]) + (pt3[0] - pt1[0]) * (pt3[1] + pt1[1]));
+        if (aire < 0)
+        {
+            result = true;
+        }
+    }
+
+    return result;
+}
+
 // Setters
 
 void MeshData::setNDIME(int NDIME)
@@ -66,7 +84,7 @@ void MeshData::setElement2Nodes(vector<string> element2Nodes)
 {
     if (!_element2NodesReserve)
     {
-        _element2Nodes.reserve(_NELEM * (element2Nodes.size() - 2));
+        _element2Nodes_unsorted.reserve(_NELEM * (element2Nodes.size() - 2));
         _element2NodesStart.reserve(_NELEM + 1);
         _element2NodesStart.push_back(0);
         _elementTypes.reserve(_NELEM);
@@ -75,7 +93,7 @@ void MeshData::setElement2Nodes(vector<string> element2Nodes)
     _elementTypes.push_back(stoi(element2Nodes[0]));
     for (size_t i = 1; i < element2Nodes.size() - 1; i++)
     {
-        _element2Nodes.push_back(stoi(element2Nodes[i]));
+        _element2Nodes_unsorted.push_back(stoi(element2Nodes[i]));
     }
     _element2NodesStart.push_back(_element2NodesStart.back() + element2Nodes.size() - 2);
     return;
@@ -123,7 +141,32 @@ void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres
 
 void MeshData::setEsup()
 {
-    cout << "a°) Début de génération connectivité noeud vs elements.\n";
+    std::cout << "a°) Début de génération connectivité noeud vs elements.\n";
+    // Orientation des éléments en Clock-Wise
+    _element2Nodes.reserve(_element2Nodes_unsorted.size());
+    for (int iElem = 0; iElem < _NELEM; iElem++)
+    {
+        vector<int> nodes3 = {
+            _element2Nodes_unsorted[_element2NodesStart[iElem]],
+            _element2Nodes_unsorted[_element2NodesStart[iElem] + 1],
+            _element2Nodes_unsorted[_element2NodesStart[iElem] + 2]};
+        bool check = checkClockWise(nodes3);
+        if (check) // Horaire
+        {
+            for (int i = _element2NodesStart[iElem + 1] - 1; i >= _element2NodesStart[iElem]; i--)
+            {
+                _element2Nodes.push_back(_element2Nodes_unsorted[i]);
+            }
+        }
+        else
+        {
+            for (int i = _element2NodesStart[iElem]; i < _element2NodesStart[iElem + 1]; i++)
+            {
+                _element2Nodes.push_back(_element2Nodes_unsorted[i]);
+            }
+        }
+    }
+
     // Initialisation de _esupStart
 
     _esupStart.assign(_NPOIN + 1, 0);
