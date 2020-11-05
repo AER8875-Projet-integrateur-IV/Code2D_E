@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <math.h>
 
 #include "../mesh/meshData/meshData.hpp"
 #include "../inputData.hpp"
@@ -25,6 +26,14 @@ struct Properties
     double gamma;
 };
 
+struct MeshDimension
+{
+    int NELEM;
+    int NPOIN;
+    int NFACE;
+    int NBOUNDARY;
+};
+
 class Solver
 {
 private:
@@ -33,9 +42,12 @@ private:
     Solution W;
     Solution dW;
     Properties props;
+    MeshDimension meshDim;
 
     void initializeSolver();
     void initializeSolution();
+    void updateBoundaryCells();
+    void computeTimeSteps();
 
 public:
     Solver(shared_ptr<MeshData> meshData, shared_ptr<InputData> inputData);
