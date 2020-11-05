@@ -44,7 +44,10 @@ private:
     Solution dW;
     Properties props;
     MeshDimension meshDim;
+
     vector<int> _conditionsLimites;
+    vector<int> _bc2el;
+    vector<int> _bc2elStart;
 
     void initializeSolver();
     void initializeSolution();

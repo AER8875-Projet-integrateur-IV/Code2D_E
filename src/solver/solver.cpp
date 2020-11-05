@@ -35,6 +35,8 @@ void Solver::initializeSolver()
     meshDim.NMARK = _meshData->getNMARK();
     // Conditions limites
     _conditionsLimites = _inputData->getConditionsLimites();
+    _bc2el = _meshData->getBc2el();
+    _bc2elStart = _meshData->getBc2elStart();
     return;
 }
 
@@ -60,14 +62,29 @@ void Solver::updateBoundaryCells()
         int type = _conditionsLimites[iMark];
         if (type == 0) // FarField
         {
+
             if (props.Ma > 1) // Supersonic
             {
-                /* code */
+                for (int iBoundary = _bc2elStart[iMark]; iBoundary < _bc2elStart[iMark + 1]; iBoundary++)
+                {
+                    int iCell = _bc2el[iBoundary];
+                    W.rho[iCell] = 1;
+                    W.rhoU[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                    W.rhoV[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                    W.rhoE[iCell] = 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma;
+                }
             }
         }
         else if (type == 1) // Wall
         {
-            continue;
+            for (int iBoundary = _bc2elStart[iMark]; iBoundary < _bc2elStart[iMark + 1]; iBoundary++)
+            {
+                int iCell = _bc2el[iBoundary];
+                W.rho[iCell] = 1;
+                W.rhoU[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                W.rhoV[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                W.rhoE[iCell] = 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma;
+            }
         }
     }
 
