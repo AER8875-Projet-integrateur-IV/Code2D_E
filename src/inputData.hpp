@@ -53,6 +53,7 @@ public:
     double getMachNumber() const;
     double getAOA() const;
 
-    double getsoundSpeed() const;
+    double getSoundSpeed() const;
     double getCFL() const;
+    double getRatioCpCv() const;
 };

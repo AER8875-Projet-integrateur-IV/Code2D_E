@@ -164,7 +164,7 @@ double InputData::getAOA() const
     return _AOA;
 }
 
-double InputData::getsoundSpeed() const
+double InputData::getSoundSpeed() const
 {
     return _soundSpeed;
 }
@@ -172,4 +172,9 @@ double InputData::getsoundSpeed() const
 double InputData::getCFL() const
 {
     return _CFL;
+}
+
+double InputData::getRatioCpCv() const
+{
+    return _ratioCpCv;
 }
