@@ -32,6 +32,8 @@ private:
     double _ratioCpCv;
     double _soundSpeed;
 
+    vector<int> _conditionsLimites;
+
     double _CFL;
 
     int _iterationMax;
@@ -56,4 +58,6 @@ public:
     double getSoundSpeed() const;
     double getCFL() const;
     double getRatioCpCv() const;
+
+    vector<int> getConditionsLimites() const;
 };

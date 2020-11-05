@@ -125,6 +125,12 @@ bool InputData::setIndice(string ligne, int &indice)
         indice = 0;
         _iterationMax = stoi(getEqualValue(ligne));
     }
+    else if (ligne.find("CONDITIONS LIMITES") != string::npos)
+    {
+        indice = 1;
+        int nombreCL = stoi(getEqualValue(ligne));
+        _conditionsLimites.reserve(nombreCL);
+    }
     else
     {
         return false;
@@ -138,7 +144,15 @@ void InputData::setParametres(string ligne, int indice)
     {
     case 0: // inline parameters
         break;
-    case 1: //
+    case 1: // Conditions limites
+        if (ligne.find("FARFIELD") != string::npos)
+        {
+            _conditionsLimites.push_back(0);
+        }
+        else if (ligne.find("WALL") != string::npos)
+        {
+            _conditionsLimites.push_back(1);
+        }
         break;
     }
     return;
@@ -177,4 +191,9 @@ double InputData::getCFL() const
 double InputData::getRatioCpCv() const
 {
     return _ratioCpCv;
+}
+
+vector<int> InputData::getConditionsLimites() const
+{
+    return _conditionsLimites;
 }

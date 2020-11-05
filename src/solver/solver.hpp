@@ -32,6 +32,7 @@ struct MeshDimension
     int NPOIN;
     int NFACE;
     int NBOUNDARY;
+    int NMARK;
 };
 
 class Solver
@@ -43,6 +44,7 @@ private:
     Solution dW;
     Properties props;
     MeshDimension meshDim;
+    vector<int> _conditionsLimites;
 
     void initializeSolver();
     void initializeSolution();

@@ -32,6 +32,9 @@ void Solver::initializeSolver()
     meshDim.NPOIN = _meshData->getNPOIN();
     meshDim.NFACE = _meshData->getNFACE();
     meshDim.NBOUNDARY = _meshData->getNBOUNDARY();
+    meshDim.NMARK = _meshData->getNMARK();
+    // Conditions limites
+    _conditionsLimites = _inputData->getConditionsLimites();
     return;
 }
 
@@ -47,5 +50,26 @@ void Solver::initializeSolution()
     dW.rhoU.assign(meshDim.NELEM, 0.);
     dW.rhoV.assign(meshDim.NELEM, 0.);
     dW.rhoE.assign(meshDim.NELEM, 0.);
+    return;
+}
+
+void Solver::updateBoundaryCells()
+{
+    for (int iMark = 0; iMark < meshDim.NMARK; iMark++)
+    {
+        int type = _conditionsLimites[iMark];
+        if (type == 0) // FarField
+        {
+            if (props.Ma > 1) // Supersonic
+            {
+                /* code */
+            }
+        }
+        else if (type == 1) // Wall
+        {
+            continue;
+        }
+    }
+
     return;
 }
