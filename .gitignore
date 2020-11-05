@@ -2,6 +2,7 @@ build/
 .vscode
 CMakeLists.txt
 tests/mesh/exemple_mesh
+tests/inputData/Example.project
 
 # Pour c++
 #----------------------------------------------
