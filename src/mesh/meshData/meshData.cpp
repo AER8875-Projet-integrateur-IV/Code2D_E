@@ -492,12 +492,34 @@ void MeshData::setGhostCell()
     return;
 }
 
+void MeshData::setBC()
+{
+    _bc2el.reserve(_NBOUNDARY);
+    _bc2elStart.reserve(_NMARK + 1);
+    _bc2elStart.push_back(0);
+    for (int iMark = 0; iMark < _NMARK; iMark++)
+    {
+        _bc2elStart.push_back(_bc2elStart.back() + _MARKER_ELEMS[iMark]);
+        for (int iBoundary = 0; iBoundary < _NBOUNDARY; iBoundary++)
+        {
+            if (_face2bc[2 * iBoundary + 1] == iMark)
+            {
+                int iFace = _face2bc[2 * iBoundary];
+                _bc2el.push_back(_esuf[2 * iFace + 1]);
+            }
+        }
+    }
+
+    return;
+}
+
 void MeshData::setConnectivity()
 {
     setEsup();
     //setFaces();
     setEsuel();
     setGhostCell();
+    setBC();
     return;
 }
 
@@ -678,6 +700,16 @@ vector<int> MeshData::getPsufStart() const
 vector<int> MeshData::getFace2bc() const
 {
     return _face2bc;
+}
+
+vector<int> MeshData::getBc2el() const
+{
+    return _bc2el;
+}
+
+vector<int> MeshData::getBc2elStart() const
+{
+    return _bc2elStart;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

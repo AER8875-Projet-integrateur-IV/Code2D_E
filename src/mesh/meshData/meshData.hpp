@@ -73,7 +73,10 @@ private:
 
     /// Cellules fantômes et conditions frontières
     vector<int> _face2bc;
+    vector<int> _bc2el;
+    vector<int> _bc2elStart;
     void setGhostCell();
+    void setBC();
 
     ////////////////////    METRIQUES        ///////////////////////////////////////////
 
@@ -144,6 +147,8 @@ public:
     vector<int> getPsuf() const;
     vector<int> getPsufStart() const;
     vector<int> getFace2bc() const;
+    vector<int> MeshData::getBc2el() const;
+    vector<int> MeshData::getBc2elStart() const;
 
     /////////////////////////////////////////////////////////////////////////////////////
 
