@@ -47,6 +47,9 @@ public:
     void readFile();
 
     // Getters
+    string getTitle() const;
+    string getMeshPath() const;
+
     double getMachNumber() const;
     double getAOA() const;
 

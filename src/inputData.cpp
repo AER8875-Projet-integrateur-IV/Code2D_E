@@ -143,3 +143,33 @@ void InputData::setParametres(string ligne, int indice)
     }
     return;
 }
+
+string InputData::getTitle() const
+{
+    return _title;
+}
+
+string InputData::getMeshPath() const
+{
+    return _meshPath;
+}
+
+double InputData::getMachNumber() const
+{
+    return _Mach;
+}
+
+double InputData::getAOA() const
+{
+    return _AOA;
+}
+
+double InputData::getsoundSpeed() const
+{
+    return _soundSpeed;
+}
+
+double InputData::getCFL() const
+{
+    return _CFL;
+}
