@@ -28,6 +28,7 @@ private:
     void calculQuad(vector<int> &nodes, double &aire, vector<double> &centre);
     void setElements();
     void setFaces();
+    void setCVprojections();
 
 public:
     MeshMetric(MeshData *meshData);

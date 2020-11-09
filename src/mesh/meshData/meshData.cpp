@@ -37,6 +37,7 @@ MeshData::MeshData()
     _face2Aires = new vector<double>();
     _face2Centres = new vector<double>();
     _face2Normales = new vector<double>();
+    _CVprojections = new vector<double>();
 
     return;
 }
@@ -70,6 +71,7 @@ MeshData::~MeshData()
     delete _face2Aires;
     delete _face2Centres;
     delete _face2Normales;
+    delete _CVprojections;
 
     return;
 }
@@ -651,6 +653,7 @@ void MeshData::initializeMetric()
     _face2Aires->reserve(_NFACE);
     _face2Centres->reserve(_NFACE * _NDIME);
     _face2Normales->reserve(_NFACE * _NDIME);
+    _CVprojections->reserve(_NFACE * _NDIME);
     return;
 }
 
@@ -694,6 +697,13 @@ void MeshData::setFace2Normales(const vector<double> &normale)
     return;
 }
 
+void MeshData::setCVprojections(const vector<double> &S)
+{
+    _CVprojections->push_back(S[1]);
+    _CVprojections->push_back(S[1]);
+    return;
+}
+
 vector<double> *MeshData::getElement2Volumes() const
 {
     return _element2Volumes;
@@ -717,4 +727,9 @@ vector<double> *MeshData::getFace2Centres() const
 vector<double> *MeshData::getFace2Normales() const
 {
     return _face2Normales;
+}
+
+vector<double> *MeshData::getCVprojections() const
+{
+    return _CVprojections;
 }

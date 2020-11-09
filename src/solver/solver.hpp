@@ -38,13 +38,15 @@ struct MeshDimension
 class Solver
 {
 private:
-    MeshData *_meshData;
     InputData *_inputData;
-    Solution W;
-    Solution dW;
-    Flux F;
-    Properties props;
-    MeshDimension meshDim;
+    MeshData *_meshData;
+    MeshDimension _meshDim;
+    // Paramètres du solveurs
+    Solution *_W;
+    Solution *_dW;
+    Flux _F;
+    Properties _props;
+    vector<double> *_timeSteps;
 
     // Conditions limites
     vector<int> _conditionsLimites;
@@ -72,15 +74,17 @@ private:
     vector<double> *_face2Aires;
     vector<double> *_face2Centres;
     vector<double> *_face2Normales;
+    vector<double> *_CVprojections;
 
     // Méthodes internes
-    void computeEnergie(Solution &solution, int &index);
-    void computeVn(const Solution &solution, int &iCell, int &iFace, double &Vn);
+    void computeEnergie(Solution *solution, int &index);
+    void computeVn(const Solution *solution, int &iCell, int &iFace, double &Vn);
 
     void initializeSolver();
     void initializeSolution();
     void updateBoundaryCells();
     void computeTimeSteps();
+    void computeResiduals();
 
 public:
     Solver(MeshData *meshData, InputData *inputData);

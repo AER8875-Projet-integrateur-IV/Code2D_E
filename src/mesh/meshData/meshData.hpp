@@ -86,6 +86,7 @@ private:
     vector<double> *_face2Aires;
     vector<double> *_face2Centres;
     vector<double> *_face2Normales;
+    vector<double> *_CVprojections;
 
 public:
     MeshData();
@@ -164,6 +165,7 @@ public:
     void setFace2Aires(const double &aire);
     void setFace2Centres(const vector<double> &centre);
     void setFace2Normales(const vector<double> &normale);
+    void setCVprojections(const vector<double> &S);
 
     // Getters
 
@@ -172,4 +174,5 @@ public:
     vector<double> *getFace2Aires() const;
     vector<double> *getFace2Centres() const;
     vector<double> *getFace2Normales() const;
+    vector<double> *getCVprojections() const;
 };

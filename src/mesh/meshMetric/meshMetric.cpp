@@ -93,9 +93,34 @@ void MeshMetric::setFaces()
     }
 };
 
+void MeshMetric::setCVprojections()
+{
+    vector<double> S = {0., 0.};
+    int iFace;
+    vector<int> *_esuelStart = _meshData->getEsuelStart();
+    vector<int> *_fsuel = _meshData->getFsuel();
+    vector<double> *_face2Normales = _meshData->getFace2Normales();
+    vector<double> *_face2Aires = _meshData->getFace2Aires();
+    for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+    {
+        S[0] = 0;
+        S[1] = 0;
+        for (int j = _esuelStart->at(iElem); j < _esuelStart->at(iElem + 1); j++)
+        {
+            iFace = _fsuel->at(j);
+            S[0] += abs(_face2Normales->at(2 * iFace) * _face2Aires->at(iFace));
+            S[0] += abs(_face2Normales->at(2 * iFace + 1) * _face2Aires->at(iFace + 1));
+        }
+        S[0] /= 0.5;
+        S[1] /= 0.5;
+        _meshData->setCVprojections(S);
+    }
+    return;
+}
 void MeshMetric::setMetric()
 {
     setElements();
     setFaces();
+    setCVprojections();
     return;
 }
