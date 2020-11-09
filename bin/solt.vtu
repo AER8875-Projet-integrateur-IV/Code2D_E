@@ -1,0 +1,103 @@
+<VTKFile type="UnstructuredGrid">
+<UnstructuredGrid>
+<Piece NumberOfPoints="36" NumberOfCells=" 25">
+<Points><DataArray type="Float64" NumberOfComponents="3" format="ascii">
+0 0 0.0
+0 0.2 0.0
+0 0.4 0.0
+0 0.6 0.0
+0 0.8 0.0
+0 1 0.0
+0.2 0 0.0
+0.2 0.2 0.0
+0.2 0.4 0.0
+0.2 0.6 0.0
+0.2 0.8 0.0
+0.2 1 0.0
+0.4 0 0.0
+0.4 0.2 0.0
+0.4 0.4 0.0
+0.4 0.6 0.0
+0.4 0.8 0.0
+0.4 1 0.0
+0.6 0 0.0
+0.6 0.2 0.0
+0.6 0.4 0.0
+0.6 0.6 0.0
+0.6 0.8 0.0
+0.6 1 0.0
+0.8 0 0.0
+0.8 0.2 0.0
+0.8 0.4 0.0
+0.8 0.6 0.0
+0.8 0.8 0.0
+0.8 1 0.0
+1 0 0.0
+1 0.2 0.0
+1 0.4 0.0
+1 0.6 0.0
+1 0.8 0.0
+1 1 0.0
+</DataArray>
+</Points><Cells>
+ <DataArray type="UInt32" Name="connectivity" format="ascii">
+6 7 1 0
+7 8 2 1
+8 9 3 2
+9 10 4 3
+10 11 5 4
+12 13 7 6
+13 14 8 7
+14 15 9 8
+15 16 10 9
+16 17 11 10
+18 19 13 12
+19 20 14 13
+20 21 15 14
+21 22 16 15
+22 23 17 16
+24 25 19 18
+25 26 20 19
+26 27 21 20
+27 28 22 21
+28 29 23 22
+30 31 25 24
+31 32 26 25
+32 33 27 26
+33 34 28 27
+34 35 29 28
+</DataArray>
+<DataArray type="UInt32" Name="offsets" format="ascii">
+0 4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96
+</DataArray>
+<DataArray type="UInt8" Name="types" format="ascii">
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+9
+</DataArray>
+</Cells>
+</Piece>
+</UnstructuredGrid>
+</VTKFile>
