@@ -14,8 +14,14 @@ using namespace std;
 struct Solution
 {
     vector<double> rho;
-    vector<double> rhoU;
-    vector<double> rhoV;
-    vector<double> rhoE;
+    vector<double> U;
+    vector<double> V;
+    vector<double> E;
+    vector<double> p;
+    vector<double> H;
+};
+
+struct Flux
+{
     vector<double> Vn;
 };

@@ -42,20 +42,40 @@ private:
     InputData *_inputData;
     Solution W;
     Solution dW;
+    Flux F;
     Properties props;
     MeshDimension meshDim;
 
     // Conditions limites
     vector<int> _conditionsLimites;
+
+    // Connectivité
+    vector<int> *_element2Nodes;
+    vector<int> *_element2NodesStart;
+    vector<vector<int>> *_element2NodesBoundary;
+    vector<vector<int>> *_element2NodesStartBoundary;
+    vector<int> *_esup;
+    vector<int> *_esupStart;
+    vector<int> *_esuelStart;
+    vector<int> *_esuel;
+    vector<int> *_fsuel;
+    vector<int> *_esuf;
+    vector<int> *_psuf;
+    vector<int> *_psufStart;
+    vector<int> *_face2bc;
     vector<int> *_bc2el;
     vector<int> *_bc2elStart;
-
+    vector<int> *_bc2face;
     // Métriques
     vector<double> *_element2Volumes;
     vector<double> *_element2Centres;
     vector<double> *_face2Aires;
     vector<double> *_face2Centres;
     vector<double> *_face2Normales;
+
+    // Méthodes internes
+    void computeEnergie(Solution &solution, int &index);
+    void computeVn(const Solution &solution, int &iCell, int &iFace, double &Vn);
 
     void initializeSolver();
     void initializeSolution();

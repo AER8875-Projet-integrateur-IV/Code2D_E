@@ -75,6 +75,7 @@ private:
     vector<int> *_face2bc;
     vector<int> *_bc2el;
     vector<int> *_bc2elStart;
+    vector<int> *_bc2face;
     void setGhostCell();
     void setBC();
 
@@ -149,6 +150,7 @@ public:
     vector<int> *getFace2bc() const;
     vector<int> *getBc2el() const;
     vector<int> *getBc2elStart() const;
+    vector<int> *getBc2face() const;
 
     /////////////////////////////////////////////////////////////////////////////////////
 

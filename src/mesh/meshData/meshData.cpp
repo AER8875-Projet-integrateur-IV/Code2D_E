@@ -30,6 +30,7 @@ MeshData::MeshData()
     _face2bc = new vector<int>();
     _bc2el = new vector<int>();
     _bc2elStart = new vector<int>();
+    _bc2face = new vector<int>();
     // Métriques
     _element2Volumes = new vector<double>();
     _element2Centres = new vector<double>();
@@ -62,6 +63,7 @@ MeshData::~MeshData()
     delete _face2bc;
     delete _bc2el;
     delete _bc2elStart;
+    delete _bc2face;
     // Métriques
     delete _element2Volumes;
     delete _element2Centres;
@@ -414,6 +416,7 @@ void MeshData::setGhostCell()
 void MeshData::setBC()
 {
     _bc2el->reserve(2 * _NBOUNDARY);
+    _bc2face->reserve(_NBOUNDARY);
     _bc2elStart->reserve(_NMARK + 1);
     _bc2elStart->push_back(0);
     for (int iMark = 0; iMark < _NMARK; iMark++)
@@ -426,6 +429,7 @@ void MeshData::setBC()
                 int iFace = _face2bc->at(2 * iBoundary);
                 _bc2el->push_back(_esuf->at(2 * iFace + 0));
                 _bc2el->push_back(_esuf->at(2 * iFace + 1));
+                _bc2face->push_back(iFace);
             }
         }
     }
@@ -630,6 +634,10 @@ vector<int> *MeshData::getBc2el() const
 vector<int> *MeshData::getBc2elStart() const
 {
     return _bc2elStart;
+}
+vector<int> *MeshData::getBc2face() const
+{
+    return _bc2face;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
