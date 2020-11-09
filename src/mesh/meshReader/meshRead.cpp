@@ -6,7 +6,7 @@
 
 #include "./meshRead.hpp"
 
-MeshRead::MeshRead(string &path, shared_ptr<MeshData> meshData)
+MeshRead::MeshRead(string &path, MeshData *meshData)
 {
     _path = path;
     _meshData = meshData;

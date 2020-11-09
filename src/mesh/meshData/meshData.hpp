@@ -33,58 +33,58 @@ private:
     bool checkClockWise(vector<int> &nodes);
 
     // Tableaux du maillage
-    vector<double> _nodes; // Coordonnées des noeuds
-    vector<int> _element2Nodes_unsorted;
-    vector<int> _element2Nodes;
-    vector<int> _element2NodesStart;
-    vector<int> _elementTypes;
+    vector<double> *_nodes; // Coordonnées des noeuds
+    vector<int> *_element2Nodes_unsorted;
+    vector<int> *_element2Nodes;
+    vector<int> *_element2NodesStart;
+    vector<int> *_elementTypes;
     bool _nodesReserve = false;
     bool _element2NodesReserve = false;
 
     // Frontières
-    vector<vector<int>> _element2NodesBoundary;
-    vector<vector<int>> _element2NodesStartBoundary;
-    vector<vector<int>> _elementTypesBoundary;
+    vector<vector<int>> *_element2NodesBoundary;
+    vector<vector<int>> *_element2NodesStartBoundary;
+    vector<vector<int>> *_elementTypesBoundary;
     bool _element2NodesBoundaryReserve = false;
     vector<bool> _element2NodesBoundaryReserves;
 
     // Connectivé
 
     /// Connectivité node2elements
-    vector<int> _esup;
-    vector<int> _esupStart;
+    vector<int> *_esup;
+    vector<int> *_esupStart;
     void setEsup();
 
     /// Connectivité element2elements
-    vector<int> _esuelStart;
-    vector<int> _esuel;
+    vector<int> *_esuelStart;
+    vector<int> *_esuel;
 
     /// Connectivité element2faces
-    vector<int> _fsuel;
+    vector<int> *_fsuel;
     // _fsuelStart =  _esuelStart
 
     /// Connectivité face2elements
-    vector<int> _esuf;
+    vector<int> *_esuf;
 
     /// Connectivité face2nodes
-    vector<int> _psuf;
-    vector<int> _psufStart;
+    vector<int> *_psuf;
+    vector<int> *_psufStart;
     void setEsuel();
 
     /// Cellules fantômes et conditions frontières
-    vector<int> _face2bc;
-    vector<int> _bc2el;
-    vector<int> _bc2elStart;
+    vector<int> *_face2bc;
+    vector<int> *_bc2el;
+    vector<int> *_bc2elStart;
     void setGhostCell();
     void setBC();
 
     ////////////////////    METRIQUES        ///////////////////////////////////////////
 
-    vector<double> _element2Volumes;
-    vector<double> _element2Centres;
-    vector<double> _face2Aires;
-    vector<double> _face2Centres;
-    vector<double> _face2Normales;
+    vector<double> *_element2Volumes;
+    vector<double> *_element2Centres;
+    vector<double> *_face2Aires;
+    vector<double> *_face2Centres;
+    vector<double> *_face2Normales;
 
 public:
     MeshData();
@@ -122,33 +122,33 @@ public:
     vector<int> getMARKER_ELEMS() const;
 
     /// Tableaux du maillage
-    vector<double> getNodes() const;
-    vector<int> getElement2Nodes() const;
+    vector<double> *getNodes() const;
+    vector<int> *getElement2Nodes() const;
     void getElement2Nodes(int &iElem, vector<int> &nodes) const;
-    vector<int> getElement2NodesStart() const;
-    vector<int> getElementTypes() const;
-    vector<vector<int>> getElement2NodesBoundary() const;
-    vector<vector<int>> getElement2NodesStartBoundary() const;
-    vector<vector<int>> getElementTypesBoundary() const;
+    vector<int> *getElement2NodesStart() const;
+    vector<int> *getElementTypes() const;
+    vector<vector<int>> *getElement2NodesBoundary() const;
+    vector<vector<int>> *getElement2NodesStartBoundary() const;
+    vector<vector<int>> *getElementTypesBoundary() const;
     void getElement2NodesBoundary(int iMark, int iFael, vector<int> &lhelp);
 
     /// Connectivité
-    vector<int> getEsup() const;
-    vector<int> getEsupStart() const;
+    vector<int> *getEsup() const;
+    vector<int> *getEsupStart() const;
     int getVTKindex(const int &iElem);
     int getNfael(const int &iElem);
     int getLnofa(const int &iElem, const int &iFael);
     vector<int> getLpofa(const int &iElem, const int &iFael);
     void getFace2Nodes(int &iFace, vector<int> &nodes) const;
-    vector<int> getEsuel() const;
-    vector<int> getEsuelStart() const;
-    vector<int> getFsuel() const;
-    vector<int> getEsuf() const;
-    vector<int> getPsuf() const;
-    vector<int> getPsufStart() const;
-    vector<int> getFace2bc() const;
-    vector<int> MeshData::getBc2el() const;
-    vector<int> MeshData::getBc2elStart() const;
+    vector<int> *getEsuel() const;
+    vector<int> *getEsuelStart() const;
+    vector<int> *getFsuel() const;
+    vector<int> *getEsuf() const;
+    vector<int> *getPsuf() const;
+    vector<int> *getPsufStart() const;
+    vector<int> *getFace2bc() const;
+    vector<int> *getBc2el() const;
+    vector<int> *getBc2elStart() const;
 
     /////////////////////////////////////////////////////////////////////////////////////
 
@@ -165,9 +165,9 @@ public:
 
     // Getters
 
-    vector<double> getElement2Volumes() const;
-    vector<double> getElement2Centres() const;
-    vector<double> getFace2Aires() const;
-    vector<double> getFace2Centres() const;
-    vector<double> getFace2Normales() const;
+    vector<double> *getElement2Volumes() const;
+    vector<double> *getElement2Centres() const;
+    vector<double> *getFace2Aires() const;
+    vector<double> *getFace2Centres() const;
+    vector<double> *getFace2Normales() const;
 };

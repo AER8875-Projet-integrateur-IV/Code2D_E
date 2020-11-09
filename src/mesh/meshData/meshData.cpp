@@ -8,11 +8,67 @@
 
 MeshData::MeshData()
 {
+    // Maillage lu
+    _nodes = new vector<double>();
+    _element2Nodes_unsorted = new vector<int>();
+    _element2Nodes = new vector<int>();
+    _element2NodesStart = new vector<int>();
+    _elementTypes = new vector<int>();
+    // Conditions frontières
+    _element2NodesBoundary = new vector<vector<int>>();
+    _element2NodesStartBoundary = new vector<vector<int>>();
+    _elementTypesBoundary = new vector<vector<int>>();
+    // Connectivités
+    _esup = new vector<int>();
+    _esupStart = new vector<int>();
+    _esuel = new vector<int>();
+    _esuelStart = new vector<int>();
+    _fsuel = new vector<int>();
+    _esuf = new vector<int>();
+    _psuf = new vector<int>();
+    _psufStart = new vector<int>();
+    _face2bc = new vector<int>();
+    _bc2el = new vector<int>();
+    _bc2elStart = new vector<int>();
+    // Métriques
+    _element2Volumes = new vector<double>();
+    _element2Centres = new vector<double>();
+    _face2Aires = new vector<double>();
+    _face2Centres = new vector<double>();
+    _face2Normales = new vector<double>();
+
     return;
 }
 
 MeshData::~MeshData()
 {
+    delete _nodes;
+    delete _element2Nodes_unsorted;
+    delete _element2NodesStart;
+    delete _elementTypes;
+    // Conditions frontières
+    delete _element2NodesBoundary;
+    delete _element2NodesStartBoundary;
+    delete _elementTypesBoundary;
+    // Connectivités
+    delete _esup;
+    delete _esupStart;
+    delete _esuel;
+    delete _esuelStart;
+    delete _fsuel;
+    delete _esuf;
+    delete _psuf;
+    delete _psufStart;
+    delete _face2bc;
+    delete _bc2el;
+    delete _bc2elStart;
+    // Métriques
+    delete _element2Volumes;
+    delete _element2Centres;
+    delete _face2Aires;
+    delete _face2Centres;
+    delete _face2Normales;
+
     return;
 }
 
@@ -21,9 +77,9 @@ bool MeshData::checkClockWise(vector<int> &nodes)
     bool result = false;
     if (nodes.size() > 2)
     {
-        vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
-        vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
-        vector<double> pt3 = {_nodes[nodes[2] * 2], _nodes[nodes[2] * 2 + 1]};
+        vector<double> pt1 = {_nodes->at(nodes[0] * 2), _nodes->at(nodes[0] * 2 + 1)};
+        vector<double> pt2 = {_nodes->at(nodes[1] * 2), _nodes->at(nodes[1] * 2 + 1)};
+        vector<double> pt3 = {_nodes->at(nodes[2] * 2), _nodes->at(nodes[2] * 2 + 1)};
         double aire = 0.5 * ((pt1[0] - pt2[0]) * (pt1[1] + pt2[1]) + (pt2[0] - pt3[0]) * (pt2[1] + pt3[1]) + (pt3[0] - pt1[0]) * (pt3[1] + pt1[1]));
         if (aire < 0)
         {
@@ -70,12 +126,12 @@ void MeshData::setNodes(vector<string> nodes)
 {
     if (!_nodesReserve)
     {
-        _nodes.reserve(_NDIME * _NPOIN);
+        _nodes->reserve(_NDIME * _NPOIN);
         _nodesReserve = true;
     }
     for (int i = 0; i < _NDIME; i++)
     {
-        _nodes.push_back(stod(nodes[i]));
+        _nodes->push_back(stod(nodes[i]));
     }
     return;
 }
@@ -84,18 +140,18 @@ void MeshData::setElement2Nodes(vector<string> element2Nodes)
 {
     if (!_element2NodesReserve)
     {
-        _element2Nodes_unsorted.reserve(_NELEM * (element2Nodes.size() - 2));
-        _element2NodesStart.reserve(_NELEM + 1);
-        _element2NodesStart.push_back(0);
-        _elementTypes.reserve(_NELEM);
+        _element2Nodes_unsorted->reserve(_NELEM * (element2Nodes.size() - 2));
+        _element2NodesStart->reserve(_NELEM + 1);
+        _element2NodesStart->push_back(0);
+        _elementTypes->reserve(_NELEM);
         _element2NodesReserve = true;
     }
-    _elementTypes.push_back(stoi(element2Nodes[0]));
+    _elementTypes->push_back(stoi(element2Nodes[0]));
     for (size_t i = 1; i < element2Nodes.size() - 1; i++)
     {
-        _element2Nodes_unsorted.push_back(stoi(element2Nodes[i]));
+        _element2Nodes_unsorted->push_back(stoi(element2Nodes[i]));
     }
-    _element2NodesStart.push_back(_element2NodesStart.back() + element2Nodes.size() - 2);
+    _element2NodesStart->push_back(_element2NodesStart->back() + element2Nodes.size() - 2);
     return;
 }
 
@@ -103,9 +159,9 @@ void MeshData::setElement2NodesFrontieres()
 {
     if (!_element2NodesBoundaryReserve)
     {
-        _element2NodesBoundary.reserve(_NMARK);
-        _element2NodesStartBoundary.reserve(_NMARK);
-        _elementTypesBoundary.reserve(_NMARK);
+        _element2NodesBoundary->reserve(_NMARK);
+        _element2NodesStartBoundary->reserve(_NMARK);
+        _elementTypesBoundary->reserve(_NMARK);
         _element2NodesBoundaryReserve = true;
         _element2NodesBoundaryReserves.assign(_NMARK, false);
     }
@@ -118,22 +174,22 @@ void MeshData::setElement2NodesFrontieres(vector<string> element2NodesFrontieres
     {
         vector<int> vecteur_temp1;
         vecteur_temp1.reserve(_MARKER_ELEMS[marker_index - 1] * (element2NodesFrontieres.size() - 1));
-        _element2NodesBoundary.push_back(vecteur_temp1);
+        _element2NodesBoundary->push_back(vecteur_temp1);
         vector<int> vecteur_temp2;
         vecteur_temp2.reserve(_MARKER_ELEMS[marker_index - 1] + 1);
-        _element2NodesStartBoundary.push_back(vecteur_temp2);
-        _element2NodesStartBoundary[marker_index - 1].push_back(0);
+        _element2NodesStartBoundary->push_back(vecteur_temp2);
+        _element2NodesStartBoundary->at(marker_index - 1).push_back(0);
         vector<int> vecteur_temp3;
         vecteur_temp3.reserve(_MARKER_ELEMS[marker_index - 1]);
-        _elementTypesBoundary.push_back(vecteur_temp3);
+        _elementTypesBoundary->push_back(vecteur_temp3);
         _element2NodesBoundaryReserves[marker_index - 1] = true;
     }
-    _elementTypesBoundary[marker_index - 1].push_back(stoi(element2NodesFrontieres[0]));
+    _elementTypesBoundary->at(marker_index - 1).push_back(stoi(element2NodesFrontieres[0]));
     for (size_t i = 1; i < element2NodesFrontieres.size(); i++)
     {
-        _element2NodesBoundary[marker_index - 1].push_back(stoi(element2NodesFrontieres[i]));
+        _element2NodesBoundary->at(marker_index - 1).push_back(stoi(element2NodesFrontieres[i]));
     }
-    _element2NodesStartBoundary[marker_index - 1].push_back(_element2NodesStartBoundary[marker_index - 1].back() + element2NodesFrontieres.size() - 1);
+    _element2NodesStartBoundary->at(marker_index - 1).push_back(_element2NodesStartBoundary->at(marker_index - 1).back() + element2NodesFrontieres.size() - 1);
     return;
 }
 
@@ -143,219 +199,82 @@ void MeshData::setEsup()
 {
     std::cout << "a°) Début de génération connectivité noeud vs elements.\n";
     // Orientation des éléments en Clock-Wise
-    _element2Nodes.reserve(_element2Nodes_unsorted.size());
+    _element2Nodes->reserve(_element2Nodes_unsorted->size());
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
         vector<int> nodes3 = {
-            _element2Nodes_unsorted[_element2NodesStart[iElem]],
-            _element2Nodes_unsorted[_element2NodesStart[iElem] + 1],
-            _element2Nodes_unsorted[_element2NodesStart[iElem] + 2]};
+            _element2Nodes_unsorted->at(_element2NodesStart->at(iElem)),
+            _element2Nodes_unsorted->at(_element2NodesStart->at(iElem) + 1),
+            _element2Nodes_unsorted->at(_element2NodesStart->at(iElem) + 2)};
         bool check = checkClockWise(nodes3);
         if (check) // Horaire
         {
-            for (int i = _element2NodesStart[iElem + 1] - 1; i >= _element2NodesStart[iElem]; i--)
+            for (int i = _element2NodesStart->at(iElem + 1) - 1; i >= _element2NodesStart->at(iElem); i--)
             {
-                _element2Nodes.push_back(_element2Nodes_unsorted[i]);
+                _element2Nodes->push_back(_element2Nodes_unsorted->at(i));
             }
         }
         else
         {
-            for (int i = _element2NodesStart[iElem]; i < _element2NodesStart[iElem + 1]; i++)
+            for (int i = _element2NodesStart->at(iElem); i < _element2NodesStart->at(iElem + 1); i++)
             {
-                _element2Nodes.push_back(_element2Nodes_unsorted[i]);
+                _element2Nodes->push_back(_element2Nodes_unsorted->at(i));
             }
         }
     }
 
     // Initialisation de _esupStart
 
-    _esupStart.assign(_NPOIN + 1, 0);
+    _esupStart->assign(_NPOIN + 1, 0);
 
     // Première passe et stockage
 
-    for (size_t i = 0; i < _element2Nodes.size(); i++)
+    for (size_t i = 0; i < _element2Nodes->size(); i++)
     {
-        _esupStart[_element2Nodes[i] + 1]++;
+        _esupStart->at(_element2Nodes->at(i) + 1)++;
     }
     for (int i = 1; i < _NPOIN + 1; i++)
     {
-        _esupStart[i] += _esupStart[i - 1];
+        _esupStart->at(i) += _esupStart->at(i - 1);
     }
 
     // Deuxième passe et stockage
 
-    _esup.assign(_esupStart.back(), 0);
+    _esup->assign(_esupStart->back(), 0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        for (int iNode = _element2NodesStart[iElem]; iNode < _element2NodesStart[iElem + 1]; iNode++)
+        for (int iNode = _element2NodesStart->at(iElem); iNode < _element2NodesStart->at(iElem + 1); iNode++)
         {
-            int nodeI = _element2Nodes[iNode];
-            int istor = _esupStart[nodeI];
-            _esupStart[nodeI]++;
-            _esup[istor] = iElem;
+            int nodeI = _element2Nodes->at(iNode);
+            int istor = _esupStart->at(nodeI);
+            _esupStart->at(nodeI)++;
+            _esup->at(istor) = iElem;
         }
     }
     for (int iNode = _NPOIN; iNode > 0; iNode--)
     {
-        _esupStart[iNode] = _esupStart[iNode - 1];
+        _esupStart->at(iNode) = _esupStart->at(iNode - 1);
     }
-    _esupStart[0] = 0;
+    _esupStart->at(0) = 0;
 
-    cout << "\t Fin génération connectivité noeud vs elements.\n";
-    cout << "-------------------------------------------------------\n";
+    std::cout << "\t Fin génération connectivité noeud vs elements.\n";
+    std::cout << "-------------------------------------------------------\n";
 
     return;
 }
 
-/* 
-int MeshData::VTK2NFAEL(const int &vtkIndex)
-{
-    return 0;
-}
-void MeshData::getVTKConnectivity(int vtkIndex, vector<vector<int>> &ilpofa, int iElem)
-{
-    switch (vtkIndex)
-    {
-    case 1:
-        // VERTEX
-        break;
-    case 2:
-        // POLY_VERTEX
-        break;
-    case 3:
-        // LINE
-        break;
-    case 4:
-        // POLY_LINE
-        break;
-    case 5:
-        // TRIANGLE
-        ilpofa.reserve(3);
-        for (size_t i = 0; i < 3; i++)
-        {
-            vector<int> nodes_temp;
-            nodes_temp.reserve(2);
-            nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i]);
-            if (i == 2)
-            {
-                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem]]);
-            }
-            else
-            {
-                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i + 1]);
-            }
-            ilpofa.push_back(nodes_temp);
-        }
-        break;
-    case 6:
-        // TRIANGLE_STRIP
-        break;
-    case 7:
-        // POLYGON
-        break;
-    case 8:
-        // PIXEL
-        ilpofa.reserve(4);
-        for (size_t i = 0; i < 4; i++)
-        {
-            vector<int> nodes_temp;
-            nodes_temp.reserve(2);
-            nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i]);
-            if (i == 3)
-            {
-                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem]]);
-            }
-            else
-            {
-                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i + 1]);
-            }
-            ilpofa.push_back(nodes_temp);
-        }
-        break;
-    case 9:
-        // QUAD
-        ilpofa.reserve(4);
-        for (size_t i = 0; i < 4; i++)
-        {
-            vector<int> nodes_temp;
-            nodes_temp.reserve(2);
-            nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i]);
-            if (i == 3)
-            {
-                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem]]);
-            }
-            else
-            {
-                nodes_temp.push_back(_element2Nodes[_element2NodesStart[iElem] + i + 1]);
-            }
-            ilpofa.push_back(nodes_temp);
-        }
-        break;
-    case 10:
-        // TETRA
-        break;
-    case 11:
-        // VOXEL
-        break;
-    case 12:
-        // HEXAHEDRON
-        break;
-    case 13:
-        // WEDGE
-        break;
-    case 14:
-        // PYRAMID
-        break;
-    default:
-        break;
-    }
-    return;
-}
-
-void MeshData::setNNOFA(int iElem, vector<vector<int>> &ilpofa)
-{
-    int vtkIndex = _elementTypes[iElem];
-    getVTKConnectivity(vtkIndex, ilpofa, iElem);
-    return;
-}
-
-void MeshData::setFaces()
-{
-    cout << "b°) Début de la génération de la connectivité des faces.\n";
-    _NFAEL.reserve(_NELEM);
-    _NNOFA.reserve(_NELEM);
-    _lpofa.reserve(_NELEM);
-    for (int iElem = 0; iElem < _NELEM; iElem++)
-    {
-        vector<vector<int>> ilpofa;
-        setNNOFA(iElem, ilpofa);
-        _lpofa.push_back(ilpofa);
-        _NFAEL.push_back(static_cast<int>(ilpofa.size()));
-        vector<int> iNNOFA;
-        iNNOFA.reserve(ilpofa.size());
-        for (size_t iFace = 0; iFace < ilpofa.size(); iFace++)
-        {
-            iNNOFA.push_back(static_cast<int>(ilpofa[iFace].size()));
-        }
-        _NNOFA.push_back(iNNOFA);
-    }
-    cout << "\tFin de la génération de la connectivité des faces.\n";
-    cout << "-----------------------------------------------------------\n";
-    return;
-}
-*/
 void MeshData::setEsuel()
 {
-    cout << "c°) Début de la génération de la connectivité element vs elements.\n";
+    std::cout << "c°) Début de la génération de la connectivité element vs elements.\n";
 
     // Construction de _esuelStart
-    _esuelStart.reserve(_NELEM + 1);
-    _esuelStart.push_back(0);
+    _esuelStart->reserve(_NELEM + 1);
+    _esuelStart->push_back(0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        _esuelStart.push_back(VTKConnectivity::getNfael(_elementTypes[iElem]) + _esuelStart.back());
+        _esuelStart->push_back(VTKConnectivity::getNfael(_elementTypes->at(iElem)) + _esuelStart->back());
     }
-    _NFACE = _esuelStart.back();
+    _NFACE = _esuelStart->back();
     _NBOUNDARY = 0;
     for (int iMark = 0; iMark < _NMARK; iMark++)
     {
@@ -366,63 +285,63 @@ void MeshData::setEsuel()
 
     // Construction de _esuel , _esuf et _fsuel
 
-    _esuel.assign(_esuelStart.back(), -1);
-    _fsuel.assign(_esuelStart.back(), -1);
-    _esuf.assign(2 * _NFACE, -1);
-    _psufStart.reserve(_NFACE + 1);
-    _psufStart.push_back(0);
-    _psuf.reserve(_NDIME * _NFACE);
+    _esuel->assign(_esuelStart->back(), -1);
+    _fsuel->assign(_esuelStart->back(), -1);
+    _esuf->assign(2 * _NFACE, -1);
+    _psufStart->reserve(_NFACE + 1);
+    _psufStart->push_back(0);
+    _psuf->reserve(_NDIME * _NFACE);
     int iFace = 0;
 
     vector<int> lpoin(_NPOIN, 0);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        for (int iFael = 0; iFael < VTKConnectivity::getNfael(_elementTypes[iElem]); iFael++)
+        for (int iFael = 0; iFael < VTKConnectivity::getNfael(_elementTypes->at(iElem)); iFael++)
         {
-            int nnofa = VTKConnectivity::getLnofa(_elementTypes[iElem], iFael);
-            vector<int> lhelp = VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
+            int nnofa = VTKConnectivity::getLnofa(_elementTypes->at(iElem), iFael);
+            vector<int> lhelp = VTKConnectivity::getLpofa(_elementTypes->at(iElem), iFael);
             for (int i = 0; i < nnofa; i++)
             {
-                lhelp[i] = _element2Nodes[_element2NodesStart[iElem] + lhelp[i]];
+                lhelp[i] = _element2Nodes->at(_element2NodesStart->at(iElem) + lhelp[i]);
                 lpoin[lhelp[i]] = 1;
             }
             int ipoin = lhelp[0];
-            for (int istor = _esupStart[ipoin]; istor < _esupStart[ipoin + 1]; istor++)
+            for (int istor = _esupStart->at(ipoin); istor < _esupStart->at(ipoin + 1); istor++)
             {
-                int jElem = _esup[istor];
+                int jElem = _esup->at(istor);
                 if (jElem != iElem)
                 {
-                    for (int jFael = 0; jFael < VTKConnectivity::getNfael(_elementTypes[jElem]); jFael++)
+                    for (int jFael = 0; jFael < VTKConnectivity::getNfael(_elementTypes->at(jElem)); jFael++)
                     {
-                        int nnofj = VTKConnectivity::getLnofa(_elementTypes[jElem], jFael);
+                        int nnofj = VTKConnectivity::getLnofa(_elementTypes->at(jElem), jFael);
                         if (nnofj == nnofa)
                         {
                             int icoun = 0;
-                            vector<int> lhelp_j = VTKConnectivity::getLpofa(_elementTypes[jElem], jFael);
+                            vector<int> lhelp_j = VTKConnectivity::getLpofa(_elementTypes->at(jElem), jFael);
                             for (int jnofa = 0; jnofa < nnofj; jnofa++)
                             {
-                                lhelp_j[jnofa] = _element2Nodes[_element2NodesStart[jElem] + lhelp_j[jnofa]];
+                                lhelp_j[jnofa] = _element2Nodes->at(_element2NodesStart->at(jElem) + lhelp_j[jnofa]);
                                 icoun += lpoin[lhelp_j[jnofa]];
                             }
                             if (icoun == nnofa)
                             {
-                                _esuel[_esuelStart[iElem] + iFael] = jElem;
+                                _esuel->at(_esuelStart->at(iElem) + iFael) = jElem;
 
-                                if (_esuel[_esuelStart[jElem] + jFael] == iElem)
+                                if (_esuel->at(_esuelStart->at(jElem) + jFael) == iElem)
                                 {
-                                    _fsuel[_esuelStart[iElem] + iFael] = _fsuel[_esuelStart[jElem] + jFael];
+                                    _fsuel->at(_esuelStart->at(iElem) + iFael) = _fsuel->at(_esuelStart->at(jElem) + jFael);
                                 }
                                 else
                                 {
                                     // Adding a new face
-                                    _fsuel[_esuelStart[iElem] + iFael] = iFace;
-                                    _fsuel[_esuelStart[jElem] + jFael] = iFace;
-                                    _esuf[iFace * 2 + 0] = iElem;
-                                    _esuf[iFace * 2 + 1] = jElem;
-                                    _psufStart.push_back(_psufStart.back() + nnofa);
+                                    _fsuel->at(_esuelStart->at(iElem) + iFael) = iFace;
+                                    _fsuel->at(_esuelStart->at(jElem) + jFael) = iFace;
+                                    _esuf->at(iFace * 2 + 0) = iElem;
+                                    _esuf->at(iFace * 2 + 1) = jElem;
+                                    _psufStart->push_back(_psufStart->back() + nnofa);
                                     for (int inofa = 0; inofa < nnofa; inofa++)
                                     {
-                                        _psuf.push_back(lhelp[inofa]);
+                                        _psuf->push_back(lhelp[inofa]);
                                     }
                                     iFace++;
                                 }
@@ -438,8 +357,8 @@ void MeshData::setEsuel()
             }
         }
     }
-    cout << "\tFin de la génération de la connectivité element vs elements.\n";
-    cout << "-------------------------------------------------------------------\n";
+    std::cout << "\tFin de la génération de la connectivité element vs elements.\n";
+    std::cout << "-------------------------------------------------------------------\n";
 
     return;
 }
@@ -448,25 +367,25 @@ void MeshData::setGhostCell()
 {
     int iFace = _NFACE - _NBOUNDARY;
     int nelem = _NELEM;
-    _face2bc.reserve(2 * _NBOUNDARY);
+    _face2bc->reserve(2 * _NBOUNDARY);
     for (int iElem = 0; iElem < _NELEM; iElem++)
     {
-        for (int j = _esuelStart[iElem]; j < _esuelStart[iElem + 1]; j++)
+        for (int j = _esuelStart->at(iElem); j < _esuelStart->at(iElem + 1); j++)
         {
-            if (_esuel[j] == -1)
+            if (_esuel->at(j) == -1)
             {
-                int iFael = j - _esuelStart[iElem];
-                _esuel[j] = nelem;
-                _esuf[iFace * 2 + 0] = iElem;
-                _esuf[iFace * 2 + 1] = nelem;
-                _fsuel[_esuelStart[iElem] + iFael] = iFace;
-                int nnofa = VTKConnectivity::getLnofa(_elementTypes[iElem], iFael);
-                _psufStart.push_back(_psufStart.back() + nnofa);
-                vector<int> lhelp = VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
+                int iFael = j - _esuelStart->at(iElem);
+                _esuel->at(j) = nelem;
+                _esuf->at(iFace * 2 + 0) = iElem;
+                _esuf->at(iFace * 2 + 1) = nelem;
+                _fsuel->at(_esuelStart->at(iElem) + iFael) = iFace;
+                int nnofa = VTKConnectivity::getLnofa(_elementTypes->at(iElem), iFael);
+                _psufStart->push_back(_psufStart->back() + nnofa);
+                vector<int> lhelp = VTKConnectivity::getLpofa(_elementTypes->at(iElem), iFael);
                 for (int i = 0; i < nnofa; i++)
                 {
-                    lhelp[i] = _element2Nodes[_element2NodesStart[iElem] + lhelp[i]];
-                    _psuf.push_back(lhelp[i]);
+                    lhelp[i] = _element2Nodes->at(_element2NodesStart->at(iElem) + lhelp[i]);
+                    _psuf->push_back(lhelp[i]);
                 }
                 for (int iMark = 0; iMark < _NMARK; iMark++)
                 {
@@ -477,8 +396,8 @@ void MeshData::setGhostCell()
                         std::sort(lhelp.begin(), lhelp.end());
                         if (lhelp == lhelp2)
                         {
-                            _face2bc.push_back(iFace);
-                            _face2bc.push_back(iMark);
+                            _face2bc->push_back(iFace);
+                            _face2bc->push_back(iMark);
                         }
                     }
                 }
@@ -494,18 +413,19 @@ void MeshData::setGhostCell()
 
 void MeshData::setBC()
 {
-    _bc2el.reserve(_NBOUNDARY);
-    _bc2elStart.reserve(_NMARK + 1);
-    _bc2elStart.push_back(0);
+    _bc2el->reserve(2 * _NBOUNDARY);
+    _bc2elStart->reserve(_NMARK + 1);
+    _bc2elStart->push_back(0);
     for (int iMark = 0; iMark < _NMARK; iMark++)
     {
-        _bc2elStart.push_back(_bc2elStart.back() + _MARKER_ELEMS[iMark]);
+        _bc2elStart->push_back(_bc2elStart->back() + _MARKER_ELEMS[iMark]);
         for (int iBoundary = 0; iBoundary < _NBOUNDARY; iBoundary++)
         {
-            if (_face2bc[2 * iBoundary + 1] == iMark)
+            if (_face2bc->at(2 * iBoundary + 1) == iMark)
             {
-                int iFace = _face2bc[2 * iBoundary];
-                _bc2el.push_back(_esuf[2 * iFace + 1]);
+                int iFace = _face2bc->at(2 * iBoundary);
+                _bc2el->push_back(_esuf->at(2 * iFace + 0));
+                _bc2el->push_back(_esuf->at(2 * iFace + 1));
             }
         }
     }
@@ -569,56 +489,56 @@ vector<int> MeshData::getMARKER_ELEMS() const
 
 /// Tableaux du maillage
 
-vector<double> MeshData::getNodes() const
+vector<double> *MeshData::getNodes() const
 {
     return _nodes;
 }
 
-vector<int> MeshData::getElement2Nodes() const
+vector<int> *MeshData::getElement2Nodes() const
 {
     return _element2Nodes;
 }
 
 void MeshData::getElement2Nodes(int &iElem, vector<int> &nodes) const
 {
-    for (int iNode = _element2NodesStart[iElem]; iNode < _element2NodesStart[iElem + 1]; iNode++)
+    for (int iNode = _element2NodesStart->at(iElem); iNode < _element2NodesStart->at(iElem + 1); iNode++)
     {
-        nodes.push_back(_element2Nodes[iNode]);
+        nodes.push_back(_element2Nodes->at(iNode));
     }
 
     return;
 }
 
-vector<int> MeshData::getElement2NodesStart() const
+vector<int> *MeshData::getElement2NodesStart() const
 {
     return _element2NodesStart;
 }
 
-vector<int> MeshData::getElementTypes() const
+vector<int> *MeshData::getElementTypes() const
 {
     return _elementTypes;
 }
 
-vector<vector<int>> MeshData::getElement2NodesBoundary() const
+vector<vector<int>> *MeshData::getElement2NodesBoundary() const
 {
     return _element2NodesBoundary;
 }
 
-vector<vector<int>> MeshData::getElement2NodesStartBoundary() const
+vector<vector<int>> *MeshData::getElement2NodesStartBoundary() const
 {
     return _element2NodesStartBoundary;
 }
 
-vector<vector<int>> MeshData::getElementTypesBoundary() const
+vector<vector<int>> *MeshData::getElementTypesBoundary() const
 {
     return _elementTypesBoundary;
 }
 
 void MeshData::getElement2NodesBoundary(int iMark, int iFael, vector<int> &lhelp)
 {
-    for (int i = _element2NodesStartBoundary[iMark][iFael]; i < _element2NodesStartBoundary[iMark][iFael + 1]; i++)
+    for (int i = _element2NodesStartBoundary->at(iMark)[iFael]; i < _element2NodesStartBoundary->at(iMark)[iFael + 1]; i++)
     {
-        lhelp.push_back(_element2NodesBoundary[iMark][i]);
+        lhelp.push_back(_element2NodesBoundary->at(iMark)[i]);
     }
     std::sort(lhelp.begin(), lhelp.end());
 
@@ -627,87 +547,87 @@ void MeshData::getElement2NodesBoundary(int iMark, int iFael, vector<int> &lhelp
 
 /// Connectivité
 
-vector<int> MeshData::getEsup() const
+vector<int> *MeshData::getEsup() const
 {
     return _esup;
 }
 
-vector<int> MeshData::getEsupStart() const
+vector<int> *MeshData::getEsupStart() const
 {
     return _esupStart;
 }
 
 int MeshData::getVTKindex(const int &iElem)
 {
-    return _elementTypes[iElem];
+    return _elementTypes->at(iElem);
 }
 
 int MeshData::getNfael(const int &iElem)
 {
-    return VTKConnectivity::getNfael(_elementTypes[iElem]);
+    return VTKConnectivity::getNfael(_elementTypes->at(iElem));
 }
 
 int MeshData::getLnofa(const int &iElem, const int &iFael)
 {
-    return VTKConnectivity::getLnofa(_elementTypes[iElem], iFael);
+    return VTKConnectivity::getLnofa(_elementTypes->at(iElem), iFael);
 }
 
 vector<int> MeshData::getLpofa(const int &iElem, const int &iFael)
 {
-    return VTKConnectivity::getLpofa(_elementTypes[iElem], iFael);
+    return VTKConnectivity::getLpofa(_elementTypes->at(iElem), iFael);
 }
 
 void MeshData::getFace2Nodes(int &iFace, vector<int> &nodes) const
 {
-    for (int iNode = _psufStart[iFace]; iNode < _psufStart[iFace + 1]; iNode++)
+    for (int iNode = _psufStart->at(iFace); iNode < _psufStart->at(iFace + 1); iNode++)
     {
-        nodes.push_back(_psuf[iNode]);
+        nodes.push_back(_psuf->at(iNode));
     }
 
     return;
 }
 
-vector<int> MeshData::getEsuel() const
+vector<int> *MeshData::getEsuel() const
 {
     return _esuel;
 }
 
-vector<int> MeshData::getEsuelStart() const
+vector<int> *MeshData::getEsuelStart() const
 {
     return _esuelStart;
 }
 
-vector<int> MeshData::getFsuel() const
+vector<int> *MeshData::getFsuel() const
 {
     return _fsuel;
 }
 
-vector<int> MeshData::getEsuf() const
+vector<int> *MeshData::getEsuf() const
 {
     return _esuf;
 }
 
-vector<int> MeshData::getPsuf() const
+vector<int> *MeshData::getPsuf() const
 {
     return _psuf;
 }
 
-vector<int> MeshData::getPsufStart() const
+vector<int> *MeshData::getPsufStart() const
 {
     return _psufStart;
 }
 
-vector<int> MeshData::getFace2bc() const
+vector<int> *MeshData::getFace2bc() const
 {
     return _face2bc;
 }
 
-vector<int> MeshData::getBc2el() const
+vector<int> *MeshData::getBc2el() const
 {
     return _bc2el;
 }
 
-vector<int> MeshData::getBc2elStart() const
+vector<int> *MeshData::getBc2elStart() const
 {
     return _bc2elStart;
 }
@@ -718,17 +638,17 @@ vector<int> MeshData::getBc2elStart() const
 
 void MeshData::initializeMetric()
 {
-    _element2Volumes.reserve(_NELEM);
-    _element2Centres.reserve(_NELEM * _NDIME);
-    _face2Aires.reserve(_NFACE);
-    _face2Centres.reserve(_NFACE * _NDIME);
-    _face2Normales.reserve(_NFACE * _NDIME);
+    _element2Volumes->reserve(_NELEM);
+    _element2Centres->reserve(_NELEM * _NDIME);
+    _face2Aires->reserve(_NFACE);
+    _face2Centres->reserve(_NFACE * _NDIME);
+    _face2Normales->reserve(_NFACE * _NDIME);
     return;
 }
 
 void MeshData::setElement2Volumes(const double &volume)
 {
-    _element2Volumes.push_back(volume);
+    _element2Volumes->push_back(volume);
     return;
 }
 
@@ -736,14 +656,14 @@ void MeshData::setElement2Centres(const vector<double> &centre)
 {
     for (size_t i = 0; i < centre.size(); i++)
     {
-        _element2Centres.push_back(centre[i]);
+        _element2Centres->push_back(centre[i]);
     }
     return;
 }
 
 void MeshData::setFace2Aires(const double &aire)
 {
-    _face2Aires.push_back(aire);
+    _face2Aires->push_back(aire);
     return;
 }
 
@@ -751,7 +671,7 @@ void MeshData::setFace2Centres(const vector<double> &centre)
 {
     for (size_t i = 0; i < centre.size(); i++)
     {
-        _face2Centres.push_back(centre[i]);
+        _face2Centres->push_back(centre[i]);
     }
 
     return;
@@ -761,32 +681,32 @@ void MeshData::setFace2Normales(const vector<double> &normale)
 {
     for (size_t i = 0; i < normale.size(); i++)
     {
-        _face2Normales.push_back(normale[i]);
+        _face2Normales->push_back(normale[i]);
     }
     return;
 }
 
-vector<double> MeshData::getElement2Volumes() const
+vector<double> *MeshData::getElement2Volumes() const
 {
     return _element2Volumes;
 }
 
-vector<double> MeshData::getElement2Centres() const
+vector<double> *MeshData::getElement2Centres() const
 {
     return _element2Centres;
 }
 
-vector<double> MeshData::getFace2Aires() const
+vector<double> *MeshData::getFace2Aires() const
 {
     return _face2Aires;
 }
 
-vector<double> MeshData::getFace2Centres() const
+vector<double> *MeshData::getFace2Centres() const
 {
     return _face2Centres;
 }
 
-vector<double> MeshData::getFace2Normales() const
+vector<double> *MeshData::getFace2Normales() const
 {
     return _face2Normales;
 }

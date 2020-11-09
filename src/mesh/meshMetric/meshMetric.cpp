@@ -6,7 +6,7 @@
 
 #include "./meshMetric.hpp"
 
-MeshMetric::MeshMetric(shared_ptr<MeshData> meshData)
+MeshMetric::MeshMetric(MeshData *meshData)
 {
     _meshData = meshData;
     _meshData->initializeMetric();
@@ -30,19 +30,19 @@ void MeshMetric::calculAireTriangle(vector<double> &pt1, vector<double> &pt2, ve
 
 void MeshMetric::calculTriangle(vector<int> &nodes, double &aire, vector<double> &centre)
 {
-    vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
-    vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
-    vector<double> pt3 = {_nodes[nodes[2] * 2], _nodes[nodes[2] * 2 + 1]};
+    vector<double> pt1 = {_nodes->at(nodes[0] * 2), _nodes->at(nodes[0] * 2 + 1)};
+    vector<double> pt2 = {_nodes->at(nodes[1] * 2), _nodes->at(nodes[1] * 2 + 1)};
+    vector<double> pt3 = {_nodes->at(nodes[2] * 2), _nodes->at(nodes[2] * 2 + 1)};
     calculAireTriangle(pt1, pt2, pt3, aire, centre);
     return;
 }
 
 void MeshMetric::calculQuad(vector<int> &nodes, double &aire, vector<double> &centre)
 {
-    vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
-    vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
-    vector<double> pt3 = {_nodes[nodes[2] * 2], _nodes[nodes[2] * 2 + 1]};
-    vector<double> pt4 = {_nodes[nodes[3] * 2], _nodes[nodes[3] * 2 + 1]};
+    vector<double> pt1 = {_nodes->at(nodes[0] * 2), _nodes->at(nodes[0] * 2 + 1)};
+    vector<double> pt2 = {_nodes->at(nodes[1] * 2), _nodes->at(nodes[1] * 2 + 1)};
+    vector<double> pt3 = {_nodes->at(nodes[2] * 2), _nodes->at(nodes[2] * 2 + 1)};
+    vector<double> pt4 = {_nodes->at(nodes[3] * 2), _nodes->at(nodes[3] * 2 + 1)};
     double aire1, aire2;
     vector<double> centre1, centre2;
     calculAireTriangle(pt1, pt2, pt3, aire1, centre1);
@@ -82,8 +82,8 @@ void MeshMetric::setFaces()
         vector<int> nodes;
         _meshData->getFace2Nodes(iFace, nodes);
         // En 2D on a:
-        vector<double> pt1 = {_nodes[nodes[0] * 2], _nodes[nodes[0] * 2 + 1]};
-        vector<double> pt2 = {_nodes[nodes[1] * 2], _nodes[nodes[1] * 2 + 1]};
+        vector<double> pt1 = {_nodes->at(nodes[0] * 2), _nodes->at(nodes[0] * 2 + 1)};
+        vector<double> pt2 = {_nodes->at(nodes[1] * 2), _nodes->at(nodes[1] * 2 + 1)};
         double aire = sqrt(pow(pt2[1] - pt1[1], 2) + pow(pt2[0] - pt1[0], 2));
         vector<double> normale = {(pt2[1] - pt1[1]) / aire, (pt2[0] - pt1[0]) / aire};
         vector<double> centre = {(pt2[0] + pt1[0]) / 2., (pt2[1] + pt1[1]) / 2.};

@@ -21,10 +21,10 @@ class MeshRead : public StringTools
 {
 private:
     string _path;
-    shared_ptr<MeshData> _meshData;
+    MeshData *_meshData;
 
 public:
-    MeshRead(string &path, shared_ptr<MeshData> meshData);
+    MeshRead(string &path, MeshData *meshData);
     ~MeshRead();
     void readFile();
 };

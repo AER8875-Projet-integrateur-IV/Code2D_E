@@ -6,7 +6,7 @@
 
 #include <./su2Reader.hpp>
 
-Su2Reader::Su2Reader(string &path, shared_ptr<MeshData> meshData)
+Su2Reader::Su2Reader(string &path, MeshData *meshData)
 {
     _path = path;
     _meshData = meshData;
