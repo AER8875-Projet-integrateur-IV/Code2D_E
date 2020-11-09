@@ -6,7 +6,7 @@
 
 #include "./solver.hpp"
 
-Solver::Solver(shared_ptr<MeshData> meshData, shared_ptr<InputData> inputData)
+Solver::Solver(MeshData *meshData, InputData *inputData)
 {
     _meshData = meshData;
     _inputData = inputData;
@@ -37,6 +37,10 @@ void Solver::initializeSolver()
     _conditionsLimites = _inputData->getConditionsLimites();
     _bc2el = _meshData->getBc2el();
     _bc2elStart = _meshData->getBc2elStart();
+    // Connectivité
+
+    // Métriques
+    _face2Normales = _meshData->getFace2Normales();
     return;
 }
 
@@ -47,6 +51,7 @@ void Solver::initializeSolution()
     W.rhoU.assign(meshDim.NELEM + meshDim.NBOUNDARY, props.Ma * sqrt(props.gamma) * cos(props.AOA));
     W.rhoV.assign(meshDim.NELEM + meshDim.NBOUNDARY, props.Ma * sqrt(props.gamma) * sin(props.AOA));
     W.rhoE.assign(meshDim.NELEM + meshDim.NBOUNDARY, 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma);
+    W.Vn.reserve(meshDim.NELEM + meshDim.NBOUNDARY);
 
     dW.rho.assign(meshDim.NELEM, 0.);
     dW.rhoU.assign(meshDim.NELEM, 0.);
@@ -65,25 +70,31 @@ void Solver::updateBoundaryCells()
 
             if (props.Ma > 1) // Supersonic
             {
-                for (int iBoundary = _bc2elStart[iMark]; iBoundary < _bc2elStart[iMark + 1]; iBoundary++)
+                for (int iBoundary = _bc2elStart->at(iMark); iBoundary < _bc2elStart->at(iMark + 1); iBoundary++)
                 {
-                    int iCell = _bc2el[iBoundary];
-                    W.rho[iCell] = 1;
-                    W.rhoU[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
-                    W.rhoV[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
-                    W.rhoE[iCell] = 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma;
+                    //int iCelld = _bc2el[->at(2 * iBoundary);
+                    int iCellb = _bc2el->at(2 * iBoundary + 1);
+                    W.rho[iCellb] = 1;
+                    W.rhoU[iCellb] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                    W.rhoV[iCellb] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                    W.rhoE[iCellb] = 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma;
                 }
+            }
+            else
+            {
+                continue;
             }
         }
         else if (type == 1) // Wall
         {
-            for (int iBoundary = _bc2elStart[iMark]; iBoundary < _bc2elStart[iMark + 1]; iBoundary++)
+            for (int iBoundary = _bc2elStart->at(iMark); iBoundary < _bc2elStart->at(iMark + 1); iBoundary++)
             {
-                int iCell = _bc2el[iBoundary];
-                W.rho[iCell] = 1;
-                W.rhoU[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
-                W.rhoV[iCell] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
-                W.rhoE[iCell] = 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma;
+                //int iCelld = _bc2el[2 * iBoundary];
+                int iCellb = _bc2el->at(2 * iBoundary + 1);
+                W.rho[iCellb] = 1;
+                W.rhoU[iCellb] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                W.rhoV[iCellb] = props.Ma * sqrt(props.gamma) * cos(props.AOA);
+                W.rhoE[iCellb] = 1 / (props.gamma - 1) + 0.5 * props.gamma * props.Ma * props.Ma;
             }
         }
     }

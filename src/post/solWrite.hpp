@@ -5,6 +5,7 @@
 /Projet: Projet Intégrateur 4
 */
 
+/*
 #pragma once
 
 #include <iostream>
@@ -29,3 +30,4 @@ public:
     ~SolWrite();
     void writeFile();
 };
+*/

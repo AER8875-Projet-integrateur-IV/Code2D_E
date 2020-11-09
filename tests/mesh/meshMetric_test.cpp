@@ -5,27 +5,27 @@
 */
 #include "./meshMetric_test.hpp"
 
-void metricElements(shared_ptr<MeshData> meshData) // Etat: Probleme avec le signe des aires
+void metricElements(MeshData *meshData) // Etat: Probleme avec le signe des aires
 {
     cout << "Début fonction metricElements()\n";
     for (int i = 0; i < meshData->getNELEM(); i++)
     {
-        cout << "Element (" << i << "): Volume = " << meshData->getElement2Volumes()[i];
-        cout << " Centre = (" << meshData->getElement2Centres()[2 * i] << ", " << meshData->getElement2Centres()[2 * i + 1];
+        cout << "Element (" << i << "): Volume = " << meshData->getElement2Volumes()->at(i);
+        cout << " Centre = (" << meshData->getElement2Centres()->at(2 * i) << ", " << meshData->getElement2Centres()->at(2 * i + 1);
         cout << ")\n";
     }
     cout << "Fin fonction metricElements()\n";
     return;
 }
 
-void metricFaces(shared_ptr<MeshData> meshData) // Etat: Succés
+void metricFaces(MeshData *meshData) // Etat: Succés
 {
     cout << "Début fonction metricFaces()\n";
     for (int i = 0; i < meshData->getNFACE(); i++)
     {
-        cout << "Face (" << i << "): Aire = " << meshData->getFace2Aires()[i];
-        cout << " Centre = (" << meshData->getFace2Centres()[2 * i] << ", " << meshData->getFace2Centres()[2 * i + 1];
-        cout << ") Normale = (" << meshData->getFace2Normales()[2 * i] << ", " << meshData->getFace2Normales()[2 * i + 1];
+        cout << "Face (" << i << "): Aire = " << meshData->getFace2Aires()->at(i);
+        cout << " Centre = (" << meshData->getFace2Centres()->at(2 * i) << ", " << meshData->getFace2Centres()->at(2 * i + 1);
+        cout << ") Normale = (" << meshData->getFace2Normales()->at(2 * i) << ", " << meshData->getFace2Normales()->at(2 * i + 1);
         cout << ")\n";
     }
     cout << "Fin fonction metricFaces()\n";
@@ -34,7 +34,7 @@ void metricFaces(shared_ptr<MeshData> meshData) // Etat: Succés
 
 void main_meshMetric_Test()
 {
-    shared_ptr<MeshData> meshData = make_shared<MeshData>();
+    MeshData *meshData = new MeshData();
     string path1 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/naca0012_euler_9x9x1_O_1B.su2";
     string path2 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/square_5x5.su2";
     string path3 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/NACA0012_65_mixed.su2";
@@ -46,6 +46,7 @@ void main_meshMetric_Test()
     meshMetric.setMetric();
     metricElements(meshData);
     metricFaces(meshData);
+    delete meshData;
 
     return;
 }

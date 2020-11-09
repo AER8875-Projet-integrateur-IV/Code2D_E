@@ -38,16 +38,24 @@ struct MeshDimension
 class Solver
 {
 private:
-    shared_ptr<MeshData> _meshData;
-    shared_ptr<InputData> _inputData;
+    MeshData *_meshData;
+    InputData *_inputData;
     Solution W;
     Solution dW;
     Properties props;
     MeshDimension meshDim;
 
+    // Conditions limites
     vector<int> _conditionsLimites;
-    vector<int> _bc2el;
-    vector<int> _bc2elStart;
+    vector<int> *_bc2el;
+    vector<int> *_bc2elStart;
+
+    // Métriques
+    vector<double> *_element2Volumes;
+    vector<double> *_element2Centres;
+    vector<double> *_face2Aires;
+    vector<double> *_face2Centres;
+    vector<double> *_face2Normales;
 
     void initializeSolver();
     void initializeSolution();
@@ -55,7 +63,7 @@ private:
     void computeTimeSteps();
 
 public:
-    Solver(shared_ptr<MeshData> meshData, shared_ptr<InputData> inputData);
+    Solver(MeshData *meshData, InputData *inputData);
     ~Solver();
 
     // Setters

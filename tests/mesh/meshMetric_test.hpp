@@ -14,7 +14,7 @@
 
 using namespace std;
 
-void metricElements(shared_ptr<MeshData> meshData);
-void metricFaces(shared_ptr<MeshData> meshData);
+void metricElements(MeshData *meshData);
+void metricFaces(MeshData *meshData);
 
 void main_meshMetric_Test();

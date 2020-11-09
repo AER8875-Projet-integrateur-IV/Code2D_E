@@ -17,4 +17,5 @@ struct Solution
     vector<double> rhoU;
     vector<double> rhoV;
     vector<double> rhoE;
+    vector<double> Vn;
 };

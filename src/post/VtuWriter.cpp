@@ -4,7 +4,7 @@
 /Projet: Projet Intégrateur 4
 */
 
-
+/*
 #include "./VtuWriter.hpp"
 
 using std::ofstream;
@@ -160,3 +160,4 @@ void VtuWriter::writeCells(ofstream &fileStream)
   	           << "\n"
   	           << "</VTKFile>";
   }
+*/
