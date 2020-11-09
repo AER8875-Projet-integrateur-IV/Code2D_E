@@ -15,6 +15,7 @@ Solver::Solver(MeshData *meshData, InputData *inputData)
     _W = new Solution();
     _dW = new Solution();
     _F = new Flux();
+    _R = new Residual();
     _schemes = new Schemes(_meshData, _inputData, _F, _W);
     return;
 }
@@ -25,6 +26,7 @@ Solver::~Solver()
     delete _W;
     delete _dW;
     delete _F;
+    delete _R;
     delete _schemes;
     return;
 }
@@ -46,11 +48,13 @@ void Solver::initializeSolver()
     // Conditions limites
     _conditionsLimites = _inputData->getConditionsLimites();
     // Connectivité
+    _esuf = _meshData->getEsuf();
     _bc2el = _meshData->getBc2el();
     _bc2elStart = _meshData->getBc2elStart();
     _bc2face = _meshData->getBc2face();
     // Métriques
     _element2Volumes = _meshData->getElement2Volumes();
+    _face2Aires = _meshData->getFace2Aires();
     _face2Normales = _meshData->getFace2Normales();
     _CVprojections = _meshData->getCVprojections();
     return;
@@ -59,19 +63,24 @@ void Solver::initializeSolver()
 void Solver::initializeSolution()
 {
     //Initialisaton de la solution
-    _W->rho.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1);
+    _W->rho.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1.);
     _W->U.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * cos(_props.AOA));
     _W->V.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * sin(_props.AOA));
     _W->E.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma);
-    _W->p.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1);
-    _W->H.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1);
+    _W->p.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1.);
+    _W->H.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1.);
 
     _timeSteps->assign(_meshDim.NELEM, 0.);
 
-    _F->rhoV.assign(_meshDim.NFACE, 0);
-    _F->rhouV.assign(_meshDim.NFACE, 0);
-    _F->rhovV.assign(_meshDim.NFACE, 0);
-    _F->rhoHV.assign(_meshDim.NFACE, 0);
+    _F->rhoV.assign(_meshDim.NFACE, 0.);
+    _F->rhouV.assign(_meshDim.NFACE, 0.);
+    _F->rhovV.assign(_meshDim.NFACE, 0.);
+    _F->rhoHV.assign(_meshDim.NFACE, 0.);
+
+    _R->rhoVds.assign(_meshDim.NELEM, 0.);
+    _R->rhouVds.assign(_meshDim.NELEM, 0.);
+    _R->rhovVds.assign(_meshDim.NELEM, 0.);
+    _R->rhoHVds.assign(_meshDim.NELEM, 0.);
 
     _dW->rho.assign(_meshDim.NELEM, 0.);
     _dW->U.assign(_meshDim.NELEM, 0.);
@@ -176,6 +185,33 @@ void Solver::computeTimeSteps()
     {
         convSpecRadii = (abs(_W->U[iElem]) + _props.c) * _CVprojections->at(2 * iElem) + (abs(_W->V[iElem]) + _props.c) * _CVprojections->at(2 * iElem + 1);
         _timeSteps->at(iElem) = _props.CFL * _element2Volumes->at(iElem) / convSpecRadii;
+    }
+
+    return;
+}
+
+void Solver::computeResiduals()
+{
+    fill(_R->rhoVds.begin(), _R->rhoVds.end(), 0.);
+    fill(_R->rhouVds.begin(), _R->rhouVds.end(), 0.);
+    fill(_R->rhovVds.begin(), _R->rhovVds.end(), 0.);
+    fill(_R->rhoHVds.begin(), _R->rhoHVds.end(), 0.);
+    int L, R;
+    for (int iFace = 0; iFace < _meshDim.NFACE; iFace++)
+    {
+        L = _esuf->at(2 * iFace + 0);
+        R = _esuf->at(2 * iFace + 1);
+        _R->rhoVds[R] -= _F->rhoV[R] * _face2Aires->at(iFace);
+        _R->rhoVds[L] += _F->rhoV[L] * _face2Aires->at(iFace);
+
+        _R->rhouVds[R] -= _F->rhouV[R] * _face2Aires->at(iFace);
+        _R->rhouVds[L] += _F->rhouV[L] * _face2Aires->at(iFace);
+
+        _R->rhovVds[R] -= _F->rhovV[R] * _face2Aires->at(iFace);
+        _R->rhovVds[L] += _F->rhovV[L] * _face2Aires->at(iFace);
+
+        _R->rhoHVds[R] -= _F->rhoHV[R] * _face2Aires->at(iFace);
+        _R->rhoHVds[L] += _F->rhoHV[L] * _face2Aires->at(iFace);
     }
 
     return;

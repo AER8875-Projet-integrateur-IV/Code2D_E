@@ -28,3 +28,11 @@ struct Flux
     vector<double> rhovV;
     vector<double> rhoHV;
 };
+
+struct Residual
+{
+    vector<double> rhoVds;
+    vector<double> rhouVds;
+    vector<double> rhovVds;
+    vector<double> rhoHVds;
+};

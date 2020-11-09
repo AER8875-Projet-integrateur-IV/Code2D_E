@@ -39,6 +39,7 @@ class Solver
 {
 private:
     InputData *_inputData;
+    Properties _props;
     MeshData *_meshData;
     MeshDimension _meshDim;
     Schemes *_schemes;
@@ -46,8 +47,8 @@ private:
     Solution *_W;
     Solution *_dW;
     Flux *_F;
-    Properties _props;
     vector<double> *_timeSteps;
+    Residual *_R;
 
     // Conditions limites
     vector<int> _conditionsLimites;
