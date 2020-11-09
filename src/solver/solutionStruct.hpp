@@ -23,5 +23,8 @@ struct Solution
 
 struct Flux
 {
-    vector<double> Vn;
+    vector<double> rhoV;
+    vector<double> rhouV;
+    vector<double> rhovV;
+    vector<double> rhoHV;
 };

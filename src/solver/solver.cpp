@@ -14,6 +14,8 @@ Solver::Solver(MeshData *meshData, InputData *inputData)
     _timeSteps = new vector<double>();
     _W = new Solution();
     _dW = new Solution();
+    _F = new Flux();
+    _schemes = new Schemes(_meshData, _inputData, _F, _W);
     return;
 }
 
@@ -22,6 +24,8 @@ Solver::~Solver()
     delete _timeSteps;
     delete _W;
     delete _dW;
+    delete _F;
+    delete _schemes;
     return;
 }
 
@@ -60,8 +64,14 @@ void Solver::initializeSolution()
     _W->V.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * sin(_props.AOA));
     _W->E.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma);
     _W->p.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1);
+    _W->H.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1);
 
     _timeSteps->assign(_meshDim.NELEM, 0.);
+
+    _F->rhoV.assign(_meshDim.NFACE, 0);
+    _F->rhouV.assign(_meshDim.NFACE, 0);
+    _F->rhovV.assign(_meshDim.NFACE, 0);
+    _F->rhoHV.assign(_meshDim.NFACE, 0);
 
     _dW->rho.assign(_meshDim.NELEM, 0.);
     _dW->U.assign(_meshDim.NELEM, 0.);

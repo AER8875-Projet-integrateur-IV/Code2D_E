@@ -8,12 +8,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <memory>
 #include <math.h>
 
 #include "../mesh/meshData/meshData.hpp"
 #include "../inputData.hpp"
 #include "./solutionStruct.hpp"
+#include "./schemes/schemes.hpp"
 
 using namespace std;
 
@@ -41,10 +41,11 @@ private:
     InputData *_inputData;
     MeshData *_meshData;
     MeshDimension _meshDim;
+    Schemes *_schemes;
     // Paramètres du solveurs
     Solution *_W;
     Solution *_dW;
-    Flux _F;
+    Flux *_F;
     Properties _props;
     vector<double> *_timeSteps;
 

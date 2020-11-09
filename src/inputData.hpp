@@ -23,6 +23,7 @@ private:
 
     string _title;
     string _meshPath;
+    string _scheme;
 
     double _Mach;
     double _AOA;
@@ -51,6 +52,7 @@ public:
     // Getters
     string getTitle() const;
     string getMeshPath() const;
+    string getScheme() const;
 
     double getMachNumber() const;
     double getAOA() const;

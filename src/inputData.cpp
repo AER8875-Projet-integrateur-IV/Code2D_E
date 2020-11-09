@@ -95,6 +95,11 @@ bool InputData::setIndice(string ligne, int &indice)
         indice = 0;
         _meshPath = getEqualValue(ligne);
     }
+    else if (ligne.find("SCHEMA") != string::npos)
+    {
+        indice = 0;
+        _scheme = getEqualValue(ligne);
+    }
     else if (ligne.find("DENSITE") != string::npos)
     {
         indice = 0;
@@ -196,4 +201,9 @@ double InputData::getRatioCpCv() const
 vector<int> InputData::getConditionsLimites() const
 {
     return _conditionsLimites;
+}
+
+string InputData::getScheme() const
+{
+    return _scheme;
 }
