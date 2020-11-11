@@ -15,6 +15,7 @@
 
 #include "../mesh/meshData/meshData.hpp"
 #include "./VtuWriter.hpp"
+#include "./TecWriter.hpp"
 #include "../../tools/stringTools.hpp"
 
 using namespace std;
