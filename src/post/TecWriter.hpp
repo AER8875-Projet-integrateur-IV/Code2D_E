@@ -3,7 +3,7 @@
 /Date: novembre 2020
 /Projet: Projet Intégrateur 4
 */
-
+/*
 #pragma once
 
 #include <iostream>
@@ -29,7 +29,7 @@ private:
 /*       void setElement2Nodes(string ligne); */
 /*       void setElement2NodesFrontieres(string ligne, int marker_index); */
 /*       void setNodes(string ligne); */
-
+/* 
 public:
     TecWriter(string &format, shared_ptr<MeshData> meshData);
     ~TecWriter();
@@ -42,3 +42,4 @@ public:
     // void writeCellsData(std::ofstream&);
     // void endFile(std::ofstream&);
 };
+*/
