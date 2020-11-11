@@ -3,7 +3,7 @@
 /Date: novembre 2020
 /Projet: Projet Intégrateur 4
 */
-
+/*
 
 #include "./TecWriter.hpp"
 
@@ -96,3 +96,4 @@ void TecWriter::writeFaceConnectivity(ofstream &fileStream)
             fileStream << "\n";
       }
   }
+*/
