@@ -109,7 +109,7 @@ void MeshMetric::setCVprojections()
         {
             iFace = _fsuel->at(j);
             S[0] += abs(_face2Normales->at(2 * iFace) * _face2Aires->at(iFace));
-            S[0] += abs(_face2Normales->at(2 * iFace + 1) * _face2Aires->at(iFace + 1));
+            S[1] += abs(_face2Normales->at(2 * iFace + 1) * _face2Aires->at(iFace));
         }
         S[0] /= 0.5;
         S[1] /= 0.5;

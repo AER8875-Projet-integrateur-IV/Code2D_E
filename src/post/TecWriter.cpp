@@ -3,40 +3,40 @@
 /Date: novembre 2020
 /Projet: Projet Intégrateur 4
 */
-/*
 
 #include "./TecWriter.hpp"
 
 using std::ofstream;
 
-TecWriter::TecWriter(string &format, shared_ptr<MeshData> meshData)
+TecWriter::TecWriter(string &path, MeshData *meshData)
 {
-    _format = format;
-    _meshData = meshData;
-    _outputFile = NULL;
+  _path = path;
+  _meshData = meshData;
+  _outputFile = NULL;
 }
 
 ///////////Validation du fichier
 TecWriter::~TecWriter()
 {
-    if (_outputFile != NULL)
-    {
-        fclose(_outputFile);
-    }
-    return;
+  if (_outputFile != NULL)
+  {
+    fclose(_outputFile);
+  }
+  return;
 }
 
 void TecWriter::writeFile()
 {
   /////////Suite de void qui ecrivent le fichier*
-  ofstream fileStream(_format);
+  ofstream fileStream(_path);
   beginFile(fileStream);
   writeNewZone(fileStream);
   writeCoord(fileStream);
   writeVar(fileStream);
-  writeFaceConnectivity(fileStream);
+  //writeFaceConnectivity(fileStream);
+  writeElementConnectivity(fileStream);
   fileStream.close();
- }
+}
 
 ///////////Début du fichier
 void TecWriter::beginFile(ofstream &fileStream)
@@ -47,53 +47,45 @@ void TecWriter::beginFile(ofstream &fileStream)
 void TecWriter::writeNewZone(ofstream &fileStream)
 {
   fileStream << "ZONE "
-           << "ZONETYPE=FEPOLYGON "
-           << "NODES=" << _meshData->getNPOIN() << ", "
-           << "ELEMENTS=" << _meshData->getNELEM() << ", "
-           << "FACES=" << _meshData->getNFACE() << ", "
-           << "NUMCONNECTEDBOUNDARYFACES=0, TOTALNUMBOUNDARYCONNECTIONS=0\n"
-           << "DATAPACKING=BLOCK";
+             << "ZONETYPE=FEQUADRILATERAL "
+             << "NODES=" << _meshData->getNPOIN() << ", "
+             << "ELEMENTS=" << _meshData->getNELEM() << ", "
+             << "FACES=" << _meshData->getNFACE() << ", "
+             << "NUMCONNECTEDBOUNDARYFACES=0, TOTALNUMBOUNDARYCONNECTIONS=0\n"
+             << "DATAPACKING=BLOCK\n";
 }
 
 ///////////Ecriture des coordonnees des points
 void TecWriter::writeCoord(ofstream &fileStream)
 {
 
-    uint32_t returnline = 0;
-    for (returnline = 0; returnline < unsigned(_meshData->getNPOIN()) ; returnline=returnline+1)
-         {
-       		fileStream << _meshData->getNodes()[2*returnline] << "\t" << _meshData->getNodes()[2*returnline+1] << "\t"
-       		           << "0.0"
-       		           << "\n";
-         //_meshData->getNodes()[2*returnline+2] pour ndim=3
-       	}
+  uint32_t returnline = 0;
+  for (returnline = 0; returnline < unsigned(_meshData->getNPOIN()); returnline = returnline + 1)
+  {
+    fileStream << _meshData->getNodes()->at(2 * returnline) << "\n";
+  }
+  for (returnline = 0; returnline < unsigned(_meshData->getNPOIN()); returnline = returnline + 1)
+  {
+    fileStream << _meshData->getNodes()->at(2 * returnline + 1) << "\n";
+  }
 }
 
 ///////////Ecriture des variables
 void TecWriter::writeVar(ofstream &fileStream)
 {
-    // cout << "Tec file start4" << endl;
+  // cout << "Tec file start4" << endl;
 }
 
 ///////////Ecriture des Connectivités
-void TecWriter::writeFaceConnectivity(ofstream &fileStream)
+
+void TecWriter::writeElementConnectivity(ofstream &fileStream)
 {
-  int returnline = 0;
-  for (returnline = 0; returnline < _meshData->getNFACE() ; returnline=returnline+1)
-      {
-           vector<int> nodes;
-          _meshData->getFace2Nodes(returnline, nodes);
-          for (size_t i = 0; i < nodes.size(); i++)
-          {
-              fileStream << nodes[i] << "\t";
-          }
-        fileStream << "\n";
-      }
-  returnline = 0;
-  for (returnline = 0; returnline < _meshData->getNFACE() ; returnline=returnline+1)
-      {
-            fileStream << _meshData->getEsuf()[2*returnline] << "\t"<< _meshData->getEsuf()[(2*returnline)+1];
-            fileStream << "\n";
-      }
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  {
+    for (int jNode = _meshData->getElement2NodesStart()->at(iElem); jNode < _meshData->getElement2NodesStart()->at(iElem + 1); jNode++)
+    {
+      fileStream << _meshData->getElement2Nodes()->at(jNode) + 1 << "\t";
+    }
+    fileStream << "\n";
   }
-*/
+}

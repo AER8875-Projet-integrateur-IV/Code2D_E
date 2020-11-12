@@ -3,6 +3,7 @@ build/
 CMakeLists.txt
 tests/mesh/exemple_mesh
 tests/inputData/Example.project
+tests/post/test_path_2.dat
 
 # Pour c++
 #----------------------------------------------

@@ -5,7 +5,6 @@
 /Projet: Projet Intégrateur 4
 */
 
-/*
 #pragma once
 
 #include <iostream>
@@ -20,15 +19,14 @@
 
 using namespace std;
 
-class SolWrite
+class SolWrite : public StringTools
 {
 private:
-    string _format;
-    shared_ptr<MeshData> _meshData;
+    string _path;
+    MeshData *_meshData;
 
 public:
-    SolWrite(string &fromat, shared_ptr<MeshData> meshData);
+    SolWrite(string &path, MeshData *meshData);
     ~SolWrite();
     void writeFile();
 };
-*/
