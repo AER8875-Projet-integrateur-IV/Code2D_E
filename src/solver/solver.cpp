@@ -129,25 +129,27 @@ void Solver::updateBoundaryCells()
                 for (int iBoundary = _bc2elStart->at(iMark); iBoundary < _bc2elStart->at(iMark + 1); iBoundary++)
                 {
                     int iCelld = _bc2el->at(2 * iBoundary);
-                    int iCellb = _bc2el->at(2 * iBoundary + 1);
+                    //int iCellb = _bc2el->at(2 * iBoundary + 1);
                     int iFace = _bc2face->at(iBoundary);
-                    double Vn;
-                    computeVn(_W, iCelld, iFace, Vn);
+                    double Vn = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
+                    //computeVn(_W, iCelld, iFace, Vn);
                     if (Vn < 0) // inflow
                     {
-                        _W->rho[iCellb] = 1.;
-                        _W->rhoU[iCellb] = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA);
-                        _W->rhoV[iCellb] = _props.Ma * sqrt(_props.gamma) * sin(_props.AOA);
-                        _W->p[iCellb] = 1.;
-                        computeEnergie(_W, iCellb);
+
+                        _F->rhoV[iFace] = 1. * Vn;
+                        _F->rhouV[iFace] = 1. * _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * Vn;
+                        _F->rhovV[iFace] = 1. * _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * Vn;
+                        _F->rhoHV[iFace] = 1. * (1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1.) * Vn;
+                        //computeEnergie(_W, iCellb);
                     }
                     else // outflow
                     {
-                        _W->rho[iCellb] = _W->rho[iCelld];
-                        _W->rhoU[iCellb] = _W->rhoU[iCelld];
-                        _W->rhoV[iCellb] = _W->rhoV[iCelld];
-                        _W->p[iCellb] = _W->p[iCelld];
-                        computeEnergie(_W, iCellb);
+                        computeVn(_W, iCelld, iFace, Vn);
+                        _F->rhoV[iFace] = _W->rho[iCelld] * Vn;
+                        _F->rhouV[iFace] = _W->rhoU[iCelld] * Vn;
+                        _F->rhovV[iFace] = _W->rhoV[iCelld] * Vn;
+                        _F->rhoHV[iFace] = _W->rho[iCelld] * _W->H[iCelld] * Vn;
+                        //computeEnergie(_W, iCellb);
                     }
                 }
             }
@@ -189,13 +191,13 @@ void Solver::updateBoundaryCells()
                 int iCelld = _bc2el->at(2 * iBoundary);
                 int iCellb = _bc2el->at(2 * iBoundary + 1);
                 int iFace = _bc2face->at(iBoundary);
-                double Vn;
-                computeVn(_W, iCelld, iFace, Vn);
-                _W->rho[iCellb] = _W->rho[iCelld];
-                _W->rhoU[iCellb] = _W->rhoU[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace) * _W->rho[iCellb];
-                _W->rhoV[iCellb] = _W->rhoV[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace + 1) * _W->rho[iCellb];
-                _W->p[iCellb] = _W->p[iCelld];
-                computeEnergie(_W, iCellb);
+                //double Vn;
+                //computeVn(_W, iCelld, iFace, Vn);
+                _F->rhoV[iCellb] = 0;                                                  //_W->rho[iCelld];
+                _F->rhouV[iCellb] = _face2Normales->at(2 * iFace) * _W->p[iCelld];     //_W->rhoU[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace) * _W->rho[iCellb];
+                _F->rhovV[iCellb] = _face2Normales->at(2 * iFace + 1) * _W->p[iCelld]; //_W->rhoV[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace + 1) * _W->rho[iCellb];
+                _F->rhoHV[iCellb] = 0;                                                 //_W->p[iCelld];
+                //computeEnergie(_W, iCellb);
             }
         }
     }
@@ -225,28 +227,28 @@ void Solver::computeResiduals()
     {
         L = _esuf->at(2 * iFace + 0);
         R = _esuf->at(2 * iFace + 1);
-        _R->rhoVds[R] -= _F->rhoV[R] * _face2Aires->at(iFace);
-        _R->rhoVds[L] += _F->rhoV[L] * _face2Aires->at(iFace);
+        _R->rhoVds[R] -= _F->rhoV[iFace] * _face2Aires->at(iFace);
+        _R->rhoVds[L] += _F->rhoV[iFace] * _face2Aires->at(iFace);
 
-        _R->rhouVds[R] -= _F->rhouV[R] * _face2Aires->at(iFace);
-        _R->rhouVds[L] += _F->rhouV[L] * _face2Aires->at(iFace);
+        _R->rhouVds[R] -= _F->rhouV[iFace] * _face2Aires->at(iFace);
+        _R->rhouVds[L] += _F->rhouV[iFace] * _face2Aires->at(iFace);
 
-        _R->rhovVds[R] -= _F->rhovV[R] * _face2Aires->at(iFace);
-        _R->rhovVds[L] += _F->rhovV[L] * _face2Aires->at(iFace);
+        _R->rhovVds[R] -= _F->rhovV[iFace] * _face2Aires->at(iFace);
+        _R->rhovVds[L] += _F->rhovV[iFace] * _face2Aires->at(iFace);
 
-        _R->rhoHVds[R] -= _F->rhoHV[R] * _face2Aires->at(iFace);
-        _R->rhoHVds[L] += _F->rhoHV[L] * _face2Aires->at(iFace);
+        _R->rhoHVds[R] -= _F->rhoHV[iFace] * _face2Aires->at(iFace);
+        _R->rhoHVds[L] += _F->rhoHV[iFace] * _face2Aires->at(iFace);
     }
     for (int iFace = _meshDim.NFACE - _meshDim.NBOUNDARY; iFace < _meshDim.NFACE; iFace++)
     {
         L = _esuf->at(2 * iFace + 0);
-        _R->rhoVds[L] += _F->rhoV[L] * _face2Aires->at(iFace);
+        _R->rhoVds[L] += _F->rhoV[iFace] * _face2Aires->at(iFace);
 
-        _R->rhouVds[L] += _F->rhouV[L] * _face2Aires->at(iFace);
+        _R->rhouVds[L] += _F->rhouV[iFace] * _face2Aires->at(iFace);
 
-        _R->rhovVds[L] += _F->rhovV[L] * _face2Aires->at(iFace);
+        _R->rhovVds[L] += _F->rhovV[iFace] * _face2Aires->at(iFace);
 
-        _R->rhoHVds[L] += _F->rhoHV[L] * _face2Aires->at(iFace);
+        _R->rhoHVds[L] += _F->rhoHV[iFace] * _face2Aires->at(iFace);
     }
 
     return;
@@ -275,6 +277,27 @@ void Solver::makeOneIteration()
     _schemes->computeConservativesVariables();
     updateW();
     updateBoundaryCells();
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    {
+        cout << "Element " << iElem << " "
+             << _W->rho[iElem] << " "
+             << _W->rhoU[iElem] << " "
+             << _W->rhoV[iElem] << " "
+             << _W->rhoE[iElem] << " "
+             << _W->p[iElem] << " "
+             << _W->H[iElem] << " "
+             << "dT " << _timeSteps->at(iElem) << " "
+             << "R "
+             << _R->rhoVds[iElem] << " "
+             << _R->rhouVds[iElem] << " "
+             << _R->rhovVds[iElem] << " "
+             << _R->rhoHVds[iElem] << " "
+             << "dW: "
+             << _dW->rho[iElem] << " "
+             << _dW->rhoU[iElem] << " "
+             << _dW->rhoV[iElem] << " "
+             << _dW->rhoE[iElem] << "\n";
+    }
     return;
 }
 
@@ -283,7 +306,7 @@ void Solver::runSolver()
     cout << "Démarrage de l'éxécution du solveur\n";
     initializeSolution();
     cout << "Afichage de la solution initiale: \n";
-    for (int iElem = 0; iElem < _meshDim.NELEM + _meshDim.NBOUNDARY; iElem++)
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
         cout << "Element " << iElem << " "
              << _W->rho[iElem] << " "
@@ -300,7 +323,7 @@ void Solver::runSolver()
 
     cout << "Fin de l'éxécution du solveur\n";
     cout << "Afichage de la solution Finale: \n";
-    for (int iElem = 0; iElem < _meshDim.NELEM + _meshDim.NBOUNDARY; iElem++)
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
         cout << "Element " << iElem << " "
              << _W->rho[iElem] << " "
