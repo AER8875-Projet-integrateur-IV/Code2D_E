@@ -3,7 +3,7 @@ build/
 CMakeLists.txt
 tests/mesh/exemple_mesh
 tests/inputData/Example.project
-tests/post/test_path_2.dat
+*.dat
 
 # Pour c++
 #----------------------------------------------
@@ -181,3 +181,5 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+tests/solver/Solution_path_1.dat
+tests/solver/Solution_path_1.dat

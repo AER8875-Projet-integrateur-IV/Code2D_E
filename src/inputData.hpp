@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <memory>
+#include "math.h"
 
 #include "./tools/stringTools.hpp"
 
@@ -43,6 +43,7 @@ private:
     bool isFileValid();
     bool setIndice(string ligne, int &indice);
     void setParametres(string ligne, int indice);
+    void computeSoundSpeed();
 
 public:
     InputData(string &path);

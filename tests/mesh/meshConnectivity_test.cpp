@@ -99,6 +99,24 @@ void connectiviteFaces(MeshData *meshData) // Etat: Succés
     cout << "Fin fonction connectiviteFaces()\n";
     return;
 }
+void connectiviteBoundary(MeshData *meshData)
+{
+    cout << "Début fonction connectiviteBoundary()\n";
+    for (int iMark = 0; iMark < meshData->getNMARK(); iMark++)
+    {
+        cout << "Bc2elStart: " << meshData->getBc2elStart()->at(iMark + 1) << " (" << iMark << ")\n";
+        for (int iBoundary = meshData->getBc2elStart()->at(iMark); iBoundary < meshData->getBc2elStart()->at(iMark + 1); iBoundary++)
+        {
+            int iCelld = meshData->getBc2el()->at(2 * iBoundary);
+            int iCellb = meshData->getBc2el()->at(2 * iBoundary + 1);
+            int iFace = meshData->getBc2face()->at(iBoundary);
+            cout << iCellb << " " << iCelld << " " << iFace << "\n";
+        }
+        cout << "\n";
+    }
+    cout << "Fin fonction connectiviteBoundary()\n";
+    return;
+}
 
 void main_meshConnectivity_Test()
 {
@@ -107,13 +125,14 @@ void main_meshConnectivity_Test()
     string path2 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/square_5x5.su2";
     string path3 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/NACA0012_65_mixed.su2";
     string path4 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/maillage_exemple_prof.su2";
-    MeshRead meshRead = MeshRead(path2, meshData);
+    MeshRead meshRead = MeshRead(path4, meshData);
     meshRead.readFile();
     meshData->setConnectivity();
     connectiviteNodeElements(meshData);
     connectiviteFacesLocale(meshData);
     connectiviteElementElements(meshData);
     connectiviteFaces(meshData);
+    connectiviteBoundary(meshData);
     delete meshData;
 
     return;

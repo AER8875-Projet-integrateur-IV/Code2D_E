@@ -38,8 +38,8 @@ void Solver::initializeSolver()
     _props.Ma = _inputData->getMachNumber();
     _props.AOA = _inputData->getAOA();
     _props.CFL = _inputData->getCFL();
-    _props.c = _inputData->getSoundSpeed();
     _props.gamma = _inputData->getRatioCpCv();
+    _props.c = sqrt(_props.gamma); //_inputData->getSoundSpeed();
     _props.Niter = _inputData->getIterationMax();
     // Dimensions du maillage
     _meshDim.NELEM = _meshData->getNELEM();
@@ -59,7 +59,7 @@ void Solver::initializeSolver()
     _face2Aires = _meshData->getFace2Aires();
     _face2Normales = _meshData->getFace2Normales();
     _CVprojections = _meshData->getCVprojections();
-    cout << "Fin de la fonction initializeSolver() de la classe Solver.\n";
+    cout << "\tFin de la fonction initializeSolver() de la classe Solver.\n";
     return;
 }
 
@@ -68,7 +68,6 @@ void Solver::initializeSolution()
     cout << "Début de la fonction initializeSolution() de la classe Solver.\n";
     //Initialisaton de la solution
     _W->rho.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1.);
-    cout << "INIT " << cos(_props.AOA) << sqrt(_props.gamma) << _props.Ma << endl;
     _W->rhoU.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * cos(_props.AOA));
     _W->rhoV.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * sin(_props.AOA));
     _W->rhoE.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma);
@@ -93,7 +92,7 @@ void Solver::initializeSolution()
     _dW->rhoE.assign(_meshDim.NELEM, 0.);
 
     updateBoundaryCells();
-    cout << "Fin de la fonction initializeSolution() de la classe Solver.\n";
+    cout << "\tFin de la fonction initializeSolution() de la classe Solver.\n";
     return;
 }
 
@@ -207,9 +206,11 @@ void Solver::updateBoundaryCells()
 void Solver::computeTimeSteps()
 {
     double convSpecRadii;
+    double c;
     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
-        convSpecRadii = (abs(_W->rhoU[iElem] / _W->rho[iElem]) + _props.c) * _CVprojections->at(2 * iElem) + (abs(_W->rhoV[iElem] / _W->rho[iElem]) + _props.c) * _CVprojections->at(2 * iElem + 1);
+        c = sqrt(_props.gamma * _W->p[iElem] / _W->rho[iElem]);
+        convSpecRadii = (abs(_W->rhoU[iElem] / _W->rho[iElem]) + c) * _CVprojections->at(2 * iElem + 0) + (abs(_W->rhoV[iElem] / _W->rho[iElem]) + c) * _CVprojections->at(2 * iElem + 1);
         _timeSteps->at(iElem) = _props.CFL * _element2Volumes->at(iElem) / convSpecRadii;
     }
 
@@ -282,7 +283,7 @@ void Solver::runSolver()
     cout << "Démarrage de l'éxécution du solveur\n";
     initializeSolution();
     cout << "Afichage de la solution initiale: \n";
-    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    for (int iElem = 0; iElem < _meshDim.NELEM + _meshDim.NBOUNDARY; iElem++)
     {
         cout << "Element " << iElem << " "
              << _W->rho[iElem] << " "
@@ -299,7 +300,7 @@ void Solver::runSolver()
 
     cout << "Fin de l'éxécution du solveur\n";
     cout << "Afichage de la solution Finale: \n";
-    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    for (int iElem = 0; iElem < _meshDim.NELEM + _meshDim.NBOUNDARY; iElem++)
     {
         cout << "Element " << iElem << " "
              << _W->rho[iElem] << " "
@@ -314,8 +315,8 @@ void Solver::runSolver()
 
 void Solver::computeEnergie(Solution *solution, int &index)
 {
-    solution->rhoE[index] = solution->p[index] / ((_props.gamma - 1) * solution->rho[index]) + 0.5 * (solution->rhoU[index] * solution->rhoU[index] + solution->rhoV[index] * solution->rhoV[index]) / (solution->rho[index] * solution->rho[index]);
-    solution->H[index] = solution->rhoE[index] / solution->rho[index] + solution->p[index] / solution->rho[index];
+    solution->rhoE[index] = solution->p[index] / (_props.gamma - 1) + 0.5 * (solution->rhoU[index] * solution->rhoU[index] + solution->rhoV[index] * solution->rhoV[index]) / solution->rho[index];
+    solution->H[index] = (solution->rhoE[index] + solution->p[index]) / solution->rho[index];
     return;
 }
 

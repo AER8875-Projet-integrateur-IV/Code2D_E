@@ -169,6 +169,11 @@ void InputData::setParametres(string ligne, int indice)
     return;
 }
 
+void InputData::computeSoundSpeed()
+{
+    _soundSpeed = sqrt(_ratioCpCv * _pressure / _density);
+}
+
 string InputData::getTitle() const
 {
     return _title;

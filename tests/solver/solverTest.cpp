@@ -17,7 +17,7 @@ SolverTest::~SolverTest()
     return;
 }
 
-void SolverTest::initializeSolver()
+void SolverTest::initializeSolver() // Etat : Succés
 {
     _solver->runSolver();
     return;
@@ -30,7 +30,8 @@ void main_solver_Test()
     string path2 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/square_5x5.su2";
     string path3 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/NACA0012_65_mixed.su2";
     string path4 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/maillage_exemple_prof.su2";
-    MeshRead meshRead = MeshRead(path1, meshData);
+    string path5 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/naca0012_euler_33x33x1_O_1B.su2";
+    MeshRead meshRead = MeshRead(path5, meshData);
     meshRead.readFile();
     meshData->setConnectivity();
     MeshMetric meshMetric = MeshMetric(meshData);
@@ -43,7 +44,7 @@ void main_solver_Test()
     SolverTest solverTest = SolverTest(meshData, inputData, solver);
     solverTest.initializeSolver();
     Solution *solution = solver->getSolution();
-    string fichierOut = "./tests/solver/Solution_path_1.dat";
+    string fichierOut = "./tests/solver/Solution_path_5.dat";
     SolWrite solWriter = SolWrite(fichierOut, meshData, solution);
     solWriter.writeFile();
     delete meshData;

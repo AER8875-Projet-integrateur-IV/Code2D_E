@@ -59,11 +59,13 @@ void RoeScheme::computeFluxCentres()
     {
         L = _esuf->at(2 * iFace + 0);
         R = _esuf->at(2 * iFace + 1);
+
         Vn_L = _W->rhoU[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 1);
         Vn_R = _W->rhoU[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 1);
+
         _Fcentre->rhoV[iFace] = 0.5 * (_W->rho[L] * Vn_L + _W->rho[R] * Vn_R);
-        _Fcentre->rhouV[iFace] = 0.5 * (_W->rhoU[L] * Vn_L + _W->rhoU[R] * Vn_R + _face2Normales->at(iFace + 0) * (_W->p[L] + _W->p[R]));
-        _Fcentre->rhovV[iFace] = 0.5 * (_W->rhoV[L] * Vn_L + _W->rhoV[R] * Vn_R + _face2Normales->at(iFace + 1) * (_W->p[L] + _W->p[R]));
+        _Fcentre->rhouV[iFace] = 0.5 * (_W->rhoU[L] * Vn_L + _W->rhoU[R] * Vn_R + _face2Normales->at(2 * iFace + 0) * (_W->p[L] + _W->p[R]));
+        _Fcentre->rhovV[iFace] = 0.5 * (_W->rhoV[L] * Vn_L + _W->rhoV[R] * Vn_R + _face2Normales->at(2 * iFace + 1) * (_W->p[L] + _W->p[R]));
         _Fcentre->rhoHV[iFace] = 0.5 * (_W->rho[L] * _W->H[L] * Vn_L + _W->rho[R] * _W->H[R] * Vn_R);
     }
     return;
@@ -78,14 +80,20 @@ void RoeScheme::computeFluxDissip()
     {
         L = _esuf->at(2 * iFace + 0);
         R = _esuf->at(2 * iFace + 1);
+
         Vn_L = _W->rhoU[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 1);
         Vn_R = _W->rhoU[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 1);
+
         rho_ = sqrt(_W->rho[L] * _W->rho[R]);
-        u_ = (_W->rhoU[L] / _W->rho[L] * sqrt(_W->rho[L]) + _W->rhoU[R] / _W->rho[R] * sqrt(_W->rho[R])) / (sqrt(_W->rho[L]) + sqrt(_W->rho[R]));
-        v_ = (_W->rhoV[L] / _W->rho[L] * sqrt(_W->rho[L]) + _W->rhoV[R] / _W->rho[R] * sqrt(_W->rho[R])) / (sqrt(_W->rho[L]) + sqrt(_W->rho[R]));
+
+        u_ = (_W->rhoU[L] / sqrt(_W->rho[L]) + _W->rhoU[R] / sqrt(_W->rho[R])) / (sqrt(_W->rho[L]) + sqrt(_W->rho[R]));
+        v_ = (_W->rhoV[L] / sqrt(_W->rho[L]) + _W->rhoV[R] / sqrt(_W->rho[R])) / (sqrt(_W->rho[L]) + sqrt(_W->rho[R]));
+
         H_ = (_W->H[L] * sqrt(_W->rho[L]) + _W->H[R] * sqrt(_W->rho[R])) / (sqrt(_W->rho[L]) + sqrt(_W->rho[R]));
+
         q2_ = u_ * u_ + v_ * v_;
         c_ = sqrt((_inputData->getRatioCpCv() - 1) * (H_ - q2_ * 0.5));
+
         V_ = u_ * _face2Normales->at(2 * iFace + 0) + v_ * _face2Normales->at(2 * iFace + 1);
 
         DF1 = abs(V_ - c_) * ((_W->p[R] - _W->p[L] - rho_ * c_ * (Vn_R - Vn_L)) / (2 * c_ * c_));
@@ -93,8 +101,10 @@ void RoeScheme::computeFluxDissip()
         DF5 = abs(V_ + c_) * ((_W->p[R] - _W->p[L] + rho_ * c_ * (Vn_R - Vn_L)) / (2 * c_ * c_));
 
         _Fdissip->rhoV[iFace] = 0.5 * (DF1 * 1. + abs(V_) * (DF234 * 1. + 0.) + DF5 * 1.);
+
         _Fdissip->rhouV[iFace] = 0.5 * (DF1 * (u_ - c_ * _face2Normales->at(2 * iFace + 0)) + DF5 * (u_ + c_ * _face2Normales->at(2 * iFace + 0)) + abs(V_) * (DF234 * u_ + rho_ * (_W->rhoU[R] / _W->rho[R] - _W->rhoU[L] / _W->rho[L] - (Vn_R - Vn_L) * _face2Normales->at(2 * iFace + 0))));
         _Fdissip->rhovV[iFace] = 0.5 * (DF1 * (v_ - c_ * _face2Normales->at(2 * iFace + 1)) + DF5 * (v_ + c_ * _face2Normales->at(2 * iFace + 1)) + abs(V_) * (DF234 * v_ + rho_ * (_W->rhoV[R] / _W->rho[R] - _W->rhoV[L] / _W->rho[L] - (Vn_R - Vn_L) * _face2Normales->at(2 * iFace + 1))));
+
         _Fdissip->rhoHV[iFace] = 0.5 * (DF1 * (H_ - c_ * V_) + DF5 * (H_ + c_ * V_) + abs(V_) * (DF234 * q2_ * 0.5 + rho_ * (u_ * (_W->rhoU[R] / _W->rho[R] - _W->rhoU[L] / _W->rho[L]) + v_ * (_W->rhoV[R] / _W->rho[R] - _W->rhoV[L] / _W->rho[L]) - (Vn_R - Vn_L) * V_)));
     }
     return;

@@ -18,5 +18,6 @@ void connectiviteNodeElements(MeshData *meshData);
 void connectiviteFacesLocale(MeshData *meshData);
 void connectiviteElementElements(MeshData *meshData);
 void connectiviteFaces(MeshData *meshData);
+void connectiviteBoundary(MeshData *meshData);
 
 void main_meshConnectivity_Test();

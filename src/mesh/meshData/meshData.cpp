@@ -653,7 +653,7 @@ void MeshData::initializeMetric()
     _face2Aires->reserve(_NFACE);
     _face2Centres->reserve(_NFACE * _NDIME);
     _face2Normales->reserve(_NFACE * _NDIME);
-    _CVprojections->reserve(_NFACE * _NDIME);
+    _CVprojections->reserve(_NELEM * _NDIME);
     return;
 }
 
@@ -699,7 +699,7 @@ void MeshData::setFace2Normales(const vector<double> &normale)
 
 void MeshData::setCVprojections(const vector<double> &S)
 {
-    _CVprojections->push_back(S[1]);
+    _CVprojections->push_back(S[0]);
     _CVprojections->push_back(S[1]);
     return;
 }
