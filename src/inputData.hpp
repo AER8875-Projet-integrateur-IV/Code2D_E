@@ -56,9 +56,10 @@ public:
     string getSchemeSpace() const;
     string getSchemeTime() const;
 
+    int getIterationMax() const;
+
     double getMachNumber() const;
     double getAOA() const;
-
     double getSoundSpeed() const;
     double getCFL() const;
     double getRatioCpCv() const;

@@ -218,3 +218,8 @@ string InputData::getSchemeTime() const
 {
     return _schemeTime;
 }
+
+int InputData::getIterationMax() const
+{
+    return _iterationMax;
+}

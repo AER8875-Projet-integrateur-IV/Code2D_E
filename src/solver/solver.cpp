@@ -39,6 +39,7 @@ void Solver::initializeSolver()
     _props.CFL = _inputData->getCFL();
     _props.c = _inputData->getSoundSpeed();
     _props.gamma = _inputData->getRatioCpCv();
+    _props.Niter = _inputData->getIterationMax();
     // Dimensions du maillage
     _meshDim.NELEM = _meshData->getNELEM();
     _meshDim.NPOIN = _meshData->getNPOIN();
@@ -86,6 +87,8 @@ void Solver::initializeSolution()
     _dW->rhoU.assign(_meshDim.NELEM, 0.);
     _dW->rhoV.assign(_meshDim.NELEM, 0.);
     _dW->rhoE.assign(_meshDim.NELEM, 0.);
+
+    updateBoundaryCells();
 
     return;
 }
@@ -211,6 +214,7 @@ void Solver::computeTimeSteps()
 
 void Solver::computeResiduals()
 {
+
     int L, R;
     for (int iFace = 0; iFace < _meshDim.NFACE - _meshDim.NBOUNDARY; iFace++)
     {
@@ -240,6 +244,59 @@ void Solver::computeResiduals()
         _R->rhoHVds[L] += _F->rhoHV[L] * _face2Aires->at(iFace);
     }
 
+    return;
+}
+
+void Solver::updateW()
+{
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    {
+        _W->rho[iElem] += _dW->rho[iElem];
+        _W->rhoU[iElem] += _dW->rhoU[iElem];
+        _W->rhoV[iElem] += _dW->rhoV[iElem];
+        _W->rhoE[iElem] += _dW->rhoE[iElem];
+        _W->p[iElem] = (_props.gamma - 1) * (_W->rhoE[iElem] - (_W->rhoU[iElem] * _W->rhoU[iElem] + _W->rhoV[iElem] * _W->rhoV[iElem]) / (2 * _W->rho[iElem]));
+        _W->H[iElem] = (_W->rhoE[iElem] + _W->p[iElem]) / _W->rho[iElem];
+    }
+    return;
+}
+
+void Solver::makeOneIteration()
+{
+    initializeEachIteration();
+    computeTimeSteps();
+    _schemes->computeConvectivesFlux();
+    computeResiduals();
+    _schemes->computeConservativesVariables();
+    updateW();
+    updateBoundaryCells();
+    return;
+}
+
+void Solver::runSolver()
+{
+    cout << "Démarrage de l'éxécution du solveur\n";
+    initializeSolution();
+
+    for (int iter = 0; iter < _props.Niter; iter++)
+    {
+        cout << "Début Itération " << iter + 1;
+        makeOneIteration();
+        cout << " - Fin Itération " << iter + 1 << endl;
+    }
+
+    cout << "Fin de l'éxécution du solveur\n";
+    cout << "Afichage de la solution: \n";
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    {
+        cout << "Element " << iElem << " "
+             << _W->rho[iElem] << " "
+             << _W->rhoU[iElem] << " "
+             << _W->rhoV[iElem] << " "
+             << _W->rhoE[iElem] << " "
+             << _W->p[iElem] << " "
+             << _W->H[iElem] << "\n";
+    }
     return;
 }
 

@@ -24,6 +24,7 @@ struct Properties
     double CFL;
     double c;
     double gamma;
+    int Niter;
 };
 
 struct MeshDimension
@@ -89,10 +90,12 @@ private:
     void computeTimeSteps();
     void computeResiduals();
     void updateW();
+    void makeOneIteration();
 
 public:
     Solver(MeshData *meshData, InputData *inputData);
     ~Solver();
+    void runSolver();
 
     // Setters
 };
