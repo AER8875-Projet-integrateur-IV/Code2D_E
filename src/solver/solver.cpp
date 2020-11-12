@@ -33,6 +33,7 @@ Solver::~Solver()
 
 void Solver::initializeSolver()
 {
+    cout << "Début de la fonction initializeSolver() de la classe Solver.\n";
     // Propiétés fluides et paramètres solveur
     _props.Ma = _inputData->getMachNumber();
     _props.AOA = _inputData->getAOA();
@@ -58,13 +59,16 @@ void Solver::initializeSolver()
     _face2Aires = _meshData->getFace2Aires();
     _face2Normales = _meshData->getFace2Normales();
     _CVprojections = _meshData->getCVprojections();
+    cout << "Fin de la fonction initializeSolver() de la classe Solver.\n";
     return;
 }
 
 void Solver::initializeSolution()
 {
+    cout << "Début de la fonction initializeSolution() de la classe Solver.\n";
     //Initialisaton de la solution
     _W->rho.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1.);
+    cout << "INIT " << cos(_props.AOA) << sqrt(_props.gamma) << _props.Ma << endl;
     _W->rhoU.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * cos(_props.AOA));
     _W->rhoV.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * sin(_props.AOA));
     _W->rhoE.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma);
@@ -89,7 +93,7 @@ void Solver::initializeSolution()
     _dW->rhoE.assign(_meshDim.NELEM, 0.);
 
     updateBoundaryCells();
-
+    cout << "Fin de la fonction initializeSolution() de la classe Solver.\n";
     return;
 }
 
@@ -277,16 +281,24 @@ void Solver::runSolver()
 {
     cout << "Démarrage de l'éxécution du solveur\n";
     initializeSolution();
-
+    cout << "Afichage de la solution initiale: \n";
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    {
+        cout << "Element " << iElem << " "
+             << _W->rho[iElem] << " "
+             << _W->rhoU[iElem] << " "
+             << _W->rhoV[iElem] << " "
+             << _W->rhoE[iElem] << " "
+             << _W->p[iElem] << " "
+             << _W->H[iElem] << "\n";
+    }
     for (int iter = 0; iter < _props.Niter; iter++)
     {
-        cout << "Début Itération " << iter + 1;
         makeOneIteration();
-        cout << " - Fin Itération " << iter + 1 << endl;
     }
 
     cout << "Fin de l'éxécution du solveur\n";
-    cout << "Afichage de la solution: \n";
+    cout << "Afichage de la solution Finale: \n";
     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
         cout << "Element " << iElem << " "
@@ -311,4 +323,11 @@ void Solver::computeVn(const Solution *solution, int &iCell, int &iFace, double 
 {
     Vn = (solution->rhoU[iCell] * _face2Normales->at(2 * iFace) + solution->rhoV[iCell] * _face2Normales->at(2 * iFace + 1)) / solution->rho[iCell];
     return;
+}
+
+// Getters
+
+Solution *Solver::getSolution() const
+{
+    return _W;
 }

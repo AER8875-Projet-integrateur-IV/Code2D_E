@@ -18,8 +18,8 @@ void main_postTecplot_Test()
     MeshMetric meshMetric = MeshMetric(meshData);
     meshMetric.setMetric();
     string extensionfichier = "./tests/post/test_path_2.dat";
-    SolWrite solWriter = SolWrite(extensionfichier, meshData);
-    solWriter.writeFile();
+    //SolWrite solWriter = SolWrite(extensionfichier, meshData);
+    //solWriter.writeFile();
     delete meshData;
 
     return;

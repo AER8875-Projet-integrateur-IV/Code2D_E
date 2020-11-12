@@ -13,6 +13,7 @@
 #include "../../src/mesh/meshMetric/meshMetric.hpp"
 #include "../../src/inputData.hpp"
 #include "../../src/solver/solver.hpp"
+#include "../../src/post/solWrite.hpp"
 
 using namespace std;
 class SolverTest

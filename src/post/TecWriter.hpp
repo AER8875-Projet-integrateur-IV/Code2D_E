@@ -14,6 +14,7 @@
 
 #include "../mesh/meshData/meshData.hpp"
 #include "../../tools/stringTools.hpp"
+#include "../solver/solutionStruct.hpp"
 
 using namespace std;
 
@@ -22,12 +23,13 @@ class TecWriter
 private:
     string _path;
     MeshData *_meshData;
+    Solution *_solution;
     FILE *_outputFile;
 
     bool isFileValid();
 
 public:
-    TecWriter(string &path, MeshData *meshData);
+    TecWriter(string &path, MeshData *meshData, Solution *solution);
     ~TecWriter();
     void writeFile();
     void beginFile(std::ofstream &);

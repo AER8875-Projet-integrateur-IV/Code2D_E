@@ -16,7 +16,7 @@ Schemes::Schemes(MeshData *meshData, InputData *inputData, Flux *F, Solution *W,
     _R = R;
     _timeSteps = timeSteps;
     _schemaSpace = _inputData->getSchemeSpace();
-    _schemaSpace = _inputData->getSchemeTime();
+    _schemaTime = _inputData->getSchemeTime();
     _roeScheme = new RoeScheme(_meshData, _inputData, _F, _W);
     _eulerExplicitScheme = new EulerExplicitScheme(_meshData, _R, _dW, _timeSteps);
     return;

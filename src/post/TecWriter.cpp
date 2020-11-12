@@ -8,10 +8,11 @@
 
 using std::ofstream;
 
-TecWriter::TecWriter(string &path, MeshData *meshData)
+TecWriter::TecWriter(string &path, MeshData *meshData, Solution *solution)
 {
   _path = path;
   _meshData = meshData;
+  _solution = solution;
   _outputFile = NULL;
 }
 
@@ -41,7 +42,7 @@ void TecWriter::writeFile()
 ///////////Début du fichier
 void TecWriter::beginFile(ofstream &fileStream)
 {
-  fileStream << "TITLE = \"Exemple\"\nVARIABLES = \"X\",\"Y\"" << endl;
+  fileStream << "TITLE = \"Exemple\"\nVARIABLES = \"X\",\"Y\",\"Densité\",\"Vitesse U\",\"Vitesse V\", \"Pression\",\"Énergie\"" << endl;
 }
 
 void TecWriter::writeNewZone(ofstream &fileStream)
@@ -52,7 +53,7 @@ void TecWriter::writeNewZone(ofstream &fileStream)
              << "ELEMENTS=" << _meshData->getNELEM() << ", "
              << "FACES=" << _meshData->getNFACE() << ", "
              << "NUMCONNECTEDBOUNDARYFACES=0, TOTALNUMBOUNDARYCONNECTIONS=0\n"
-             << "DATAPACKING=BLOCK\n";
+             << "DATAPACKING=BLOCK, VARLOCATION=([3-7]=CELLCENTERED)\n";
 }
 
 ///////////Ecriture des coordonnees des points
@@ -73,7 +74,26 @@ void TecWriter::writeCoord(ofstream &fileStream)
 ///////////Ecriture des variables
 void TecWriter::writeVar(ofstream &fileStream)
 {
-  // cout << "Tec file start4" << endl;
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  {
+    fileStream << _solution->rho[iElem] << "\n";
+  }
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  {
+    fileStream << _solution->rhoU[iElem] / _solution->rho[iElem] << "\n";
+  }
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  {
+    fileStream << _solution->rhoV[iElem] / _solution->rho[iElem] << "\n";
+  }
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  {
+    fileStream << _solution->rhoE[iElem] / _solution->rho[iElem] << "\n";
+  }
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  {
+    fileStream << _solution->p[iElem] << "\n";
+  }
 }
 
 ///////////Ecriture des Connectivités

@@ -88,7 +88,7 @@ bool InputData::setIndice(string ligne, int &indice)
     else if (ligne.find("ANGLE D'ATTAQUE") != string::npos)
     {
         indice = 0;
-        _AOA = stod(getEqualValue(ligne));
+        _AOA = stod(getEqualValue(ligne)) * 3.14159265 / 180.;
     }
     else if (ligne.find("MAILLAGE") != string::npos)
     {

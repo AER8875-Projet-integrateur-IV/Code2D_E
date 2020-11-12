@@ -16,6 +16,7 @@
 #include "./VtuWriter.hpp"
 #include "./TecWriter.hpp"
 #include "../../tools/stringTools.hpp"
+#include "../solver/solutionStruct.hpp"
 
 using namespace std;
 
@@ -24,9 +25,10 @@ class SolWrite : public StringTools
 private:
     string _path;
     MeshData *_meshData;
+    Solution *_solution;
 
 public:
-    SolWrite(string &path, MeshData *meshData);
+    SolWrite(string &path, MeshData *meshData, Solution *solution);
     ~SolWrite();
     void writeFile();
 };

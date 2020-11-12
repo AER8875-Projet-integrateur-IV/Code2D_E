@@ -97,5 +97,6 @@ public:
     ~Solver();
     void runSolver();
 
-    // Setters
+    // Getters
+    Solution *getSolution() const;
 };
