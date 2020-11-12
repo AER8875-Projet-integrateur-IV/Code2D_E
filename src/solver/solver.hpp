@@ -84,9 +84,11 @@ private:
 
     void initializeSolver();
     void initializeSolution();
+    void initializeEachIteration();
     void updateBoundaryCells();
     void computeTimeSteps();
     void computeResiduals();
+    void updateW();
 
 public:
     Solver(MeshData *meshData, InputData *inputData);

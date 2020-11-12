@@ -23,7 +23,8 @@ private:
 
     string _title;
     string _meshPath;
-    string _scheme;
+    string _schemeSpace;
+    string _schemeTime;
 
     double _Mach;
     double _AOA;
@@ -52,7 +53,8 @@ public:
     // Getters
     string getTitle() const;
     string getMeshPath() const;
-    string getScheme() const;
+    string getSchemeSpace() const;
+    string getSchemeTime() const;
 
     double getMachNumber() const;
     double getAOA() const;

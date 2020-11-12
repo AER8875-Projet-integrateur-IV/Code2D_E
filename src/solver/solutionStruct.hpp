@@ -14,9 +14,9 @@ using namespace std;
 struct Solution
 {
     vector<double> rho;
-    vector<double> U;
-    vector<double> V;
-    vector<double> E;
+    vector<double> rhoU;
+    vector<double> rhoV;
+    vector<double> rhoE;
     vector<double> p;
     vector<double> H;
 };

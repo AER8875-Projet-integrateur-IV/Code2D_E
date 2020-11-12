@@ -95,11 +95,17 @@ bool InputData::setIndice(string ligne, int &indice)
         indice = 0;
         _meshPath = getEqualValue(ligne);
     }
-    else if (ligne.find("SCHEMA") != string::npos)
+    else if (ligne.find("SCHEMA ESPACE") != string::npos)
     {
         indice = 0;
-        _scheme = getEqualValue(ligne);
+        _schemeSpace = getEqualValue(ligne);
     }
+    else if (ligne.find("SCHEMA TEMPS") != string::npos)
+    {
+        indice = 0;
+        _schemeTime = getEqualValue(ligne);
+    }
+
     else if (ligne.find("DENSITE") != string::npos)
     {
         indice = 0;
@@ -203,7 +209,12 @@ vector<int> InputData::getConditionsLimites() const
     return _conditionsLimites;
 }
 
-string InputData::getScheme() const
+string InputData::getSchemeSpace() const
 {
-    return _scheme;
+    return _schemeSpace;
+}
+
+string InputData::getSchemeTime() const
+{
+    return _schemeTime;
 }
