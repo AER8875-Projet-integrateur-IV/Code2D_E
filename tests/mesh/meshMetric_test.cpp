@@ -10,9 +10,10 @@ void metricElements(MeshData *meshData) // Etat: Probleme avec le signe des aire
     cout << "Début fonction metricElements()\n";
     for (int i = 0; i < meshData->getNELEM(); i++)
     {
-        cout << "Element (" << i << "): Volume = " << meshData->getElement2Volumes()->at(i);
-        cout << " Centre = (" << meshData->getElement2Centres()->at(2 * i) << ", " << meshData->getElement2Centres()->at(2 * i + 1);
-        cout << ")\n";
+        cout << "Element (" << i << "): Volume = " << meshData->getElement2Volumes()->at(i)
+             << " Centre = (" << meshData->getElement2Centres()->at(2 * i) << ", " << meshData->getElement2Centres()->at(2 * i + 1) << ")"
+             << " CV Projection = (" << meshData->getCVprojections()->at(2 * i) << ", " << meshData->getCVprojections()->at(2 * i + 1) << ")"
+             << "\n";
     }
     cout << "Fin fonction metricElements()\n";
     return;
@@ -32,6 +33,29 @@ void metricFaces(MeshData *meshData) // Etat: Succés
     return;
 }
 
+void divergenceTest(MeshData *meshData) // Etat: Succés
+{
+    cout << "Début fonction divergenceTest()\n";
+    vector<double> divergence;
+    vector<double> champ = {1, -3};
+    divergence.assign(meshData->getNELEM(), 0.);
+    int L, R;
+    for (int iFace = 0; iFace < meshData->getNFACE(); iFace++)
+    {
+        L = meshData->getEsuf()->at(2 * iFace + 0);
+        R = meshData->getEsuf()->at(2 * iFace + 1);
+        divergence[L] += (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
+        divergence[R] -= (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
+    }
+    for (size_t i = 0; i < divergence.size(); i++)
+    {
+        cout << "Element " << i << " , divergence = " << divergence[i] << endl;
+    }
+    cout << "Fin fonction divegenceTest()\n";
+
+    return;
+}
+
 void main_meshMetric_Test()
 {
     MeshData *meshData = new MeshData();
@@ -46,6 +70,7 @@ void main_meshMetric_Test()
     meshMetric.setMetric();
     metricElements(meshData);
     metricFaces(meshData);
+    divergenceTest(meshData);
     delete meshData;
 
     return;

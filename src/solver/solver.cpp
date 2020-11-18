@@ -129,27 +129,27 @@ void Solver::updateBoundaryCells()
                 for (int iBoundary = _bc2elStart->at(iMark); iBoundary < _bc2elStart->at(iMark + 1); iBoundary++)
                 {
                     int iCelld = _bc2el->at(2 * iBoundary);
-                    //int iCellb = _bc2el->at(2 * iBoundary + 1);
+                    int iCellb = _bc2el->at(2 * iBoundary + 1);
                     int iFace = _bc2face->at(iBoundary);
                     double Vn = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
                     //computeVn(_W, iCelld, iFace, Vn);
                     if (Vn < 0) // inflow
                     {
 
-                        _F->rhoV[iFace] = 1. * Vn;
-                        _F->rhouV[iFace] = 1. * _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * Vn;
-                        _F->rhovV[iFace] = 1. * _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * Vn;
-                        _F->rhoHV[iFace] = 1. * (1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1.) * Vn;
-                        //computeEnergie(_W, iCellb);
+                        _W->rho[iCellb] = 1.;
+                        _W->rhoU[iCellb] = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA);
+                        _W->rhoV[iCellb] = _props.Ma * sqrt(_props.gamma) * sin(_props.AOA);
+                        _W->p[iCellb] = 1.;
+                        computeEnergie(_W, iCellb);
                     }
                     else // outflow
                     {
-                        computeVn(_W, iCelld, iFace, Vn);
-                        _F->rhoV[iFace] = _W->rho[iCelld] * Vn;
-                        _F->rhouV[iFace] = _W->rhoU[iCelld] * Vn;
-                        _F->rhovV[iFace] = _W->rhoV[iCelld] * Vn;
-                        _F->rhoHV[iFace] = _W->rho[iCelld] * _W->H[iCelld] * Vn;
-                        //computeEnergie(_W, iCellb);
+                        _W->rho[iCellb] = _W->rho[iCelld];
+                        _W->rhoU[iCellb] = _W->rhoU[iCelld];
+                        _W->rhoV[iCellb] = _W->rhoV[iCelld];
+                        _W->rhoE[iCellb] = _W->rhoE[iCelld];
+                        _W->p[iCellb] = (_props.gamma - 1) * (_W->rhoE[iCellb] - 0.5 * (_W->rhoU[iCellb] * _W->rhoU[iCellb] + _W->rhoV[iCellb] * _W->rhoV[iCellb]) / _W->rho[iCellb]);
+                        _W->H[iCellb] = (_W->rhoE[iCellb] + _W->p[iCellb]) / _W->rho[iCellb];
                     }
                 }
             }
@@ -191,13 +191,13 @@ void Solver::updateBoundaryCells()
                 int iCelld = _bc2el->at(2 * iBoundary);
                 int iCellb = _bc2el->at(2 * iBoundary + 1);
                 int iFace = _bc2face->at(iBoundary);
-                //double Vn;
-                //computeVn(_W, iCelld, iFace, Vn);
-                _F->rhoV[iCellb] = 0;                                                  //_W->rho[iCelld];
-                _F->rhouV[iCellb] = _face2Normales->at(2 * iFace) * _W->p[iCelld];     //_W->rhoU[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace) * _W->rho[iCellb];
-                _F->rhovV[iCellb] = _face2Normales->at(2 * iFace + 1) * _W->p[iCelld]; //_W->rhoV[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace + 1) * _W->rho[iCellb];
-                _F->rhoHV[iCellb] = 0;                                                 //_W->p[iCelld];
-                //computeEnergie(_W, iCellb);
+                double Vn;
+                computeVn(_W, iCelld, iFace, Vn);
+                _W->rho[iCellb] = _W->rho[iCelld];
+                _W->rhoU[iCellb] = (_W->rhoU[iCelld] / _W->rho[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace)) * _W->rho[iCellb];
+                _W->rhoV[iCellb] = (_W->rhoV[iCelld] / _W->rho[iCelld] - 2 * Vn * _face2Normales->at(2 * iFace + 1)) * _W->rho[iCellb];
+                _W->p[iCellb] = _W->p[iCelld];
+                computeEnergie(_W, iCellb);
             }
         }
     }

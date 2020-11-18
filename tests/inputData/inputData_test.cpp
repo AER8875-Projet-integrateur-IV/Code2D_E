@@ -23,6 +23,8 @@ void verification_lecture(InputData inputData) // Etat: Succés
     cout << "Nombre de Mach: " << inputData.getMachNumber() << endl;
     cout << "angle d'attaque " << inputData.getAOA() << endl;
     cout << "Path du maillage: " << inputData.getMeshPath() << endl;
+    cout << "Conditions limites 1 : " << inputData.getConditionsLimites()[0] << endl;
+    cout << "Conditions limites 2 : " << inputData.getConditionsLimites()[1] << endl;
 
     cout << "Fin fonction verification_lecture()" << endl;
 };
