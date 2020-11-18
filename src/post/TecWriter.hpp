@@ -29,12 +29,13 @@ private:
     bool isFileValid();
 
 public:
-    TecWriter(string &path, MeshData *meshData, Solution *solution);
+    TecWriter(string &path, MeshData *meshData);
     ~TecWriter();
     void writeFile();
     void beginFile(std::ofstream &);
     void writeNewZone(std::ofstream &);
     void writeCoord(std::ofstream &);
     void writeVar(std::ofstream &);
-    void writeElementConnectivity(ofstream &fileStream);
+    void writeFaceConnectivity(ofstream &fileStream);
+    // void writeElementConnectivity(ofstream &fileStream);
 };

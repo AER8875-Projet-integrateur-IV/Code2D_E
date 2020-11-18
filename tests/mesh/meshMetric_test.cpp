@@ -1,4 +1,4 @@
-/* 
+/*
 /Fichier meshMetric_test.cpp
 /Date: 21 octobre 2020 - 04h20
 /Projet: Projet Intégrateur 4
@@ -39,7 +39,8 @@ void main_meshMetric_Test()
     string path2 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/square_5x5.su2";
     string path3 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/NACA0012_65_mixed.su2";
     string path4 = "/home/aziz/Bureau/A2020/PI4/Codes/Code2D_E/tests/mesh/exemple_mesh/maillage_exemple_prof.su2";
-    MeshRead meshRead = MeshRead(path2, meshData);
+    string path5 = "/home/vincentbar/Documents/square_5x5.su2";
+    MeshRead meshRead = MeshRead(path5, meshData);
     meshRead.readFile();
     meshData->setConnectivity();
     MeshMetric meshMetric = MeshMetric(meshData);

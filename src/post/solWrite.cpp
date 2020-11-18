@@ -6,11 +6,11 @@
 
 #include "./solWrite.hpp"
 
-SolWrite::SolWrite(string &path, MeshData *meshData, Solution *solution)
+SolWrite::SolWrite(string &path, MeshData *meshData)
 {
     _path = path;
     _meshData = meshData;
-    _solution = solution;
+    // _solution = solution;
     cout << _path << endl;
     return;
 };
@@ -31,7 +31,7 @@ void SolWrite::writeFile()
     else if (ends_With(_path, ".dat"))
     {
         //cout << "Pile" << endl; follow3
-        TecWriter _tecWriter = TecWriter(_path, _meshData, _solution);
+        TecWriter _tecWriter = TecWriter(_path, _meshData);
         _tecWriter.writeFile();
     }
     else

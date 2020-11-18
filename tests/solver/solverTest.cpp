@@ -1,4 +1,4 @@
-/* 
+/*
 /Fichier meshConnectivity_test.cpp
 /Date: 12 octobre 2020 - 20h56
 /Projet: Projet Intégrateur 4
@@ -44,8 +44,8 @@ void main_solver_Test()
     solverTest.initializeSolver();
     Solution *solution = solver->getSolution();
     string fichierOut = "./tests/solver/Solution_path_1.dat";
-    SolWrite solWriter = SolWrite(fichierOut, meshData, solution);
-    solWriter.writeFile();
+    // SolWrite solWriter = SolWrite(fichierOut, meshData, solution);
+    // solWriter.writeFile();
     delete meshData;
     delete inputData;
     delete solver;

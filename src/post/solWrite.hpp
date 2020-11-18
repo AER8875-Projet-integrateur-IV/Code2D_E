@@ -25,10 +25,10 @@ class SolWrite : public StringTools
 private:
     string _path;
     MeshData *_meshData;
-    Solution *_solution;
+//    Solution *_solution;
 
 public:
-    SolWrite(string &path, MeshData *meshData, Solution *solution);
+    SolWrite(string &path, MeshData *meshData);
     ~SolWrite();
     void writeFile();
 };
