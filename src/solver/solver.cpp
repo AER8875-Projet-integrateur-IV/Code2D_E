@@ -17,6 +17,7 @@ Solver::Solver(MeshData *meshData, InputData *inputData)
     _F = new Flux();
     _R = new Residual();
     _schemes = new Schemes(_meshData, _inputData, _F, _W, _R, _dW, _timeSteps);
+    _errors = new vector<double>();
     return;
 }
 
@@ -28,6 +29,7 @@ Solver::~Solver()
     delete _F;
     delete _R;
     delete _schemes;
+    delete _errors;
     return;
 }
 
@@ -91,6 +93,8 @@ void Solver::initializeSolution()
     _dW->rhoV.assign(_meshDim.NELEM, 0.);
     _dW->rhoE.assign(_meshDim.NELEM, 0.);
 
+    _errors->reserve(4 * _props.Niter);
+
     updateBoundaryCells();
     cout << "\tFin de la fonction initializeSolution() de la classe Solver.\n";
     return;
@@ -131,11 +135,10 @@ void Solver::updateBoundaryCells()
                     int iCelld = _bc2el->at(2 * iBoundary);
                     int iCellb = _bc2el->at(2 * iBoundary + 1);
                     int iFace = _bc2face->at(iBoundary);
-                    double Vn = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
-                    //computeVn(_W, iCelld, iFace, Vn);
+                    double Vn; // = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
+                    computeVn(_W, iCelld, iFace, Vn);
                     if (Vn < 0) // inflow
                     {
-
                         _W->rho[iCellb] = 1.;
                         _W->rhoU[iCellb] = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA);
                         _W->rhoV[iCellb] = _props.Ma * sqrt(_props.gamma) * sin(_props.AOA);
@@ -277,7 +280,8 @@ void Solver::makeOneIteration()
     _schemes->computeConservativesVariables();
     updateW();
     updateBoundaryCells();
-    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    computeErrors();
+    /*     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
         cout << "Element " << iElem << " "
              << _W->rho[iElem] << " "
@@ -297,7 +301,7 @@ void Solver::makeOneIteration()
              << _dW->rhoU[iElem] << " "
              << _dW->rhoV[iElem] << " "
              << _dW->rhoE[iElem] << "\n";
-    }
+    } */
     return;
 }
 
@@ -305,7 +309,7 @@ void Solver::runSolver()
 {
     cout << "Démarrage de l'éxécution du solveur\n";
     initializeSolution();
-    cout << "Afichage de la solution initiale: \n";
+    /*     cout << "Afichage de la solution initiale: \n";
     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
         cout << "Element " << iElem << " "
@@ -315,10 +319,17 @@ void Solver::runSolver()
              << _W->rhoE[iElem] << " "
              << _W->p[iElem] << " "
              << _W->H[iElem] << "\n";
-    }
+    } */
+    cout << "Itérations\tError rho\tError rhoU\tError rhoV\tError rhoE\n";
     for (int iter = 0; iter < _props.Niter; iter++)
     {
         makeOneIteration();
+        cout << iter + 1
+             << "\t" << _errors->at(4 * iter + 0)
+             << "\t" << _errors->at(4 * iter + 1)
+             << "\t" << _errors->at(4 * iter + 2)
+             << "\t" << _errors->at(4 * iter + 3)
+             << "\n";
     }
 
     cout << "Fin de l'éxécution du solveur\n";
@@ -334,6 +345,22 @@ void Solver::runSolver()
              << _W->H[iElem] << "\n";
     }
     return;
+}
+
+void Solver::computeErrors()
+{
+    vector<double> error = {0., 0., 0., 0.};
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    {
+        error[0] += pow(_dW->rho[iElem], 2);
+        error[1] += pow(_dW->rhoU[iElem], 2);
+        error[2] += pow(_dW->rhoV[iElem], 2);
+        error[3] += pow(_dW->rhoE[iElem], 2);
+    }
+    _errors->push_back(sqrt(error[0] / _meshDim.NELEM));
+    _errors->push_back(sqrt(error[1] / _meshDim.NELEM));
+    _errors->push_back(sqrt(error[2] / _meshDim.NELEM));
+    _errors->push_back(sqrt(error[3] / _meshDim.NELEM));
 }
 
 void Solver::computeEnergie(Solution *solution, int &index)

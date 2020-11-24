@@ -51,6 +51,8 @@ private:
     vector<double> *_timeSteps;
     Residual *_R;
 
+    vector<double> *_errors;
+
     // Conditions limites
     vector<int> _conditionsLimites;
 
@@ -91,6 +93,7 @@ private:
     void computeResiduals();
     void updateW();
     void makeOneIteration();
+    void computeErrors();
 
 public:
     Solver(MeshData *meshData, InputData *inputData);

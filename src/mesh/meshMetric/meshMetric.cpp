@@ -85,11 +85,21 @@ void MeshMetric::setFaces()
         vector<double> pt1 = {_nodes->at(nodes[0] * 2), _nodes->at(nodes[0] * 2 + 1)};
         vector<double> pt2 = {_nodes->at(nodes[1] * 2), _nodes->at(nodes[1] * 2 + 1)};
         double aire = sqrt(pow(pt2[1] - pt1[1], 2) + pow(pt2[0] - pt1[0], 2));
-        vector<double> normale = {(pt2[1] - pt1[1]) / aire, (pt2[0] - pt1[0]) / aire};
+        vector<double> normale = {(pt2[1] - pt1[1]) / aire, (pt1[0] - pt2[0]) / aire};
         vector<double> centre = {(pt2[0] + pt1[0]) / 2., (pt2[1] + pt1[1]) / 2.};
         // Correction du sens de la normale
         int iElemL = _meshData->getEsuf()->at(2 * iFace + 0);
-        double prod = (centre[0] - _meshData->getElement2Centres()->at(2 * iElemL + 0)) * normale[0] + (centre[1] - _meshData->getElement2Centres()->at(2 * iElemL + 1)) * normale[1];
+        int iElemR = _meshData->getEsuf()->at(2 * iFace + 1);
+        double prod;
+        if (iElemR < _meshData->getNELEM())
+        {
+            prod = (_meshData->getElement2Centres()->at(2 * iElemR + 0) - _meshData->getElement2Centres()->at(2 * iElemL + 0)) * normale[0] + (_meshData->getElement2Centres()->at(2 * iElemR + 1) - _meshData->getElement2Centres()->at(2 * iElemL + 1)) * normale[1];
+        }
+        else
+        {
+            prod = (centre[0] - _meshData->getElement2Centres()->at(2 * iElemL + 0)) * normale[0] + (centre[1] - _meshData->getElement2Centres()->at(2 * iElemL + 1)) * normale[1];
+        }
+
         if (prod < 0)
         {
             normale[0] = -normale[0];
@@ -116,7 +126,7 @@ void MeshMetric::setCVprojections()
         for (int j = _esuelStart->at(iElem); j < _esuelStart->at(iElem + 1); j++)
         {
             iFace = _fsuel->at(j);
-            S[0] += abs(_face2Normales->at(2 * iFace) * _face2Aires->at(iFace));
+            S[0] += abs(_face2Normales->at(2 * iFace + 0) * _face2Aires->at(iFace));
             S[1] += abs(_face2Normales->at(2 * iFace + 1) * _face2Aires->at(iFace));
         }
         S[0] /= 2;
