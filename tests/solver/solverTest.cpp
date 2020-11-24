@@ -40,9 +40,8 @@ void main_solver_Test()
     SolverTest solverTest = SolverTest(meshData, inputData, solver);
     solverTest.initializeSolver();
 
-    Solution *solution = solver->getSolution();
     string fichierOut = "./tests/solver/Solution_path.dat";
-    SolWrite solWriter = SolWrite(fichierOut, meshData, solution);
+    SolWrite solWriter = SolWrite(fichierOut, meshData, inputData, solver);
     solWriter.writeFile();
 
     delete meshData;

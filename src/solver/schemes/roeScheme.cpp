@@ -61,7 +61,7 @@ void RoeScheme::computeConvectivesFlux()
 void RoeScheme::computeFluxCentres()
 {
     int L, R;
-    double rho_, rhoU_, rhoV_, rhoE_, Vn_L, Vn_R, V_, p_, H_;
+    double Vn_L, Vn_R;
     for (int iFace = 0; iFace < _meshData->getNFACE(); iFace++)
     {
         L = _esuf->at(2 * iFace + 0);
@@ -70,19 +70,6 @@ void RoeScheme::computeFluxCentres()
         Vn_L = _W->rhoU[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 1);
         Vn_R = _W->rhoU[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 1);
 
-        /*         rho_ = 0.5 * (_W->rho[L] + _W->rho[R]);
-        rhoU_ = 0.5 * (_W->rhoU[L] + _W->rhoU[R]);
-        rhoV_ = 0.5 * (_W->rhoV[L] + _W->rhoV[R]);
-        rhoE_ = 0.5 * (_W->rhoE[L] + _W->rhoE[R]);
-        p_ = (_inputData->getRatioCpCv() - 1) * (rhoE_ - (pow(rhoU_, 2) + pow(rhoV_, 2)) / rho_);
-        H_ = (rhoE_ + p_) / rho_;
-        V_ = (rhoU_ * _face2Normales->at(2 * iFace + 0) + rhoV_ * _face2Normales->at(2 * iFace + 1)) / rho_;
-
-        _Fcentre->rhoV[iFace] = V_ * rho_;
-        _Fcentre->rhouV[iFace] = rhoU_ * V_ + _face2Normales->at(2 * iFace + 0) * p_;
-        _Fcentre->rhovV[iFace] = rhoV_ * V_ + _face2Normales->at(2 * iFace + 1) * p_;
-        _Fcentre->rhoHV[iFace] = rho_ * V_ * H_;
- */
         _Fcentre->rhoV[iFace] = 0.5 * (_W->rho[L] * Vn_L + _W->rho[R] * Vn_R);
         _Fcentre->rhouV[iFace] = 0.5 * (_W->rhoU[L] * Vn_L + _W->rhoU[R] * Vn_R + _face2Normales->at(2 * iFace + 0) * (_W->p[L] + _W->p[R]));
         _Fcentre->rhovV[iFace] = 0.5 * (_W->rhoV[L] * Vn_L + _W->rhoV[R] * Vn_R + _face2Normales->at(2 * iFace + 1) * (_W->p[L] + _W->p[R]));
@@ -122,15 +109,15 @@ void RoeScheme::computeFluxDissip()
         V = abs(V_);
         if (VmC <= delta)
         {
-            VmC = (pow(VmC, 2) + pow(delta, 2)) / (2 * delta);
+            VmC = (pow(VmC, 2.) + pow(delta, 2.)) / (2 * delta);
         }
         if (VpC <= delta)
         {
-            VpC = (pow(VpC, 2) + pow(delta, 2)) / (2 * delta);
+            VpC = (pow(VpC, 2.) + pow(delta, 2.)) / (2 * delta);
         }
         if (V <= delta)
         {
-            V = (pow(V, 2) + pow(delta, 2)) / (2 * delta);
+            V = (pow(V, 2.) + pow(delta, 2.)) / (2 * delta);
         }
         DF1 = VmC * ((_W->p[R] - _W->p[L] - rho_ * c_ * (Vn_R - Vn_L)) / (2 * c_ * c_));
         DF234 = ((_W->rho[R] - _W->rho[L]) - (_W->p[R] - _W->p[L]) / (c_ * c_));

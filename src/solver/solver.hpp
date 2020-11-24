@@ -6,6 +6,7 @@
 #pragma once
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 #include <math.h>
@@ -31,9 +32,11 @@ struct MeshDimension
 {
     int NELEM;
     int NPOIN;
+    int NDIME;
     int NFACE;
     int NBOUNDARY;
     int NMARK;
+    double meshSize;
 };
 
 class Solver
@@ -102,4 +105,6 @@ public:
 
     // Getters
     Solution *getSolution() const;
+    vector<double> *getErrors() const;
+    double getMeshSize() const;
 };

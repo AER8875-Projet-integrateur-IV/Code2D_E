@@ -43,14 +43,6 @@ void Solver::initializeSolver()
     _props.gamma = _inputData->getRatioCpCv();
     _props.c = sqrt(_props.gamma); //_inputData->getSoundSpeed();
     _props.Niter = _inputData->getIterationMax();
-    // Dimensions du maillage
-    _meshDim.NELEM = _meshData->getNELEM();
-    _meshDim.NPOIN = _meshData->getNPOIN();
-    _meshDim.NFACE = _meshData->getNFACE();
-    _meshDim.NBOUNDARY = _meshData->getNBOUNDARY();
-    _meshDim.NMARK = _meshData->getNMARK();
-    // Conditions limites
-    _conditionsLimites = _inputData->getConditionsLimites();
     // Connectivité
     _esuf = _meshData->getEsuf();
     _bc2el = _meshData->getBc2el();
@@ -61,6 +53,21 @@ void Solver::initializeSolver()
     _face2Aires = _meshData->getFace2Aires();
     _face2Normales = _meshData->getFace2Normales();
     _CVprojections = _meshData->getCVprojections();
+    // Dimensions du maillage
+    _meshDim.NELEM = _meshData->getNELEM();
+    _meshDim.NPOIN = _meshData->getNPOIN();
+    _meshDim.NDIME = _meshData->getNDIME();
+    _meshDim.NFACE = _meshData->getNFACE();
+    _meshDim.NBOUNDARY = _meshData->getNBOUNDARY();
+    _meshDim.NMARK = _meshData->getNMARK();
+    _meshDim.meshSize = 0;
+    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
+    {
+        _meshDim.meshSize += _element2Volumes->at(iElem);
+    }
+    _meshDim.meshSize = std::pow(_meshDim.meshSize / _meshDim.NELEM, 1. / _meshDim.NDIME);
+    // Conditions limites
+    _conditionsLimites = _inputData->getConditionsLimites();
     cout << "\tFin de la fonction initializeSolver() de la classe Solver.\n";
     return;
 }
@@ -72,9 +79,9 @@ void Solver::initializeSolution()
     _W->rho.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1.);
     _W->rhoU.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * cos(_props.AOA));
     _W->rhoV.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, _props.Ma * sqrt(_props.gamma) * sin(_props.AOA));
-    _W->rhoE.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma);
+    _W->rhoE.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1. / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma);
     _W->p.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1.);
-    _W->H.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1 / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1.);
+    _W->H.assign(_meshDim.NELEM + _meshDim.NBOUNDARY, 1. / (_props.gamma - 1) + 0.5 * _props.gamma * _props.Ma * _props.Ma + 1.);
 
     _timeSteps->assign(_meshDim.NELEM, 0.);
 
@@ -102,22 +109,10 @@ void Solver::initializeSolution()
 
 void Solver::initializeEachIteration()
 {
-    //fill(_timeSteps->begin(), _timeSteps->end(), 0.);
-
-    /*     fill(_F->rhoV.begin(), _F->rhoV.end(), 0.);
-    fill(_F->rhouV.begin(), _F->rhouV.end(), 0.);
-    fill(_F->rhovV.begin(), _F->rhovV.end(), 0.);
-    fill(_F->rhoHV.begin(), _F->rhoHV.end(), 0.);
- */
     fill(_R->rhoVds.begin(), _R->rhoVds.end(), 0.);
     fill(_R->rhouVds.begin(), _R->rhouVds.end(), 0.);
     fill(_R->rhovVds.begin(), _R->rhovVds.end(), 0.);
     fill(_R->rhoHVds.begin(), _R->rhoHVds.end(), 0.);
-
-    /*     fill(_dW->rho.begin(), _dW->rho.end(), 0.);
-    fill(_dW->rhoU.begin(), _dW->rhoU.end(), 0.);
-    fill(_dW->rhoV.begin(), _dW->rhoV.end(), 0.);//
-    fill(_dW->rhoE.begin(), _dW->rhoE.end(), 0.); */
 }
 
 void Solver::updateBoundaryCells()
@@ -281,27 +276,6 @@ void Solver::makeOneIteration()
     updateW();
     updateBoundaryCells();
     computeErrors();
-    /*     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
-    {
-        cout << "Element " << iElem << " "
-             << _W->rho[iElem] << " "
-             << _W->rhoU[iElem] << " "
-             << _W->rhoV[iElem] << " "
-             << _W->rhoE[iElem] << " "
-             << _W->p[iElem] << " "
-             << _W->H[iElem] << " "
-             << "dT " << _timeSteps->at(iElem) << " "
-             << "R "
-             << _R->rhoVds[iElem] << " "
-             << _R->rhouVds[iElem] << " "
-             << _R->rhovVds[iElem] << " "
-             << _R->rhoHVds[iElem] << " "
-             << "dW: "
-             << _dW->rho[iElem] << " "
-             << _dW->rhoU[iElem] << " "
-             << _dW->rhoV[iElem] << " "
-             << _dW->rhoE[iElem] << "\n";
-    } */
     return;
 }
 
@@ -352,10 +326,10 @@ void Solver::computeErrors()
     vector<double> error = {0., 0., 0., 0.};
     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
-        error[0] += pow(_dW->rho[iElem], 2);
-        error[1] += pow(_dW->rhoU[iElem], 2);
-        error[2] += pow(_dW->rhoV[iElem], 2);
-        error[3] += pow(_dW->rhoE[iElem], 2);
+        error[0] += pow(_dW->rho[iElem], 2.);
+        error[1] += pow(_dW->rhoU[iElem], 2.);
+        error[2] += pow(_dW->rhoV[iElem], 2.);
+        error[3] += pow(_dW->rhoE[iElem], 2.);
     }
     _errors->push_back(sqrt(error[0] / _meshDim.NELEM));
     _errors->push_back(sqrt(error[1] / _meshDim.NELEM));
@@ -365,7 +339,7 @@ void Solver::computeErrors()
 
 void Solver::computeEnergie(Solution *solution, int &index)
 {
-    solution->rhoE[index] = solution->p[index] / (_props.gamma - 1) + 0.5 * (solution->rhoU[index] * solution->rhoU[index] + solution->rhoV[index] * solution->rhoV[index]) / solution->rho[index];
+    solution->rhoE[index] = solution->p[index] / (_props.gamma - 1.) + 0.5 * (solution->rhoU[index] * solution->rhoU[index] + solution->rhoV[index] * solution->rhoV[index]) / solution->rho[index];
     solution->H[index] = (solution->rhoE[index] + solution->p[index]) / solution->rho[index];
     return;
 }
@@ -381,4 +355,14 @@ void Solver::computeVn(const Solution *solution, int &iCell, int &iFace, double 
 Solution *Solver::getSolution() const
 {
     return _W;
+}
+
+vector<double> *Solver::getErrors() const
+{
+    return _errors;
+}
+
+double Solver::getMeshSize() const
+{
+    return _meshDim.meshSize;
 }
