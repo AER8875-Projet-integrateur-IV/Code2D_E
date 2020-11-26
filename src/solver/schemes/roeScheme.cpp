@@ -44,7 +44,7 @@ void RoeScheme::computeConvectivesFlux()
     for (int iFace = 0; iFace < _meshData->getNFACE() - _meshData->getNBOUNDARY(); iFace++)
     {
         _F->rhoV[iFace] = _Fcentre->rhoV[iFace] - _Fdissip->rhoV[iFace];
-        _F->rhouV[iFace] = _Fcentre->rhouV[iFace] - _Fdissip->rhovV[iFace];
+        _F->rhouV[iFace] = _Fcentre->rhouV[iFace] - _Fdissip->rhouV[iFace];
         _F->rhovV[iFace] = _Fcentre->rhovV[iFace] - _Fdissip->rhovV[iFace];
         _F->rhoHV[iFace] = _Fcentre->rhoHV[iFace] - _Fdissip->rhoHV[iFace];
     }
@@ -60,31 +60,41 @@ void RoeScheme::computeConvectivesFlux()
 
 void RoeScheme::computeFluxCentres()
 {
-    int L, R;
-    double Vn_L, Vn_R;
     for (int iFace = 0; iFace < _meshData->getNFACE(); iFace++)
     {
+        int L, R;
+        double Vn_L, Vn_R;
+        double rho_m, p_m, u_m, v_m, H_m, Vn;
         L = _esuf->at(2 * iFace + 0);
         R = _esuf->at(2 * iFace + 1);
+
+        rho_m = 0.5 * (_W->rho[L] + _W->rho[R]);
+        u_m = 0.5 * (_W->rhoU[L] / _W->rho[L] + _W->rhoU[R] / _W->rho[R]);
+        v_m = 0.5 * (_W->rhoV[L] / _W->rho[L] + _W->rhoV[R] / _W->rho[R]);
+        p_m = 0.5 * (_W->p[L] + _W->p[R]);
+        H_m = 0.5 * (_W->H[L] + _W->H[R]);
 
         Vn_L = _W->rhoU[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[L] / _W->rho[L] * _face2Normales->at(2 * iFace + 1);
         Vn_R = _W->rhoU[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[R] / _W->rho[R] * _face2Normales->at(2 * iFace + 1);
 
-        _Fcentre->rhoV[iFace] = 0.5 * (_W->rho[L] * Vn_L + _W->rho[R] * Vn_R);
-        _Fcentre->rhouV[iFace] = 0.5 * (_W->rhoU[L] * Vn_L + _W->rhoU[R] * Vn_R + _face2Normales->at(2 * iFace + 0) * (_W->p[L] + _W->p[R]));
-        _Fcentre->rhovV[iFace] = 0.5 * (_W->rhoV[L] * Vn_L + _W->rhoV[R] * Vn_R + _face2Normales->at(2 * iFace + 1) * (_W->p[L] + _W->p[R]));
-        _Fcentre->rhoHV[iFace] = 0.5 * (_W->rho[L] * _W->H[L] * Vn_L + _W->rho[R] * _W->H[R] * Vn_R);
+        Vn = 0.5 * (u_m * _face2Normales->at(2 * iFace + 0) + v_m * _face2Normales->at(2 * iFace + 1));
+
+        _Fcentre->rhoV[iFace] = rho_m * Vn;
+        _Fcentre->rhouV[iFace] = rho_m * u_m * Vn + _face2Normales->at(2 * iFace + 0) * p_m;
+        _Fcentre->rhovV[iFace] = rho_m * v_m * Vn + _face2Normales->at(2 * iFace + 1) * p_m;
+        _Fcentre->rhoHV[iFace] = rho_m * H_m * Vn;
     }
     return;
 }
 
 void RoeScheme::computeFluxDissip()
 {
-    int L, R;
-    double Vn_L, Vn_R, rho_, u_, v_, H_, c_, q2_, V_, delta;
-    double VmC, VpC, V, DF1, DF234, DF5;
+
     for (int iFace = 0; iFace < _meshData->getNFACE() - _meshData->getNBOUNDARY(); iFace++)
     {
+        int L, R;
+        double Vn_L, Vn_R, rho_, u_, v_, H_, c_, q2_, V_, delta;
+        double VmC, VpC, V, DF1, DF234, DF5;
         L = _esuf->at(2 * iFace + 0);
         R = _esuf->at(2 * iFace + 1);
 
@@ -103,7 +113,8 @@ void RoeScheme::computeFluxDissip()
 
         V_ = u_ * _face2Normales->at(2 * iFace + 0) + v_ * _face2Normales->at(2 * iFace + 1);
 
-        delta = c_ / 10;
+        double c_local = sqrt(_inputData->getRatioCpCv() * _W->p[L] / _W->rho[L]);
+        delta = c_local / 10;
         VmC = abs(V_ - c_);
         VpC = abs(V_ + c_);
         V = abs(V_);

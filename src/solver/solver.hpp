@@ -105,6 +105,7 @@ public:
 
     // Getters
     Solution *getSolution() const;
+    Residual *getResidus() const;
     vector<double> *getErrors() const;
     double getMeshSize() const;
 };

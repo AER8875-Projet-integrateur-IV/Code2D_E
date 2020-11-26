@@ -44,13 +44,17 @@ void divergenceTest(MeshData *meshData) // Etat: Succés
     {
         L = meshData->getEsuf()->at(2 * iFace + 0);
         R = meshData->getEsuf()->at(2 * iFace + 1);
-        divergence[L] += (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
-        divergence[R] -= (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
+        double xLR = meshData->getElement2Centres()->at(2 * R + 0) - meshData->getElement2Centres()->at(2 * L + 0);
+        double yLR = meshData->getElement2Centres()->at(2 * R + 1) - meshData->getElement2Centres()->at(2 * L + 1);
+        double prodScalaire = xLR * meshData->getFace2Normales()->at(2 * iFace) + yLR * meshData->getFace2Normales()->at(2 * iFace + 1);
+        cout << "Face " << iFace << "prodscalaire _norm = " << prodScalaire << endl;
+        divergence[L] -= (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
+        divergence[R] += (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
     }
     for (int iFace = meshData->getNFACE() - meshData->getNBOUNDARY(); iFace < meshData->getNFACE(); iFace++)
     {
         L = meshData->getEsuf()->at(2 * iFace + 0);
-        divergence[L] += (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
+        divergence[L] -= (champ[0] * meshData->getFace2Normales()->at(2 * iFace) + champ[1] * meshData->getFace2Normales()->at(2 * iFace + 1)) * meshData->getFace2Aires()->at(iFace);
     }
 
     for (size_t i = 0; i < divergence.size(); i++)

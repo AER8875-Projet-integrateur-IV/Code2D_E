@@ -132,7 +132,7 @@ void Solver::updateBoundaryCells()
                     int iFace = _bc2face->at(iBoundary);
                     double Vn; // = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
                     computeVn(_W, iCelld, iFace, Vn);
-                    if (Vn < 0) // inflow
+                    if (Vn < 0.) // inflow
                     {
                         _W->rho[iCellb] = 1.;
                         _W->rhoU[iCellb] = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA);
@@ -146,7 +146,7 @@ void Solver::updateBoundaryCells()
                         _W->rhoU[iCellb] = _W->rhoU[iCelld];
                         _W->rhoV[iCellb] = _W->rhoV[iCelld];
                         _W->rhoE[iCellb] = _W->rhoE[iCelld];
-                        _W->p[iCellb] = (_props.gamma - 1) * (_W->rhoE[iCellb] - 0.5 * (_W->rhoU[iCellb] * _W->rhoU[iCellb] + _W->rhoV[iCellb] * _W->rhoV[iCellb]) / _W->rho[iCellb]);
+                        _W->p[iCellb] = (_props.gamma - 1.) * (_W->rhoE[iCellb] - 0.5 * (_W->rhoU[iCellb] * _W->rhoU[iCellb] + _W->rhoV[iCellb] * _W->rhoV[iCellb]) / _W->rho[iCellb]);
                         _W->H[iCellb] = (_W->rhoE[iCellb] + _W->p[iCellb]) / _W->rho[iCellb];
                     }
                 }
@@ -161,7 +161,7 @@ void Solver::updateBoundaryCells()
                     double Vn;
                     computeVn(_W, iCelld, iFace, Vn);
                     double c0 = sqrt(_props.gamma * _W->p[iCelld] / _W->rho[iCelld]);
-                    if (Vn < 0) // inflow
+                    if (Vn < 0.) // inflow
                     {
                         double ua = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA);
                         double va = _props.Ma * sqrt(_props.gamma) * sin(_props.AOA);
@@ -205,10 +205,10 @@ void Solver::updateBoundaryCells()
 
 void Solver::computeTimeSteps()
 {
-    double convSpecRadii;
-    double c;
     for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
     {
+        double convSpecRadii;
+        double c;
         c = sqrt(_props.gamma * _W->p[iElem] / _W->rho[iElem]);
         convSpecRadii = (abs(_W->rhoU[iElem] / _W->rho[iElem]) + c) * _CVprojections->at(2 * iElem + 0) + (abs(_W->rhoV[iElem] / _W->rho[iElem]) + c) * _CVprojections->at(2 * iElem + 1);
         _timeSteps->at(iElem) = _props.CFL * _element2Volumes->at(iElem) / convSpecRadii;
@@ -220,9 +220,9 @@ void Solver::computeTimeSteps()
 void Solver::computeResiduals()
 {
 
-    int L, R;
     for (int iFace = 0; iFace < _meshDim.NFACE - _meshDim.NBOUNDARY; iFace++)
     {
+        int L, R;
         L = _esuf->at(2 * iFace + 0);
         R = _esuf->at(2 * iFace + 1);
         _R->rhoVds[R] -= _F->rhoV[iFace] * _face2Aires->at(iFace);
@@ -239,6 +239,7 @@ void Solver::computeResiduals()
     }
     for (int iFace = _meshDim.NFACE - _meshDim.NBOUNDARY; iFace < _meshDim.NFACE; iFace++)
     {
+        int L, R;
         L = _esuf->at(2 * iFace + 0);
         _R->rhoVds[L] += _F->rhoV[iFace] * _face2Aires->at(iFace);
 
@@ -271,6 +272,17 @@ void Solver::makeOneIteration()
     initializeEachIteration();
     computeTimeSteps();
     _schemes->computeConvectivesFlux();
+    /*     for (int iMark = 0; iMark < _meshDim.NMARK; iMark++)
+    {
+        cout << _conditionsLimites[iMark] << endl;
+        ;
+        for (int iBoundary = _bc2elStart->at(iMark); iBoundary < _bc2elStart->at(iMark + 1); iBoundary++)
+        {
+            int iFace = _bc2face->at(iBoundary);
+            cout << "Flux: " << _F->rhoV[iFace] << "\t\t" << _F->rhouV[iFace] << "\t\t" << _F->rhovV[iFace] << "\t\t" << _F->rhoHV[iFace] << "\n";
+        }
+    } */
+
     computeResiduals();
     _schemes->computeConservativesVariables();
     updateW();
@@ -355,6 +367,11 @@ void Solver::computeVn(const Solution *solution, int &iCell, int &iFace, double 
 Solution *Solver::getSolution() const
 {
     return _W;
+}
+
+Residual *Solver::getResidus() const
+{
+    return _R;
 }
 
 vector<double> *Solver::getErrors() const

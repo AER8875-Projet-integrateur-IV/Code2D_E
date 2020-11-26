@@ -33,7 +33,7 @@ void SolWrite::writeFile()
     else if (ends_With(_path, ".dat"))
     {
         //cout << "Pile" << endl; follow3
-        TecWriter _tecWriter = TecWriter(_path, _meshData, _solver->getSolution());
+        TecWriter _tecWriter = TecWriter(_path, _meshData, _solver);
         _tecWriter.writeFile();
     }
     else
