@@ -1,4 +1,4 @@
-/* 
+/*
 /Fichier meshMetric_test.cpp
 /Date: 21 octobre 2020 - 04h20
 /Projet: Projet Intégrateur 4

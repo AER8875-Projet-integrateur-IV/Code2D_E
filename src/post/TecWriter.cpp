@@ -34,9 +34,9 @@ void TecWriter::writeFile()
   beginFile(fileStream);
   writeNewZone(fileStream);
   writeCoord(fileStream);
-  writeVar(fileStream);
-  //writeFaceConnectivity(fileStream);
-  writeElementConnectivity(fileStream);
+  // writeVar(fileStream);
+  writeFaceConnectivity(fileStream);
+  //writeElementConnectivity(fileStream);
   fileStream.close();
 }
 
@@ -49,7 +49,7 @@ void TecWriter::beginFile(ofstream &fileStream)
 void TecWriter::writeNewZone(ofstream &fileStream)
 {
   fileStream << "ZONE "
-             << "ZONETYPE=FEQUADRILATERAL "
+             << "ZONETYPE=FEPOLYGON "
              << "NODES=" << _meshData->getNPOIN() << ", "
              << "ELEMENTS=" << _meshData->getNELEM() << ", "
              << "FACES=" << _meshData->getNFACE() << ", "
@@ -102,15 +102,40 @@ void TecWriter::writeVar(ofstream &fileStream)
 }
 
 ///////////Ecriture des Connectivités
-
-void TecWriter::writeElementConnectivity(ofstream &fileStream)
+void TecWriter::writeFaceConnectivity(ofstream &fileStream)
 {
-  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+  // Face2Nodes connectivity
+  for (int iFace = 0; iFace < _meshData->getNFACE(); iFace++)
   {
-    for (int jNode = _meshData->getElement2NodesStart()->at(iElem); jNode < _meshData->getElement2NodesStart()->at(iElem + 1); jNode++)
+    vector<int> n;
+    _meshData->getFace2Nodes(iFace, n);
+    for (int i = 0; i < n.size(); i++)
     {
-      fileStream << _meshData->getElement2Nodes()->at(jNode) + 1 << "\t";
+      fileStream << n[i] << "\t";
     }
     fileStream << "\n";
   }
+
+  //Left and right elements for each face
+  uint32_t returnline = 0;
+  for (returnline = 0; returnline < unsigned(_meshData->getNFACE()); returnline++)
+  {
+    fileStream << _meshData->getEsuf()->at(2 * returnline) << "\t";
+  }
+  fileStream << "\n";
+  for (returnline = 0; returnline < unsigned(_meshData->getNFACE()); returnline++)
+  {
+    fileStream << _meshData->getEsuf()->at(2 * returnline + 1) << "\t";
+  }
 }
+// void TecWriter::writeElementConnectivity(ofstream &fileStream)
+// {
+//   for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
+//   {
+//     for (int jNode = _meshData->getElement2NodesStart()->at(iElem); jNode < _meshData->getElement2NodesStart()->at(iElem + 1); jNode++)
+//     {
+//       fileStream << _meshData->getElement2Nodes()->at(jNode) + 1 << "\t";
+//     }
+//     fileStream << "\n";
+//   }
+// }

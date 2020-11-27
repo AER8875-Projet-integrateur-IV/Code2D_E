@@ -37,5 +37,6 @@ public:
     void writeNewZone(std::ofstream &);
     void writeCoord(std::ofstream &);
     void writeVar(std::ofstream &);
-    void writeElementConnectivity(ofstream &fileStream);
+    void writeFaceConnectivity(ofstream &fileStream);
+    // void writeElementConnectivity(ofstream &fileStream);
 };

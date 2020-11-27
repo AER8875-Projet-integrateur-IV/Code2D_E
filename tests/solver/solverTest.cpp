@@ -1,4 +1,4 @@
-/* 
+/*
 /Fichier meshConnectivity_test.cpp
 /Date: 12 octobre 2020 - 20h56
 /Projet: Projet Intégrateur 4
