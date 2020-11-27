@@ -29,7 +29,14 @@ private:
     MeshData *_meshData;
     Solver *_solver;
     InputData *_inputData;
+
+    // Aerodynamics coeff
+    double _Cd;
+    double _Cl;
+    double _Cm;
+    vector<double> *_Cp;
     void writeErrors();
+    void computeAerodynamicCoefs();
 
 public:
     SolWrite(string &path, MeshData *meshData, InputData *inputData, Solver *solver);

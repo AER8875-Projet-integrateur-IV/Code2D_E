@@ -175,8 +175,8 @@ void Solver::updateBoundaryCells()
                     {
                         _W->p[iCellb] = 1.;
                         _W->rho[iCellb] = _W->rho[iCelld] + (_W->p[iCellb] - _W->p[iCelld]) / (c0 * c0);
-                        _W->rhoU[iCellb] = _W->rho[iCellb] * (_W->rhoU[iCelld] / _W->rho[iCelld] + _face2Normales->at(2 * iFace) * (_W->p[iCellb] - _W->p[iCelld]) / (_W->rho[iCelld] * c0));
-                        _W->rhoV[iCellb] = _W->rho[iCellb] * (_W->rhoV[iCelld] / _W->rho[iCelld] + _face2Normales->at(2 * iFace + 1) * (_W->p[iCellb] - _W->p[iCelld]) / (_W->rho[iCelld] * c0));
+                        _W->rhoU[iCellb] = _W->rho[iCellb] * (_W->rhoU[iCelld] / _W->rho[iCelld] + _face2Normales->at(2 * iFace) * (_W->p[iCelld] - _W->p[iCellb]) / (_W->rho[iCelld] * c0));
+                        _W->rhoV[iCellb] = _W->rho[iCellb] * (_W->rhoV[iCelld] / _W->rho[iCelld] + _face2Normales->at(2 * iFace + 1) * (_W->p[iCelld] - _W->p[iCellb]) / (_W->rho[iCelld] * c0));
                         computeEnergie(_W, iCellb);
                     }
                 }
@@ -239,7 +239,7 @@ void Solver::computeResiduals()
     }
     for (int iFace = _meshDim.NFACE - _meshDim.NBOUNDARY; iFace < _meshDim.NFACE; iFace++)
     {
-        int L, R;
+        int L;
         L = _esuf->at(2 * iFace + 0);
         _R->rhoVds[L] += _F->rhoV[iFace] * _face2Aires->at(iFace);
 
@@ -272,17 +272,6 @@ void Solver::makeOneIteration()
     initializeEachIteration();
     computeTimeSteps();
     _schemes->computeConvectivesFlux();
-    /*     for (int iMark = 0; iMark < _meshDim.NMARK; iMark++)
-    {
-        cout << _conditionsLimites[iMark] << endl;
-        ;
-        for (int iBoundary = _bc2elStart->at(iMark); iBoundary < _bc2elStart->at(iMark + 1); iBoundary++)
-        {
-            int iFace = _bc2face->at(iBoundary);
-            cout << "Flux: " << _F->rhoV[iFace] << "\t\t" << _F->rhouV[iFace] << "\t\t" << _F->rhovV[iFace] << "\t\t" << _F->rhoHV[iFace] << "\n";
-        }
-    } */
-
     computeResiduals();
     _schemes->computeConservativesVariables();
     updateW();
@@ -295,17 +284,6 @@ void Solver::runSolver()
 {
     cout << "Démarrage de l'éxécution du solveur\n";
     initializeSolution();
-    /*     cout << "Afichage de la solution initiale: \n";
-    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
-    {
-        cout << "Element " << iElem << " "
-             << _W->rho[iElem] << " "
-             << _W->rhoU[iElem] << " "
-             << _W->rhoV[iElem] << " "
-             << _W->rhoE[iElem] << " "
-             << _W->p[iElem] << " "
-             << _W->H[iElem] << "\n";
-    } */
     cout << "Itérations\tError rho\tError rhoU\tError rhoV\tError rhoE\n";
     for (int iter = 0; iter < _props.Niter; iter++)
     {
@@ -319,17 +297,6 @@ void Solver::runSolver()
     }
 
     cout << "Fin de l'éxécution du solveur\n";
-    cout << "Afichage de la solution Finale: \n";
-    for (int iElem = 0; iElem < _meshDim.NELEM; iElem++)
-    {
-        cout << "Element " << iElem << " "
-             << _W->rho[iElem] << " "
-             << _W->rhoU[iElem] << " "
-             << _W->rhoV[iElem] << " "
-             << _W->rhoE[iElem] << " "
-             << _W->p[iElem] << " "
-             << _W->H[iElem] << "\n";
-    }
     return;
 }
 
@@ -372,6 +339,11 @@ Solution *Solver::getSolution() const
 Residual *Solver::getResidus() const
 {
     return _R;
+}
+
+Flux *Solver::getFlux() const
+{
+    return _F;
 }
 
 vector<double> *Solver::getErrors() const

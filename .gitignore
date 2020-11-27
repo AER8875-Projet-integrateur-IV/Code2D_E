@@ -4,7 +4,8 @@ CMakeLists.txt
 tests/mesh/exemple_mesh
 tests/inputData/Example.project
 *.dat
-
+*.png
+docs/
 # Pour c++
 #----------------------------------------------
 # Prerequisites
