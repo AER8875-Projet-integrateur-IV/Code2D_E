@@ -136,6 +136,26 @@ bool InputData::setIndice(string ligne, int &indice)
         indice = 0;
         _iterationMax = stoi(getEqualValue(ligne));
     }
+    else if (ligne.find("ERREUR DENSITY") != string::npos)
+    {
+        indice = 0;
+        _errorRho = stod(getEqualValue(ligne));
+    }
+    else if (ligne.find("ERREUR XQTMVT") != string::npos)
+    {
+        indice = 0;
+        _errorRhoU = stod(getEqualValue(ligne));
+    }
+    else if (ligne.find("ERREUR YQTMVT") != string::npos)
+    {
+        indice = 0;
+        _errorRhoV = stod(getEqualValue(ligne));
+    }
+    else if (ligne.find("ERREUR ENERGY") != string::npos)
+    {
+        indice = 0;
+        _errorRhoE = stod(getEqualValue(ligne));
+    }
     else if (ligne.find("CONDITIONS LIMITES") != string::npos)
     {
         indice = 1;
@@ -227,4 +247,24 @@ string InputData::getSchemeTime() const
 int InputData::getIterationMax() const
 {
     return _iterationMax;
+}
+
+double InputData::getErrorRho() const
+{
+    return _errorRho;
+}
+
+double InputData::getErrorRhoU() const
+{
+    return _errorRhoU;
+}
+
+double InputData::getErrorRhoV() const
+{
+    return _errorRhoV;
+}
+
+double InputData::getErrorRhoE() const
+{
+    return _errorRhoE;
 }

@@ -43,6 +43,7 @@ void Solver::initializeSolver()
     _props.gamma = _inputData->getRatioCpCv();
     _props.c = sqrt(_props.gamma); //_inputData->getSoundSpeed();
     _props.Niter = _inputData->getIterationMax();
+    _props.errorsLim = {_inputData->getErrorRho(), _inputData->getErrorRhoU(), _inputData->getErrorRhoV(), _inputData->getErrorRhoE()};
     // Connectivité
     _esuf = _meshData->getEsuf();
     _bc2el = _meshData->getBc2el();
@@ -286,15 +287,18 @@ void Solver::runSolver()
     clock_t tStart = clock();
     initializeSolution();
     cout << "Itérations\tError rho\tError rhoU\tError rhoV\tError rhoE\n";
-    for (int iter = 0; iter < _props.Niter; iter++)
+    int iter = 0;
+    makeOneIteration();
+    while ((iter < _props.Niter) & ((_props.errorsLim[0] <= _errors->at(4 * iter + 0)) | (_props.errorsLim[1] <= _errors->at(4 * iter + 1)) | (_props.errorsLim[2] <= _errors->at(4 * iter + 2)) | (_props.errorsLim[3] <= _errors->at(4 * iter + 3))))
     {
-        makeOneIteration();
         cout << iter + 1
              << "\t" << _errors->at(4 * iter + 0)
              << "\t" << _errors->at(4 * iter + 1)
              << "\t" << _errors->at(4 * iter + 2)
              << "\t" << _errors->at(4 * iter + 3)
              << "\n";
+        iter++;
+        makeOneIteration();
     }
     cout << "Fin de l'éxécution du solveur\n";
     printf("Temps d'éxécution: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);

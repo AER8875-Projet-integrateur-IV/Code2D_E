@@ -39,6 +39,10 @@ private:
     double _CFL;
 
     int _iterationMax;
+    double _errorRho;
+    double _errorRhoU;
+    double _errorRhoV;
+    double _errorRhoE;
 
     bool isFileValid();
     bool setIndice(string ligne, int &indice);
@@ -58,6 +62,10 @@ public:
     string getSchemeTime() const;
 
     int getIterationMax() const;
+    double getErrorRho() const;
+    double getErrorRhoU() const;
+    double getErrorRhoV() const;
+    double getErrorRhoE() const;
 
     double getMachNumber() const;
     double getAOA() const;

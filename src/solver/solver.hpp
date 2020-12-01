@@ -27,6 +27,7 @@ struct Properties
     double c;
     double gamma;
     int Niter;
+    vector<double> errorsLim;
 };
 
 struct MeshDimension

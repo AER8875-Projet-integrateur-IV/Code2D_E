@@ -59,7 +59,7 @@ void SolWrite::writeErrors()
     fprintf(fError, "Nombre d'iteration: %6d\n", _inputData->getIterationMax());
     fprintf(fError, "Itérations\tError rho\t\tError rhoU\t\tError rhoV\t\tError rhoE\n");
     vector<double> *errors = _solver->getErrors();
-    for (int iter = 0; iter < _inputData->getIterationMax(); iter++)
+    for (int iter = 0; iter < errors->size() / 4; iter++)
     {
         fprintf(fError, "%-6d\t\t%-8.3e\t\t%-8.3e\t\t%-8.3e\t\t%-8.3e\n", iter + 1, errors->at(4 * iter + 0), errors->at(4 * iter + 1), errors->at(4 * iter + 2), errors->at(4 * iter + 3));
     }
