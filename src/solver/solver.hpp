@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <math.h>
+#include <time.h>
 
 #include "../mesh/meshData/meshData.hpp"
 #include "../inputData.hpp"

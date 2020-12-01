@@ -73,7 +73,7 @@ void RoeScheme::computeFluxCentres()
         p_m = 0.5 * (_W->p[L] + _W->p[R]);
         H_m = 0.5 * (_W->H[L] + _W->H[R]);
 
-        Vn = 0.5 * (u_m * _face2Normales->at(2 * iFace + 0) + v_m * _face2Normales->at(2 * iFace + 1));
+        Vn = u_m * _face2Normales->at(2 * iFace + 0) + v_m * _face2Normales->at(2 * iFace + 1);
 
         _Fcentre->rhoV[iFace] = rho_m * Vn;
         _Fcentre->rhouV[iFace] = rho_m * u_m * Vn + _face2Normales->at(2 * iFace + 0) * p_m;
@@ -110,17 +110,17 @@ void RoeScheme::computeFluxDissip()
         V_ = u_ * _face2Normales->at(2 * iFace + 0) + v_ * _face2Normales->at(2 * iFace + 1);
 
         double c_local = sqrt(_inputData->getRatioCpCv() * _W->p[L] / _W->rho[L]);
-        delta = c_local / 10;
+        delta = c_local / 15.;
         VmC = abs(V_ - c_);
         VpC = abs(V_ + c_);
         V = abs(V_);
         if (VmC <= delta)
         {
-            VmC = (pow(VmC, 2.) + pow(delta, 2.)) / (2 * delta);
+            VmC = (pow(VmC, 2.) + pow(delta, 2)) / (2 * delta);
         }
         if (VpC <= delta)
         {
-            VpC = (pow(VpC, 2.) + pow(delta, 2.)) / (2 * delta);
+            VpC = (pow(VpC, 2.) + pow(delta, 2)) / (2 * delta);
         }
         /*         if (V <= delta)
         {

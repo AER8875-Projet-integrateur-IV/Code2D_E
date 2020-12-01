@@ -34,27 +34,27 @@ void TecWriter::writeFile()
   beginFile(fileStream);
   writeNewZone(fileStream);
   writeCoord(fileStream);
-  // writeVar(fileStream);
-  writeFaceConnectivity(fileStream);
-  //writeElementConnectivity(fileStream);
+  writeVar(fileStream);
+  //writeFaceConnectivity(fileStream);
+  writeElementConnectivity(fileStream);
   fileStream.close();
 }
 
 ///////////Début du fichier
 void TecWriter::beginFile(ofstream &fileStream)
 {
-  fileStream << "TITLE = \"Exemple\"\nVARIABLES = \"X\",\"Y\",\"Densité\",\"Vitesse U\",\"Vitesse V\", \"Pression\",\"Énergie\",\"Rrho\"" << endl;
+  fileStream << "TITLE = \"Exemple\"\nVARIABLES = \"X\",\"Y\",\"Densité\",\"Vitesse U\",\"Vitesse V\", \"Pression\",\"Énergie\"" << endl;
 }
 
 void TecWriter::writeNewZone(ofstream &fileStream)
 {
   fileStream << "ZONE "
-             << "ZONETYPE=FEPOLYGON "
+             << "ZONETYPE=FEQUADRILATERAL "
              << "NODES=" << _meshData->getNPOIN() << ", "
              << "ELEMENTS=" << _meshData->getNELEM() << ", "
              << "FACES=" << _meshData->getNFACE() << ", "
              << "NUMCONNECTEDBOUNDARYFACES=0, TOTALNUMBOUNDARYCONNECTIONS=0\n"
-             << "DATAPACKING=BLOCK, VARLOCATION=([3-8]=CELLCENTERED)\n";
+             << "DATAPACKING=BLOCK, VARLOCATION=([3-7]=CELLCENTERED)\n";
 }
 
 ///////////Ecriture des coordonnees des points
@@ -95,47 +95,18 @@ void TecWriter::writeVar(ofstream &fileStream)
   {
     fileStream << _solution->p[iElem] << "\n";
   }
-  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
-  {
-    fileStream << _solver->getResidus()->rhoVds[iElem] << "\n";
-  }
 }
 
 ///////////Ecriture des Connectivités
-void TecWriter::writeFaceConnectivity(ofstream &fileStream)
+
+void TecWriter::writeElementConnectivity(ofstream &fileStream)
 {
-  // Face2Nodes connectivity
-  for (int iFace = 0; iFace < _meshData->getNFACE(); iFace++)
+  for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
   {
-    vector<int> n;
-    _meshData->getFace2Nodes(iFace, n);
-    for (int i = 0; i < n.size(); i++)
+    for (int jNode = _meshData->getElement2NodesStart()->at(iElem); jNode < _meshData->getElement2NodesStart()->at(iElem + 1); jNode++)
     {
-      fileStream << n[i] << "\t";
+      fileStream << _meshData->getElement2Nodes()->at(jNode) + 1 << "\t";
     }
     fileStream << "\n";
   }
-
-  //Left and right elements for each face
-  uint32_t returnline = 0;
-  for (returnline = 0; returnline < unsigned(_meshData->getNFACE()); returnline++)
-  {
-    fileStream << _meshData->getEsuf()->at(2 * returnline) << "\t";
-  }
-  fileStream << "\n";
-  for (returnline = 0; returnline < unsigned(_meshData->getNFACE()); returnline++)
-  {
-    fileStream << _meshData->getEsuf()->at(2 * returnline + 1) << "\t";
-  }
 }
-// void TecWriter::writeElementConnectivity(ofstream &fileStream)
-// {
-//   for (int iElem = 0; iElem < _meshData->getNELEM(); iElem++)
-//   {
-//     for (int jNode = _meshData->getElement2NodesStart()->at(iElem); jNode < _meshData->getElement2NodesStart()->at(iElem + 1); jNode++)
-//     {
-//       fileStream << _meshData->getElement2Nodes()->at(jNode) + 1 << "\t";
-//     }
-//     fileStream << "\n";
-//   }
-// }

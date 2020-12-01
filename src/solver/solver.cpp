@@ -158,8 +158,8 @@ void Solver::updateBoundaryCells()
                     int iCelld = _bc2el->at(2 * iBoundary);
                     int iCellb = _bc2el->at(2 * iBoundary + 1);
                     int iFace = _bc2face->at(iBoundary);
-                    double Vn;
-                    computeVn(_W, iCelld, iFace, Vn);
+                    double Vn = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
+                    //computeVn(_W, iCelld, iFace, Vn);
                     double c0 = sqrt(_props.gamma * _W->p[iCelld] / _W->rho[iCelld]);
                     if (Vn < 0.) // inflow
                     {
@@ -283,6 +283,7 @@ void Solver::makeOneIteration()
 void Solver::runSolver()
 {
     cout << "Démarrage de l'éxécution du solveur\n";
+    clock_t tStart = clock();
     initializeSolution();
     cout << "Itérations\tError rho\tError rhoU\tError rhoV\tError rhoE\n";
     for (int iter = 0; iter < _props.Niter; iter++)
@@ -295,8 +296,8 @@ void Solver::runSolver()
              << "\t" << _errors->at(4 * iter + 3)
              << "\n";
     }
-
     cout << "Fin de l'éxécution du solveur\n";
+    printf("Temps d'éxécution: %.2fs\n", (double)(clock() - tStart) / CLOCKS_PER_SEC);
     return;
 }
 

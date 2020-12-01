@@ -9,9 +9,9 @@ int main(int argc, char const *argv[])
 {
     std::cout << "Hello Word!" << std::endl;
     //main_meshConnectivity_Test();
-    main_meshMetric_Test();
+    //main_meshMetric_Test();
     //main_inputData_Test();
-    main_postTecplot_Test();
-    //main_solver_Test();
+    //main_postTecplot_Test();
+    main_solver_Test();
     return 0;
 }

@@ -38,5 +38,5 @@ public:
     void writeCoord(std::ofstream &);
     void writeVar(std::ofstream &);
     void writeFaceConnectivity(ofstream &fileStream);
-    // void writeElementConnectivity(ofstream &fileStream);
+    void writeElementConnectivity(ofstream &fileStream);
 };
