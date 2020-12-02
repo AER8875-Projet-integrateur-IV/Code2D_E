@@ -159,8 +159,8 @@ void Solver::updateBoundaryCells()
                     int iCelld = _bc2el->at(2 * iBoundary);
                     int iCellb = _bc2el->at(2 * iBoundary + 1);
                     int iFace = _bc2face->at(iBoundary);
-                    double Vn = _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
-                    //computeVn(_W, iCelld, iFace, Vn);
+                    double Vn; //= _props.Ma * sqrt(_props.gamma) * cos(_props.AOA) * _face2Normales->at(2 * iFace + 0) + _props.Ma * sqrt(_props.gamma) * sin(_props.AOA) * _face2Normales->at(2 * iFace + 1);
+                    computeVn(_W, iCelld, iFace, Vn);
                     double c0 = sqrt(_props.gamma * _W->p[iCelld] / _W->rho[iCelld]);
                     if (Vn < 0.) // inflow
                     {

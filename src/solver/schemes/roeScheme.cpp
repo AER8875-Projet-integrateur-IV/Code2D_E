@@ -60,6 +60,20 @@ void RoeScheme::computeConvectivesFlux()
 
 void RoeScheme::computeFluxCentres()
 {
+    /*     for (int iFace = 0; iFace < _meshData->getNFACE() - _meshData->getNBOUNDARY(); iFace++)
+    {
+        int L, R;
+        double Vn_L, Vn_R;
+        L = _esuf->at(2 * iFace + 0);
+        R = _esuf->at(2 * iFace + 1);
+
+        Vn_L = (_W->rhoU[L] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[L] * _face2Normales->at(2 * iFace + 1)) / _W->rho[L];
+        Vn_R = (_W->rhoU[R] * _face2Normales->at(2 * iFace + 0) + _W->rhoV[R] * _face2Normales->at(2 * iFace + 1)) / _W->rho[R];
+        _Fcentre->rhoV[iFace] = 0.5 * (_W->rho[L] * Vn_L + _W->rho[R] * Vn_R);
+        _Fcentre->rhouV[iFace] = 0.5 * (_W->rhoU[L] * Vn_L + _W->rhoU[R] * Vn_R + _face2Normales->at(2 * iFace + 0) * (_W->p[L] + _W->p[R]));
+        _Fcentre->rhovV[iFace] = 0.5 * (_W->rhoV[L] * Vn_L + _W->rhoV[R] * Vn_R + _face2Normales->at(2 * iFace + 1) * (_W->p[L] + _W->p[R]));
+        _Fcentre->rhoHV[iFace] = 0.5 * (_W->rho[L] * _W->H[L] * Vn_L + _W->rho[R] * _W->H[R] * Vn_R);
+    } */
     for (int iFace = 0; iFace < _meshData->getNFACE(); iFace++)
     {
         int L, R;
@@ -116,16 +130,16 @@ void RoeScheme::computeFluxDissip()
         V = abs(V_);
         if (VmC <= delta)
         {
-            VmC = (pow(VmC, 2.) + pow(delta, 2)) / (2 * delta);
+            VmC = (pow(VmC, 2) + pow(delta, 2)) / (2 * delta);
         }
         if (VpC <= delta)
         {
-            VpC = (pow(VpC, 2.) + pow(delta, 2)) / (2 * delta);
+            VpC = (pow(VpC, 2) + pow(delta, 2)) / (2 * delta);
         }
-        /*         if (V <= delta)
+        if (V <= delta)
         {
-            V = (pow(V, 2.) + pow(delta, 2.)) / (2 * delta);
-        } */
+            V = (pow(V, 2) + pow(delta, 2)) / (2 * delta);
+        }
         DF1 = VmC * ((_W->p[R] - _W->p[L] - rho_ * c_ * (Vn_R - Vn_L)) / (2 * c_ * c_));
         DF234 = ((_W->rho[R] - _W->rho[L]) - (_W->p[R] - _W->p[L]) / (c_ * c_));
         DF5 = VpC * ((_W->p[R] - _W->p[L] + rho_ * c_ * (Vn_R - Vn_L)) / (2 * c_ * c_));
