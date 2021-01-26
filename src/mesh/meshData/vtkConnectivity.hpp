@@ -18,7 +18,9 @@ class VTKConnectivity
 private:
     // Nombre de faces par éléments
     static vector<int> _NFAEL;
+    // Nombre de noeuds par face
     static vector<vector<int>> _NNOFA;
+    // Connectivité locale des faces
     static vector<vector<vector<int>>> _LPOFA;
 
 public:
